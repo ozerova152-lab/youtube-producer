@@ -1,0 +1,27 @@
+# Секреты и локальные ключи
+.env
+.env.*
+!.env.example
+
+# Данные каналов пользователя (стратегии, брифы, кэш API)
+data/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# Мусор ОС и редакторов
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Артефакты проверок: скриншоты и бинарники локальные
+*.png
+*.jpg

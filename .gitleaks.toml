@@ -1,0 +1,12 @@
+title = "youtube-producer"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Локальные файлы, которые не попадают в git"
+paths = [
+  '''^\.venv/''',
+  '''^data/''',
+  '''^\.env$''',
+]

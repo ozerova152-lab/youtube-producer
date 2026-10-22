@@ -1,0 +1,33 @@
+# Тестовый канал: настройки для проверок без ключей и сети.
+# Свой канал: скопируйте эту папку в data/<канал>/ и заполните.
+channel:
+  name: Демо-канал
+  my_channel_id: UC_demo_my_channel
+  niche: нейросети для обычных людей
+  audience: новички, 18–35, интересуются ИИ-инструментами
+segments:
+  - id: ru
+    region: RU
+    language: ru
+  - id: en
+    region: US
+    language: en
+keywords:
+  ru: [нейросеть, ChatGPT, нейросети для работы]
+  en: [AI tools, ChatGPT tutorial, AI for beginners]
+competitors: []
+thresholds:
+  views_multiplier: 3
+  likes_ratio: 0.02
+  comments_ratio: 0.001
+  norm_videos: 10
+  min_channel_videos: 5
+  max_comments: 100
+  min_comments: 10
+publishing:
+  default_videos_per_month: 6
+  min_videos_per_month: 2
+  max_videos_per_month: 12
+ai:
+  provider: claude
+  model: claude-haiku-5-5
