@@ -1,0 +1,15 @@
+============================= test session starts ==============================
+platform linux -- Python 3.14.4, pytest-9.1.1, pluggy-1.7.0 -- /home/matebook/vibecoding-projects/youtube-producer/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/matebook/vibecoding-projects/youtube-producer
+configfile: pyproject.toml
+plugins: recording-0.14.0
+collecting ... collected 5 items
+
+tests/test_agent_instructions.py::test_no_agents_md_file_or_links PASSED [ 20%]
+tests/test_agent_instructions.py::test_claude_md_required_content PASSED [ 40%]
+tests/test_agent_instructions.py::test_claude_code_denies_env_read PASSED [ 60%]
+tests/test_agent_instructions.py::test_playbooks_templates_markdown_and_claude_code_marks PASSED [ 80%]
+tests/test_agent_instructions.py::test_no_claude_api_leftovers PASSED    [100%]
+
+============================== 5 passed in 0.94s ===============================

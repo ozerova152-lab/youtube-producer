@@ -1,0 +1,11 @@
+gitleaks detect --no-git --source . --config .gitleaks.toml --no-banner
+[90m4:11PM[0m [32mINF[0m scan completed in 148ms
+[90m4:11PM[0m [32mINF[0m no leaks found
+[90m4:11PM[0m [32mINF[0m 7 commits scanned.
+[90m4:11PM[0m [32mINF[0m scan completed in 83.7ms
+[90m4:11PM[0m [32mINF[0m no leaks found
+.venv/bin/ruff check src tests
+All checks passed!
+.venv/bin/pytest -q
+.......                                                                  [100%]
+7 passed in 1.01s

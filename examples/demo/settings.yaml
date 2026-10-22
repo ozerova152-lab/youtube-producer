@@ -28,6 +28,3 @@ publishing:
   default_videos_per_month: 6
   min_videos_per_month: 2
   max_videos_per_month: 12
-ai:
-  provider: claude
-  model: claude-haiku-5-5
