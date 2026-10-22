@@ -25,3 +25,14 @@ Thumbs.db
 # Артефакты проверок: скриншоты и бинарники локальные
 *.png
 *.jpg
+
+# артефакты задач: в git идут только текстовые доказательства (логи, выписки, json);
+# скриншоты и прочие бинарники — локальные, в коммиты не попадают
+docs/tasks/artifacts/**
+!docs/tasks/artifacts/**/
+!docs/tasks/artifacts/**/*.txt
+!docs/tasks/artifacts/**/*.md
+!docs/tasks/artifacts/**/*.log
+!docs/tasks/artifacts/**/*.json
+!docs/tasks/artifacts/**/*.csv
+!docs/tasks/artifacts/**/*.sql
