@@ -5,7 +5,9 @@ from typing import Annotated
 
 import typer
 
+from produce.core import analysis as analyzing
 from produce.core import collect as collecting
+from produce.core import comments as commenting
 from produce.core import importing, quota, report, runs
 from produce.core import virals as finding
 from produce.core.errors import KeyMissingError, ProduceError, QuotaExceededError, RunError
@@ -286,6 +288,118 @@ def report_command(
         typer.echo(f"Отчёт записан: {found[-1].path / 'report.md'}")
     except ProduceError as err:
         raise _fail(err) from err
+
+
+def _current_run(channel: Path, segment_id: str | None) -> tuple[dict, dict, runs.Run]:
+    """Настройки, сегмент и последний запуск этого месяца; запуска нет — ошибка."""
+    settings = load_settings(channel)
+    ids = [str(s["id"]) for s in list_segments(settings)]
+    if segment_id is None:
+        if len(ids) != 1:
+            raise RunError(f"Укажите сегмент: --segment ({', '.join(ids)})")
+        segment_id = ids[0]
+    segment = get_segment(settings, segment_id)
+    found = runs.list_runs(channel, runs.current_month(collecting.now().date()), segment_id)
+    if not found:
+        raise RunError(f"Запуска для сегмента {segment_id} ещё нет: сначала `produce collect`")
+    return settings, segment, found[-1]
+
+
+@app.command()
+def comments(
+    ctx: typer.Context,
+    segment: Annotated[str | None, typer.Option(help="Сегмент; если он один, берётся он")] = None,
+    confirm: Annotated[bool, typer.Option(help="Слово человека получено: докачивать")] = False,
+    env_file: Annotated[Path, typer.Option(help="Файл с ключом YouTube")] = Path(".env"),
+) -> None:
+    """Оценить расход (без флага) или докачать комментарии залётов (`--confirm`)."""
+    try:
+        _comments(ctx.obj, segment, confirm, env_file)
+    except ProduceError as err:
+        raise _fail(err) from err
+
+
+def _comments(channel: Path, segment_id: str | None, confirm: bool, env_file: Path) -> None:
+    settings, _, run = _current_run(channel, segment_id)
+    limit, _ = commenting.limits_from(settings)
+    ids = commenting.viral_ids(run)
+    if not ids:
+        raise RunError("Залётов нет: докачивать комментарии не у кого")
+    todo = commenting.pending(run, ids)
+    if not todo:
+        typer.echo("Комментарии залётов уже собраны. Обращений к YouTube: 0")
+        return
+
+    key = load_api_key(env_file)
+    if key is None:
+        if run.data.get("source") == "import" and run.data.get("no_comments"):
+            typer.echo("Комментариев нет: причины предположительные, по названиям и описаниям")
+            return
+        raise KeyMissingError(
+            "Ключа YouTube нет. Можно (1) получить бесплатный ключ: шаги в README, "
+            "и положить его в файл `.env` строкой YOUTUBE_API_KEY=ваш_ключ, "
+            "или (2) загрузить видео из файла CSV/JSON. Что выбираете?"
+        )
+
+    units = commenting.estimate_units(len(todo))
+    ledger = quota.ledger_path(channel)
+    available = quota.remaining_today(ledger)
+    if units > available:
+        runs.set_awaiting(run, False)
+        raise ProduceError(
+            f"Нужно ~{_num(units)}, доступно {_num(available)}. Продолжим завтра, прогресс сохранится"
+        )
+    if not confirm:
+        runs.set_awaiting(run, True)
+        typer.echo(f"Комментарии {len(todo)} {_plural(len(todo), 'залёта', 'залётов', 'залётов')}: "
+                   f"~{_num(units)} ед. Докачать?")
+        typer.echo("Жду вашего «да».")
+        return
+
+    runs.set_awaiting(run, False)
+    api = YouTubeApi(key, on_request=lambda cost: runs.record_usage(run, cost, 1, ledger))
+    spent_before = int(run.data["quota_spent"])
+    try:
+        stored = commenting.fetch(run, api, ids, limit,
+                                  progress=lambda text: typer.echo(f"Собираю: {text}…"))
+    except QuotaExceededError:
+        quota.mark_exhausted(ledger)
+        raise QuotaExceededError(
+            commenting.quota_message(int(run.data["quota_spent"]) - spent_before, units)
+        ) from None
+    total = sum(len(stored.get(i, [])) for i in ids)
+    typer.echo(f"Комментарии собраны: {len(ids)} {_plural(len(ids), 'залёт', 'залёта', 'залётов')}, "
+               f"{total} комментариев. Расход: {_num(int(run.data['quota_spent']) - spent_before)} ед.")
+
+
+CHECK_STEPS = ("strategy", "briefs", "plan")
+
+
+@app.command(name="check-files")
+def check_files(
+    ctx: typer.Context,
+    step: Annotated[str | None, typer.Option(help="strategy, briefs или plan; без флага: разбор")] = None,
+    segment: Annotated[str | None, typer.Option(help="Сегмент; если он один, берётся он")] = None,
+) -> None:
+    """Проверить структуру файлов агента по шаблонам (смысл проверяет человек)."""
+    try:
+        if step is not None and step not in CHECK_STEPS:
+            raise RunError(f"Неизвестный шаг «{step}». Допустимые: {', '.join(CHECK_STEPS)}")
+        if step is not None:
+            raise RunError(f"Проверка шага «{step}» ещё не подключена: пока работает только "
+                           "проверка разбора (`check-files` без `--step`)")
+        settings, seg, run = _current_run(ctx.obj, segment)
+        _, minimum = commenting.limits_from(settings)
+        problems = analyzing.check(run, str(seg.get("language", "ru")), minimum)
+    except ProduceError as err:
+        raise _fail(err) from err
+    if problems:
+        for line in problems:
+            typer.echo(line)
+        raise typer.Exit(code=1)
+    count = len(commenting.viral_ids(run))
+    runs.advance_stage(run, "разбор готов")
+    typer.echo(f"Проверено: разбор по {count} {_plural(count, 'залёту', 'залётам', 'залётам')}, ошибок нет")
 
 
 if __name__ == "__main__":

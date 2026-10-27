@@ -5,7 +5,7 @@
 (`runs/<месяц>_<сегмент>_v<N>/cache/`) в том же виде, что после `produce collect`.
 Если файл неверный, команда называет колонку или поле, а кэш остаётся как был.
 
-Образец: [`examples/demo/import.csv`](../examples/demo/import.csv).
+Образец: [`examples/demo/import.csv`](../examples/demo/import.csv) (без комментариев) и [`examples/demo/import_comments.json`](../examples/demo/import_comments.json) (с комментариями, в том числе с «инъекцией» и видео с менее чем 10 комментариями).
 
 ## Откуда взять файл
 

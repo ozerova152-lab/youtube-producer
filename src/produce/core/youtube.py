@@ -65,6 +65,10 @@ class PlaylistNotFound(Exception):
     """У канала нет списка загрузок (пустой канал)."""
 
 
+class CommentsUnavailable(Exception):
+    """У видео комментарии закрыты или видео исчезло: это не сбой, а ответ «комментариев нет»."""
+
+
 def parse_duration(iso: str | None) -> int | None:
     """`PT1H2M3S` -> секунды; прямые трансляции без длины -> None."""
     m = _DURATION.match(iso or "")
@@ -130,6 +134,9 @@ class YouTubeApi:
             if status == 404 and "playlistNotFound" in reasons:
                 self._on_request(cost)
                 raise PlaylistNotFound() from None
+            if "commentsDisabled" in reasons or "videoNotFound" in reasons:
+                self._on_request(cost)  # YouTube списывает единицу и за такой ответ
+                raise CommentsUnavailable() from None
             if status >= 500 or status == 429 or reasons & _RATE_REASONS:
                 raise _Transient() from None
             # Остальные отказы (400, 403, 404) повтором не лечатся.
@@ -178,6 +185,24 @@ class YouTubeApi:
              "published_at": i["contentDetails"].get("videoPublishedAt", "")}
             for i in self._run(req, COST_LIST).get("items", [])
         ]
+
+    def comments(self, video_id: str, limit: int) -> list[dict]:
+        """Самые популярные комментарии верхнего уровня, не больше `limit` (до 100) за 1 ед.
+
+        Тексты чужие: наружу идут только данными, в логи не пишутся.
+        """
+        req = self._svc.commentThreads().list(
+            part="snippet", videoId=video_id, order="relevance",
+            maxResults=max(1, min(limit, 100)), textFormat="plainText",
+        )
+        found = []
+        for item in self._run(req, COST_LIST).get("items", []):
+            top = item.get("snippet", {}).get("topLevelComment", {}).get("snippet", {})
+            text = str(top.get("textDisplay") or top.get("textOriginal") or "").strip()
+            if text:
+                found.append({"text": text, "likes": _int(top.get("likeCount")) or 0})
+        found.sort(key=lambda c: -c["likes"])
+        return found[:limit]
 
 
 def _int(value: object) -> int | None:
