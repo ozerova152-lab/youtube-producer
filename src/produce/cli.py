@@ -7,6 +7,7 @@ import typer
 
 from produce.core import collect as collecting
 from produce.core import importing, quota, report, runs
+from produce.core import virals as finding
 from produce.core.errors import KeyMissingError, ProduceError, QuotaExceededError, RunError
 from produce.core.settings import get_segment, list_segments, load_api_key, load_settings
 from produce.core.youtube import YouTubeApi
@@ -220,6 +221,41 @@ def _import(channel: Path, file: Path, segment_id: str | None) -> None:
                    "они пропущены")
     if not result.comments:
         typer.echo("Комментариев нет: причины предположительные, по названиям и описаниям")
+
+
+@app.command()
+def virals(
+    ctx: typer.Context,
+    segment: Annotated[str | None, typer.Option(help="Сегмент; если он один, берётся он")] = None,
+) -> None:
+    """Найти залёты по кэшу запуска (без сети) и записать `virals.json`."""
+    try:
+        settings = load_settings(ctx.obj)
+        ids = [str(s["id"]) for s in list_segments(settings)]
+        if segment is None:
+            if len(ids) != 1:
+                raise RunError(f"Укажите сегмент: --segment ({', '.join(ids)})")
+            segment = ids[0]
+        get_segment(settings, segment)
+        found = runs.list_runs(ctx.obj, runs.current_month(collecting.now().date()), segment)
+        if not found:
+            raise RunError(f"Запуска для сегмента {segment} ещё нет: сначала `produce collect`")
+        result = finding.find_and_save(found[-1], settings)
+    except ProduceError as err:
+        raise _fail(err) from err
+    typer.echo(f"Проверено видео: {result['checked']}. Залётов: {len(result['virals'])}")
+    for v in result["virals"]:
+        typer.echo(f"- {v['title']}: {_num(v['views'])} просмотров, норма {_num(v['norm'])}, "
+                   f"{finding.times_text(v)}")
+    if not result["virals"]:
+        typer.echo("Залётов нет. Ближайшие 5 к порогу:")
+        for v in result["nearest"]:
+            typer.echo(f"- {v['title']}: {_num(v['views'])} просмотров, норма {_num(v['norm'])}, "
+                       f"{finding.times_text(v)}")
+        typer.echo("Могу предложить ослабить пороги в `settings.yaml`, "
+                   "но менять его вы будете сами")
+    if result["skipped"]:
+        typer.echo(f"Мало данных: пропущено {len(result['skipped'])} видео")
 
 
 @app.command(name="report")

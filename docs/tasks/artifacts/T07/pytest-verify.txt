@@ -1,0 +1,52 @@
+...F....FF....................                                           [100%]
+=================================== FAILURES ===================================
+______________________ test_five_total_videos_borderline _______________________
+
+channel = PosixPath('/tmp/pytest-of-matebook/pytest-39/test_five_total_videos_borderl0/chan')
+
+    def test_five_total_videos_borderline(channel):
+        # Критерий: «у канала меньше 5 роликов». У канала ровно 5 (проверяемое + 4 других).
+        # Норму считаем «без проверяемого» -> 4. Фиксируем фактическое поведение как наблюдение.
+        vids = base("FIVE", n=4) + [vid("f_cand", 9999, 500, 50, "FIVE")]
+        put(channel, vids)
+        virals(channel)
+        data = result(channel)
+        # Спека: «если роликов меньше 5, видео пропускается» -> при 5 пропуска быть не должно.
+>       assert "f_cand" not in [s["id"] for s in data["skipped"]], (
+            "канал с ровно 5 загруженными роликами помечен «мало данных»")
+E       AssertionError: канал с ровно 5 загруженными роликами помечен «мало данных»
+E       assert 'f_cand' not in ['FIVE_b0', 'FIVE_b1', 'FIVE_b2', 'FIVE_b3', 'f_cand']
+
+tests/test_virals_verify.py:144: AssertionError
+__________________________ test_zero_median_no_crash ___________________________
+
+channel = PosixPath('/tmp/pytest-of-matebook/pytest-39/test_zero_median_no_crash0/chan')
+
+    def test_zero_median_no_crash(channel):
+        put(channel, base("Q", views=0) + [vid("cand", 500, 50, 5, "Q")])
+        r = virals(channel)
+>       assert r.exit_code == 0, f"{r.output!r} {r.exception!r}"
+E       AssertionError: 'Проверено видео: 11. Залётов: 0\nЗалётов нет. Ближайшие 5 к порогу:\n' TypeError('unsupported format string passed to NoneType.__format__')
+E       assert 1 == 0
+E        +  where 1 = <Result TypeError('unsupported format string passed to NoneType.__format__')>.exit_code
+
+tests/test_virals_verify.py:212: AssertionError
+_______________________ test_zero_median_report_no_crash _______________________
+
+channel = PosixPath('/tmp/pytest-of-matebook/pytest-39/test_zero_median_report_no_cra0/chan')
+
+    def test_zero_median_report_no_crash(channel):
+        put(channel, base("Q", views=0) + [vid("cand", 500, 50, 5, "Q")])
+        virals(channel)
+        rep = CliRunner().invoke(app, ["--channel", str(channel), "report", "--segment", "ru"])
+>       assert rep.exit_code == 0, f"{rep.output!r} {rep.exception!r}"
+E       AssertionError: '' TypeError('unsupported format string passed to NoneType.__format__')
+E       assert 1 == 0
+E        +  where 1 = <Result TypeError('unsupported format string passed to NoneType.__format__')>.exit_code
+
+tests/test_virals_verify.py:223: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_virals_verify.py::test_five_total_videos_borderline - Asser...
+FAILED tests/test_virals_verify.py::test_zero_median_no_crash - AssertionErro...
+FAILED tests/test_virals_verify.py::test_zero_median_report_no_crash - Assert...
+3 failed, 27 passed in 0.34s

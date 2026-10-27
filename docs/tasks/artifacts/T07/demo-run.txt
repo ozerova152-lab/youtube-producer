@@ -1,0 +1,83 @@
+== import
+Загружено: 11 видео, 2 канала. Обращений к YouTube: 0
+Каналов с менее чем 5 роликами: 1, они пропущены
+Комментариев нет: причины предположительные, по названиям и описаниям
+== virals
+Проверено видео: 5. Залётов: 1
+- Как использовать нейросеть: выпуск 1: 52 000 просмотров, норма 4 100, ×12.68
+Мало данных: пропущено 4 видео
+== report
+Отчёт записан: /tmp/claude-1000/-home-matebook-vibecoding-projects-youtube-producer/a49a8810-c8ff-436d-9f3d-7a65c6add235/scratchpad/demoblpR/chan/runs/2026-10_ru_v1/report.md
+## Залёты
+
+| Название | Просмотры | Норма канала | Во сколько раз выше | Лайки | Комментарии | В день |
+|----------|-----------|--------------|---------------------|-------|-------------|--------|
+| [Как использовать нейросеть: выпуск 1](https://www.youtube.com/watch?v=demo_v01) | 52 000 | 4 100 | ×12.68 | 3.3% | 0.33% | 20 129 |
+
+«В день» — скорость набора просмотров, дополнительный сигнал: на отбор не влияет.
+
+Мало данных: пропущено 4 видео (у канала меньше обычных роликов, чем нужно для нормы).
+== virals.json
+{
+  "generated_at": "2026-10-27T00:00:00+00:00",
+  "thresholds": {
+    "views_multiplier": 3.0,
+    "likes_ratio": 0.02,
+    "comments_ratio": 0.001,
+    "norm_videos": 10,
+    "min_channel_videos": 5
+  },
+  "checked": 5,
+  "virals": [
+    {
+      "id": "demo_v01",
+      "title": "Как использовать нейросеть: выпуск 1",
+      "channel_id": "UC_demo_a",
+      "channel_title": "Нейро для всех",
+      "url": "https://www.youtube.com/watch?v=demo_v01",
+      "published_at": "2026-10-24T10:00:00Z",
+      "duration_seconds": 620,
+      "views": 52000,
+      "norm": 4100,
+      "norm_sample": 5,
+      "times_norm": 12.68,
+      "likes": 1733,
+      "likes_ratio": 0.0333,
+      "comments": 173,
+      "comments_ratio": 0.0033,
+      "views_per_day": 20129,
+      "closeness": 1.0
+    }
+  ],
+  "nearest": [],
+  "skipped": [
+    {
+      "id": "demo_v07",
+      "title": "Как использовать нейросеть: выпуск 7",
+      "channel_id": "UC_demo_b",
+      "reason": "мало данных",
+      "channel_videos": 4
+    },
+    {
+      "id": "demo_v08",
+      "title": "Как использовать нейросеть: выпуск 8",
+      "channel_id": "UC_demo_b",
+      "reason": "мало данных",
+      "channel_videos": 4
+    },
+    {
+      "id": "demo_v09",
+      "title": "Как использовать нейросеть: выпуск 9",
+      "channel_id": "UC_demo_b",
+      "reason": "мало данных",
+      "channel_videos": 4
+    },
+    {
+      "id": "demo_v10",
+      "title": "Как использовать нейросеть: выпуск 10",
+      "channel_id": "UC_demo_b",
+      "reason": "мало данных",
+      "channel_videos": 4
+== settings diff
+same
+== zero median

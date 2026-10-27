@@ -1,0 +1,11 @@
+E       AssertionError: канал с ровно 5 загруженными роликами помечен «мало данных»
+E       assert 'f_cand' not in ['FIVE_b0', 'FIVE_b1', 'FIVE_b2', 'FIVE_b3', 'f_cand']
+E       AssertionError: 'Проверено видео: 11. Залётов: 0\nЗалётов нет. Ближайшие 5 к порогу:\n' TypeError('unsupported format string passed to NoneType.__format__')
+E       assert 1 == 0
+E        +  where 1 = <Result TypeError('unsupported format string passed to NoneType.__format__')>.exit_code
+E       AssertionError: '' TypeError('unsupported format string passed to NoneType.__format__')
+E       assert 1 == 0
+E        +  where 1 = <Result TypeError('unsupported format string passed to NoneType.__format__')>.exit_code
+FAILED tests/test_virals_verify.py::test_five_total_videos_borderline - Asser...
+FAILED tests/test_virals_verify.py::test_zero_median_no_crash - AssertionErro...
+FAILED tests/test_virals_verify.py::test_zero_median_report_no_crash - Assert...
