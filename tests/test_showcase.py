@@ -172,3 +172,37 @@ def test_markup_has_no_hardcoded_colors_or_inline_styles():
     html = (SITE / "index.html").read_text(encoding="utf-8")
     assert not re.search(r"#[0-9a-fA-F]{3,8}\b", html)
     assert "style=" not in html
+
+
+def test_example_block_comes_from_demo_data(browser):
+    """T15: пример результата взят из examples/demo, а не условный."""
+    page = open_page(browser)
+    page.goto(PAGE_URL)
+    row = page.locator("#example table tbody tr").first.inner_text()
+    for cell in ("Как использовать нейросеть: выпуск 1", "52 000", "4 100", "×12.68"):
+        assert cell in row
+    brief = (ROOT / "examples/demo/expected/briefs/01.md").read_text(encoding="utf-8")
+    assert "Бриф 1: Нейросеть для таблиц без формул" in brief
+    assert page.get_by_role("heading", name="Бриф 1: Нейросеть для таблиц без формул").is_visible()
+    first_15 = re.search(r"Первые 15 секунд: (.+)", brief).group(1)
+    assert first_15 in page.locator("#example article").inner_text().replace("\n", " ")
+    assert page.get_by_text("Пример на демо-данных, не реальный канал.").is_visible()
+    # Старого условного примера нет.
+    assert "монтажёра" not in page.content()
+
+
+def test_github_fallback_phrase_next_to_address(browser):
+    page = open_page(browser)
+    page.goto(PAGE_URL)
+    assert page.get_by_text("Если GitHub не открывается, попробуйте позже.").is_visible()
+    assert page.locator("#repo-address").inner_text() == REPO
+
+
+def test_demo_table_row_matches_report_numbers():
+    """Числа в таблице совпадают с демо-запуском (examples/demo/import.csv)."""
+    import csv
+
+    rows = list(csv.DictReader((ROOT / "examples/demo/import.csv").open(encoding="utf-8")))
+    first = next(r for r in rows if r["id"] == "demo_v01")
+    assert f"{int(first['views']):,}".replace(",", " ") == "52 000"
+    assert first["title"] in (SITE / "index.html").read_text(encoding="utf-8")

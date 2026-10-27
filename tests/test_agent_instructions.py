@@ -90,3 +90,30 @@ def test_no_claude_api_leftovers():
         if p.suffix in (".py",):
             assert "import anthropic" not in _text(p) and "from anthropic" not in _text(p)
     assert "anthropic" not in (ROOT / "pyproject.toml").read_text().lower()
+
+
+def test_claude_md_links_match_playbooks_exactly():
+    """T15: CLAUDE.md ссылается на каждый существующий сценарий и ни на один несуществующий."""
+    linked = set(re.findall(r"playbooks/([\w.-]+\.md)", CLAUDE))
+    existing = {p.name for p in (ROOT / "playbooks").glob("*.md") if p.name != "README.md"}
+    assert linked == existing, (linked ^ existing)
+
+
+def test_all_playbook_cross_references_exist():
+    """Ссылки на файлы проекта внутри сценариев и README не ведут в пустоту."""
+    pattern = re.compile(r"`((?:playbooks|templates|docs|examples)/[\w./-]+\.(?:md|yaml|csv|json))`")
+    for doc in [*(ROOT / "playbooks").glob("*.md"), ROOT / "README.md"]:
+        for ref in pattern.findall(doc.read_text(encoding="utf-8")):
+            assert (ROOT / ref).exists(), f"{doc.name}: {ref}"
+
+
+def test_month_playbook_has_order_pauses_and_bans():
+    text = (ROOT / "playbooks/00-month.md").read_text(encoding="utf-8")
+    positions = [text.index(f"playbooks/{n}.md") for n in
+                 ["01-collect", "02-virals", "03-analysis", "04-niche", "05-strategy", "06-briefs-plan"]]
+    assert positions == sorted(positions)
+    for phrase in ["запусти месяц", "продолжи месяц", "Где мы остановились", "Нужны настройки",
+                   "утверждена", "принят / отклонён / позже", "Лимит агента на сегодня закончился",
+                   "Ничего не публиковать", "Не читать `.env`", "`--confirm` ставится только после слова человека",
+                   "07-history"]:
+        assert phrase.lower() in text.lower(), phrase
