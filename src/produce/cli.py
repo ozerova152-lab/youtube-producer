@@ -6,6 +6,7 @@ from typing import Annotated
 import typer
 
 from produce.core import analysis as analyzing
+from produce.core import briefs as briefing
 from produce.core import collect as collecting
 from produce.core import comments as commenting
 from produce.core import importing, quota, report, runs
@@ -393,6 +394,15 @@ def _check_step(run: runs.Run, step: str) -> list[str]:
     problems = strategizing.gate(run)
     if problems:
         return problems
+    if step == "briefs":
+        found, problems = briefing.check(run)
+        if problems:
+            return problems
+        for n, brief in enumerate(found, start=1):
+            typer.echo(f"Бриф {n} из {len(found)}: {brief.kind} «{brief.title}»")
+        runs.advance_stage(run, briefing.STAGE_DECISION)
+        typer.echo(f"Проверено брифов: {len(found)}, ошибок нет")
+        return []
     return [(f"Проверка шага «{step}» ещё не подключена: стратегия утверждена, "
              "но файлы этого шага пока не проверяются")]
 
