@@ -155,7 +155,7 @@ interactions:
       accept:
       - application/json
     method: GET
-    uri: https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2Cstatistics%2CcontentDetails&id=UC_demo_en1%2CUC_demo_en2&alt=json
+    uri: https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2Cstatistics%2CcontentDetails&id=UC_demo_a%2CUC_demo_en1%2CUC_demo_en2&alt=json
   response:
     body:
       string: "{\n  \"kind\": \"youtube#channelListResponse\",\n  \"etag\": \"demo\"\

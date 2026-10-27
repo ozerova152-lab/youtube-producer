@@ -1,0 +1,48 @@
+============================= test session starts ==============================
+platform linux -- Python 3.14.4, pytest-9.1.1, pluggy-1.7.0 -- /home/matebook/vibecoding-projects/youtube-producer/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/matebook/vibecoding-projects/youtube-producer
+configfile: pyproject.toml
+plugins: recording-0.14.0
+collecting ... collected 36 items
+
+tests/test_my_results.py::test_collect_report_names_best_and_weak PASSED [  2%]
+tests/test_my_results.py::test_collect_without_my_channel_marks_and_goes_on PASSED [  5%]
+tests/test_my_results.py::test_empty_my_channel_value_is_not_set PASSED  [  8%]
+tests/test_my_results.py::test_import_report_has_my_results PASSED       [ 11%]
+tests/test_my_results.py::test_import_without_my_channel_is_skipped_with_note PASSED [ 13%]
+tests/test_my_results.py::test_import_keeps_my_small_channel PASSED      [ 16%]
+tests/test_my_results.py::test_title_with_pipe_does_not_break_table PASSED [ 19%]
+tests/test_my_results_verify.py::test_best_and_weak_never_overlap[1-1-0] PASSED [ 22%]
+tests/test_my_results_verify.py::test_best_and_weak_never_overlap[2-1-1] PASSED [ 25%]
+tests/test_my_results_verify.py::test_best_and_weak_never_overlap[3-2-1] PASSED [ 27%]
+tests/test_my_results_verify.py::test_best_and_weak_never_overlap[4-2-2] PASSED [ 30%]
+tests/test_my_results_verify.py::test_best_and_weak_never_overlap[5-3-2] PASSED [ 33%]
+tests/test_my_results_verify.py::test_best_and_weak_never_overlap[6-3-3] PASSED [ 36%]
+tests/test_my_results_verify.py::test_best_and_weak_never_overlap[7-3-3] PASSED [ 38%]
+tests/test_my_results_verify.py::test_equal_views_ties_are_deterministic_and_disjoint PASSED [ 41%]
+tests/test_my_results_verify.py::test_live_streams_excluded PASSED       [ 44%]
+tests/test_my_results_verify.py::test_channel_with_only_live_has_no_videos_note PASSED [ 47%]
+tests/test_my_results_verify.py::test_zero_views_and_hidden_likes_do_not_crash PASSED [ 50%]
+tests/test_my_results_verify.py::test_all_zero_views PASSED              [ 52%]
+tests/test_my_results_verify.py::test_pipe_in_title_csv PASSED           [ 55%]
+tests/test_my_results_verify.py::test_newline_in_title_json PASSED       [ 58%]
+tests/test_my_results_verify.py::test_newline_in_title_csv XFAIL (im...) [ 61%]
+tests/test_my_results_verify.py::test_my_channel_not_set_variants[value0] PASSED [ 63%]
+tests/test_my_results_verify.py::test_my_channel_not_set_variants[None] PASSED [ 66%]
+tests/test_my_results_verify.py::test_my_channel_not_set_variants[] PASSED [ 69%]
+tests/test_my_results_verify.py::test_my_channel_not_set_variants[   ] PASSED [ 72%]
+tests/test_my_results_verify.py::test_my_channel_not_set_variants[0] PASSED [ 75%]
+tests/test_my_results_verify.py::test_my_channel_section_missing_channel_block_in_settings PASSED [ 77%]
+tests/test_my_results_verify.py::test_import_without_my_channel_json_and_flow_continues PASSED [ 80%]
+tests/test_my_results_verify.py::test_import_ghost_channel_does_not_leak_other_channels PASSED [ 83%]
+tests/test_my_results_verify.py::test_collect_channel_not_found_note PASSED [ 86%]
+tests/test_my_results_verify.py::test_collect_channel_found_but_no_videos PASSED [ 88%]
+tests/test_my_results_verify.py::test_video_without_views_ignored PASSED [ 91%]
+tests/test_my_results_verify.py::test_report_is_idempotent PASSED        [ 94%]
+tests/test_my_results_verify.py::test_settings_not_modified_by_import_and_report PASSED [ 97%]
+tests/test_my_results_verify.py::test_collect_end_to_end_numbers_and_request_count PASSED [100%]
+
+=========================== short test summary info ============================
+XFAIL tests/test_my_results_verify.py::test_newline_in_title_csv - importing._read_csv режет файл по splitlines(): перевод строки внутри кавычек теряется без пробела (находка implementer, вне критериев T06)
+======================== 35 passed, 1 xfailed in 0.84s =========================

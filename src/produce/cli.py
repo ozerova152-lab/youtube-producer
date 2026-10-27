@@ -9,7 +9,13 @@ from produce.core import collect as collecting
 from produce.core import importing, quota, report, runs
 from produce.core import virals as finding
 from produce.core.errors import KeyMissingError, ProduceError, QuotaExceededError, RunError
-from produce.core.settings import get_segment, list_segments, load_api_key, load_settings
+from produce.core.settings import (
+    get_segment,
+    list_segments,
+    load_api_key,
+    load_settings,
+    my_channel_id,
+)
 from produce.core.youtube import YouTubeApi
 
 app = typer.Typer(add_completion=False, help="AI-продюсер YouTube-канала")
@@ -206,12 +212,13 @@ def _import(channel: Path, file: Path, segment_id: str | None) -> None:
     minimum = int((settings.get("thresholds") or {}).get("min_channel_videos",
                                                           importing.MIN_CHANNEL_VIDEOS))
     # Файл проверяется до создания запуска: неверный файл не оставляет следов.
-    importing.parse(file, minimum)
+    mine = my_channel_id(settings)
+    importing.parse(file, minimum, mine)
     month = runs.current_month(collecting.now().date())
     existing = runs.list_runs(channel, month, segment_id)
     run = existing[-1] if existing else runs.start_run(
         channel, month, segment_id, str(segment.get("language", "ru"))).run
-    result = importing.import_file(run, file, minimum)
+    result = importing.import_file(run, file, minimum, mine)
     typer.echo(
         f"Загружено: {len(result.videos)} видео, {len(result.channels)} "
         f"{_plural(len(result.channels), 'канал', 'канала', 'каналов')}. Обращений к YouTube: 0"
@@ -275,7 +282,7 @@ def report_command(
         found = runs.list_runs(ctx.obj, runs.current_month(collecting.now().date()), segment)
         if not found:
             raise RunError(f"Запуска для сегмента {segment} ещё нет: сначала `produce collect`")
-        report.write_report(found[-1])
+        report.write_report(found[-1], my_channel_id(settings))
         typer.echo(f"Отчёт записан: {found[-1].path / 'report.md'}")
     except ProduceError as err:
         raise _fail(err) from err

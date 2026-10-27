@@ -1,9 +1,9 @@
 """Отчёт запуска `report.md`: секции добавляются по мере появления данных."""
 
-from produce.core import runs
+from produce.core import my_results, runs
 from produce.core.collect import Cache, summarize
 from produce.core.errors import RunError
-from produce.core.files import read_json, write_text_atomic
+from produce.core.files import read_json, write_json_atomic, write_text_atomic
 from produce.core.virals import times_text
 
 
@@ -43,7 +43,36 @@ def _virals_section(run: runs.Run) -> list[str]:
     return lines
 
 
-def build_report(run: runs.Run) -> str:
+def _count(n: int | None) -> str:
+    return _num(n) if n is not None else "—"
+
+
+def _my_table(title: str, items: list[dict]) -> list[str]:
+    lines = [f"### {title}", "", "| Название | Просмотры | Лайки | Комментарии | Опубликовано |",
+             "|----------|-----------|-------|-------------|--------------|"]
+    for v in items:
+        lines.append(f"| [{_cell(v['title'])}]({v['url']}) | {_num(v['views'])} | "
+                     f"{_count(v['likes'])} | {_count(v['comments'])} | {v['published_at'][:10]} |")
+    return lines + [""]
+
+
+def _my_section(result: dict) -> list[str]:
+    lines = ["## Мои результаты", ""]
+    if result["status"] != "ok":
+        return lines + [result["note"] + ".", ""]
+    lines += [(f"Канал: {_cell(result['channel_title'] or result['channel_id'])}. Роликов в данных: "
+               f"{result['videos']}, медиана просмотров: {_num(result['median_views'])}. "
+               "Только публичная статистика, трансляции не считаются."), ""]
+    lines += _my_table("Мои лучшие ролики", result["best"])
+    if result["weak"]:
+        lines += _my_table("Мои слабые ролики", result["weak"])
+    else:
+        lines += ["Слабых роликов нет: в данных слишком мало моих роликов.", ""]
+    return lines
+
+
+def build_report(run: runs.Run, my_channel: str | None = None) -> str:
+    """`my_channel` — id моего канала из настроек; None — канал не задан."""
     cache = Cache(run.path / "cache")
     if not cache.videos:
         raise RunError("Данных ещё нет: сначала `produce collect` или импорт из файла")
@@ -73,10 +102,13 @@ def build_report(run: runs.Run) -> str:
             "",
         ]
     lines += _virals_section(run)
+    mine = my_results.compute(cache, my_channel, data.get("source", "collect"))
+    write_json_atomic(run.path / "my_results.json", mine)
+    lines += _my_section(mine)
     return "\n".join(lines)
 
 
-def write_report(run: runs.Run) -> str:
-    text = build_report(run)
+def write_report(run: runs.Run, my_channel: str | None = None) -> str:
+    text = build_report(run, my_channel)
     write_text_atomic(run.path / "report.md", text)
     return text

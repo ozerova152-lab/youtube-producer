@@ -49,6 +49,14 @@ def get_segment(settings: dict, segment_id: str) -> dict:
     raise SettingsError(f"Сегмента «{segment_id}» нет в настройках. Есть: {known}")
 
 
+def my_channel_id(settings: dict) -> str | None:
+    """Мой канал из `channel.my_channel_id`; None, если не задан (пусто или нет поля)."""
+    section = settings.get("channel")
+    value = section.get("my_channel_id") if isinstance(section, dict) else None
+    text = str(value).strip() if value is not None else ""
+    return text or None
+
+
 def load_api_key(env_path: Path = Path(".env")) -> str | None:
     """Ключ YouTube: из переменной окружения или из `.env`. None, если ключа нет.
 

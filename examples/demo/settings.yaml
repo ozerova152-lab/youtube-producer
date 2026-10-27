@@ -2,7 +2,7 @@
 # Свой канал: скопируйте эту папку в data/<канал>/ и заполните.
 channel:
   name: Демо-канал
-  my_channel_id: UC_demo_my_channel
+  my_channel_id: UC_demo_a
   niche: нейросети для обычных людей
   audience: новички, 18–35, интересуются ИИ-инструментами
 segments:

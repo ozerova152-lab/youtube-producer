@@ -168,8 +168,9 @@ def _check_keys(items: list, kind: str, required: list[str]) -> None:
                     f"{kind} №{n}: нет поля `{name}`. Добавьте его и повторите импорт")
 
 
-def parse(path: Path, min_channel_videos: int = MIN_CHANNEL_VIDEOS) -> Imported:
-    """Читает и проверяет файл; ничего не пишет на диск."""
+def parse(path: Path, min_channel_videos: int = MIN_CHANNEL_VIDEOS,
+          keep_channel: str | None = None) -> Imported:
+    """Читает и проверяет файл; ничего не пишет на диск. `keep_channel` — мой канал."""
     suffix = path.suffix.lower()
     comment_items: list[dict] = []
     if suffix == ".csv":
@@ -219,11 +220,15 @@ def parse(path: Path, min_channel_videos: int = MIN_CHANNEL_VIDEOS) -> Imported:
         likes = _int(c.get("likes"), where, "likes", False)
         comments.setdefault(vid, []).append({"text": _text(c, "text", where, True), "likes": likes})
 
-    return _finish(videos, channels, comments, min_channel_videos)
+    return _finish(videos, channels, comments, min_channel_videos, keep_channel)
 
 
-def _finish(videos: dict, channels: dict, comments: dict, min_videos: int) -> Imported:
-    """Недавние ролики канала = его видео из файла (кроме трансляций); мало роликов — канал пропущен."""
+def _finish(videos: dict, channels: dict, comments: dict, min_videos: int,
+            keep_channel: str | None = None) -> Imported:
+    """Недавние ролики канала = его видео из файла (кроме трансляций); мало роликов — канал пропущен.
+
+    Мой канал (`keep_channel`) не пропускается: для «Мои результаты» достаточно и одного ролика.
+    """
     by_channel: dict[str, list[dict]] = {cid: [] for cid in channels}
     for v in videos.values():
         by_channel[v["channel_id"]].append(v)
@@ -231,7 +236,7 @@ def _finish(videos: dict, channels: dict, comments: dict, min_videos: int) -> Im
     for cid in list(channels):
         regular = sorted((v for v in by_channel[cid] if not v["is_live"]),
                          key=lambda v: v["published_at"], reverse=True)
-        if len(regular) < min_videos:
+        if len(regular) < min_videos and cid != keep_channel:
             skipped.append(cid)
             for v in by_channel[cid]:
                 videos.pop(v["id"])
@@ -245,9 +250,10 @@ def _finish(videos: dict, channels: dict, comments: dict, min_videos: int) -> Im
     return Imported(videos, channels, comments, skipped)
 
 
-def import_file(run: runs.Run, path: Path, min_channel_videos: int = MIN_CHANNEL_VIDEOS) -> Imported:
+def import_file(run: runs.Run, path: Path, min_channel_videos: int = MIN_CHANNEL_VIDEOS,
+                keep_channel: str | None = None) -> Imported:
     """Проверяет файл и кладёт данные в кэш запуска в формате сбора."""
-    result = parse(path, min_channel_videos)
+    result = parse(path, min_channel_videos, keep_channel)
     cache = Cache(run.path / "cache")
     cache.videos.update(result.videos)
     cache.channels.update(result.channels)

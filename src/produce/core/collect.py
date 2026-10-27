@@ -15,6 +15,7 @@ from pathlib import Path
 from produce.core import runs
 from produce.core.errors import ProduceError, QuotaExceededError, RunError
 from produce.core.files import read_json, write_json_atomic
+from produce.core.settings import my_channel_id
 from produce.core.youtube import (
     BATCH,
     COST_LIST,
@@ -92,6 +93,8 @@ class Plan:
     language: str
     keywords: list[str]
     competitors: list[str]
+    # Мой канал собирается как обычный автор (последние ролики): отсюда «Мои результаты».
+    my_channel: str | None = None
 
     def search_key(self, query: str) -> str:
         return f"{self.region}|{self.language}|{query}"
@@ -110,7 +113,7 @@ def make_plan(settings: dict, segment: dict) -> Plan:
         if cid:
             comps.append(str(cid))
     return Plan(seg_id, str(segment.get("region", "")), language,
-                [str(k) for k in keywords], comps)
+                [str(k) for k in keywords], comps, my_channel_id(settings))
 
 
 def estimate(plan: Plan, cache: Cache) -> Estimate:
@@ -130,7 +133,7 @@ def estimate(plan: Plan, cache: Cache) -> Estimate:
     details_search = len(known_videos - skip) + unknown
 
     comps = set(plan.competitors)
-    authors = {r["channel_id"] for r in found} | comps
+    authors = {r["channel_id"] for r in found} | comps | ({plan.my_channel} if plan.my_channel else set())
     channels_missing = len({c for c in authors if c not in cache.channels
                             and c not in cache.progress["unavailable_channels"]}) + unknown
     need_recent = [c for c in authors if "recent_ids" not in cache.channels.get(c, {})
@@ -211,7 +214,8 @@ def _collect(plan: Plan, api: YouTubeApi, cache: Cache, progress: Callable[[str]
     _fetch_videos(api, cache, sorted({r["id"] for r in found}))
 
     comps = set(plan.competitors)
-    authors = sorted({r["channel_id"] for r in found} | comps)
+    authors = sorted({r["channel_id"] for r in found} | comps
+                     | ({plan.my_channel} if plan.my_channel else set()))
     progress("каналы")
     missing = [c for c in authors if c not in cache.channels
                and c not in cache.progress["unavailable_channels"]]

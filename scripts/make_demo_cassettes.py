@@ -22,6 +22,8 @@ from produce.core.youtube import YouTubeApi
 OUT = Path(__file__).parent.parent / "examples" / "demo" / "cassettes"
 RECORDED = date(2026, 10, 27).isoformat()
 STRIP = {"key", "publishedAfter"}
+# Мой канал в демо-настройках (examples/demo/settings.yaml): входит в запросы сбора.
+MY_CHANNEL = "UC_demo_a"
 
 
 def _video(vid, channel, title, published, views, likes=1, comments=1, live=False,
@@ -226,7 +228,7 @@ def _write(name, interactions):
         encoding="utf-8")
 
 
-def _drive(http, region, language, keywords, competitors):
+def _drive(http, region, language, keywords, competitors, my_channel=MY_CHANNEL):
     """Те же вызовы, что делает сбор, чтобы запросы в кассете совпали с ним."""
     from datetime import datetime, timedelta, timezone
 
@@ -239,7 +241,7 @@ def _drive(http, region, language, keywords, competitors):
         cache_dir.mkdir()
         run = Run(Path(tmp), {"quota_spent": 0, "requests_count": 0, "incomplete_data": []})
         api = YouTubeApi("fake-key-for-recording", http=http)
-        plan = Plan("x", region, language, keywords, competitors)
+        plan = Plan("x", region, language, keywords, competitors, my_channel)
         moment = datetime(2026, 10, 27, tzinfo=timezone.utc)
         assert moment - timedelta(days=30) < moment
         collect(run, plan, api, Cache(cache_dir), moment=moment)
