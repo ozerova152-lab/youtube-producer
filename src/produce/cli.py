@@ -6,7 +6,7 @@ from typing import Annotated
 import typer
 
 from produce.core import collect as collecting
-from produce.core import quota, report, runs
+from produce.core import importing, quota, report, runs
 from produce.core.errors import KeyMissingError, ProduceError, QuotaExceededError, RunError
 from produce.core.settings import get_segment, list_segments, load_api_key, load_settings
 from produce.core.youtube import YouTubeApi
@@ -179,6 +179,47 @@ def _collect(channel: Path, segment_id: str | None, confirm: bool, env_file: Pat
         f"Расход: {_num(summary.quota_spent)} ед. Обращений: {summary.requests}. "
         f"Неполные данные: {summary.incomplete} видео"
     )
+
+
+@app.command(name="import")
+def import_command(
+    ctx: typer.Context,
+    file: Annotated[Path, typer.Argument(help="Файл CSV или JSON, формат в docs/import-format.md")],
+    segment: Annotated[str | None, typer.Option(help="Сегмент; если он один, берётся он")] = None,
+) -> None:
+    """Загрузить видео и каналы из файла (без ключа YouTube, без обращений к сети)."""
+    try:
+        _import(ctx.obj, file, segment)
+    except ProduceError as err:
+        raise _fail(err) from err
+
+
+def _import(channel: Path, file: Path, segment_id: str | None) -> None:
+    settings = load_settings(channel)
+    ids = [str(s["id"]) for s in list_segments(settings)]
+    if segment_id is None:
+        if len(ids) != 1:
+            raise RunError(f"Укажите сегмент: --segment ({', '.join(ids)})")
+        segment_id = ids[0]
+    segment = get_segment(settings, segment_id)
+    minimum = int((settings.get("thresholds") or {}).get("min_channel_videos",
+                                                          importing.MIN_CHANNEL_VIDEOS))
+    # Файл проверяется до создания запуска: неверный файл не оставляет следов.
+    importing.parse(file, minimum)
+    month = runs.current_month(collecting.now().date())
+    existing = runs.list_runs(channel, month, segment_id)
+    run = existing[-1] if existing else runs.start_run(
+        channel, month, segment_id, str(segment.get("language", "ru"))).run
+    result = importing.import_file(run, file, minimum)
+    typer.echo(
+        f"Загружено: {len(result.videos)} видео, {len(result.channels)} "
+        f"{_plural(len(result.channels), 'канал', 'канала', 'каналов')}. Обращений к YouTube: 0"
+    )
+    if result.skipped_channels:
+        typer.echo(f"Каналов с менее чем {minimum} роликами: {len(result.skipped_channels)}, "
+                   "они пропущены")
+    if not result.comments:
+        typer.echo("Комментариев нет: причины предположительные, по названиям и описаниям")
 
 
 @app.command(name="report")

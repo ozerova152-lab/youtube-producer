@@ -1,0 +1,84 @@
+## import demo
+Загружено: 11 видео, 2 канала. Обращений к YouTube: 0
+Каналов с менее чем 5 роликами: 1, они пропущены
+Комментариев нет: причины предположительные, по названиям и описаниям
+exit=0
+## run.json
+{
+  "month": "2026-10",
+  "segment": "ru",
+  "brief_lang": "ru",
+  "version": 1,
+  "stage": "собрано",
+  "quota_spent": 0,
+  "requests_count": 0,
+  "awaiting_confirmation": false,
+  "incomplete_data": [],
+  "source": "import",
+  "no_comments": true
+}
+## cache files
+channels.json
+progress.json
+videos.json
+## channels.json
+{
+  "UC_demo_a": {
+    "id": "UC_demo_a",
+    "title": "Нейро для всех",
+    "subscribers": 12000,
+    "video_count": 6,
+    "uploads_playlist": "",
+    "recent_ids": [
+      "demo_v01",
+      "demo_v02",
+      "demo_v03",
+      "demo_v04",
+      "demo_v05",
+      "demo_v06"
+    ]
+  },
+  "UC_demo_b": {
+    "id": "UC_demo_b",
+    "title": "Просто про ИИ",
+    "subscribers": 3400,
+    "video_count": 5,
+    "uploads_playlist": "",
+    "recent_ids": [
+      "demo_v07",
+      "demo_v08",
+      "demo_v09",
+      "demo_v10",
+      "demo_v11"
+    ]
+  }
+}
+
+## report
+Отчёт записан: /tmp/claude-1000/-home-matebook-vibecoding-projects-youtube-producer/a49a8810-c8ff-436d-9f3d-7a65c6add235/scratchpad/tmp.udtfOlsNCi/chan/runs/2026-10_ru_v1/report.md
+exit=0
+## bad empty.csv
+8d500753e4d8ad8f
+В файле нет колонки `id`. Добавьте её и повторите импорт
+exit=1
+8d500753e4d8ad8f
+## bad q.csv
+8d500753e4d8ad8f
+Строка 2: пустое значение в колонке `channel_id`. Заполните его и повторите импорт
+exit=1
+8d500753e4d8ad8f
+## bad junk.csv
+8d500753e4d8ad8f
+В файле нет колонки `id`. Добавьте её и повторите импорт
+exit=1
+8d500753e4d8ad8f
+## bad x.txt
+8d500753e4d8ad8f
+Нужен файл CSV или JSON (расширение .csv или .json)
+exit=1
+8d500753e4d8ad8f
+## no run on bad file in fresh channel
+В файле нет колонки `id`. Добавьте её и повторите импорт
+cassettes
+import.csv
+settings.yaml
