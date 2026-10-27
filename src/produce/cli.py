@@ -9,7 +9,7 @@ from produce.core import analysis as analyzing
 from produce.core import briefs as briefing
 from produce.core import collect as collecting
 from produce.core import comments as commenting
-from produce.core import importing, quota, report, runs
+from produce.core import history, importing, quota, report, runs
 from produce.core import niche as niching
 from produce.core import plan as planning
 from produce.core import strategy as strategizing
@@ -101,6 +101,7 @@ def start(
         )
     else:
         typer.echo(f"Запуск {result.run.path.name} создан. Этап: {data['stage']}")
+        typer.echo(history.summary(ctx.obj, segment, result.run))
 
 
 def _num(n: int) -> str:
@@ -376,13 +377,70 @@ def _comments(channel: Path, segment_id: str | None, confirm: bool, env_file: Pa
                f"{total} комментариев. Расход: {_num(int(run.data['quota_spent']) - spent_before)} ед.")
 
 
+@app.command()
+def later(
+    ctx: typer.Context,
+    segment: Annotated[str | None, typer.Option(help="Сегмент; если он один, берётся он")] = None,
+    pick: Annotated[list[int] | None, typer.Option(help="Номер брифа «позже» из списка; можно несколько раз")] = None,
+    all_: Annotated[bool, typer.Option("--all", help="Вернуть все брифы «позже»")] = False,
+) -> None:
+    """Показать историю и вернуть брифы «позже» прошлых запусков сегмента в текущий запуск."""
+    try:
+        _later(ctx.obj, segment, pick or [], all_)
+    except ProduceError as err:
+        raise _fail(err) from err
+
+
+def _later(channel: Path, segment_id: str | None, picks: list[int], everything: bool) -> None:
+    settings = load_settings(channel)
+    ids = [str(s["id"]) for s in list_segments(settings)]
+    if segment_id is None:
+        if len(ids) != 1:
+            raise RunError(f"Укажите сегмент: --segment ({', '.join(ids)})")
+        segment_id = ids[0]
+    get_segment(settings, segment_id)
+    month = runs.current_month(collecting.now().date())
+    current = (runs.list_runs(channel, month, segment_id) or [None])[-1]
+    info = history.overview(channel, segment_id, current)
+    if not info.runs_count:
+        typer.echo(history.MSG_NO_RUNS)
+        return
+    if not picks and not everything:
+        typer.echo(history.summary(channel, segment_id, current))
+        for title, items in (("Отклонённые темы", info.rejected), ("Уже предложенные темы", info.proposed)):
+            if items:
+                typer.echo(f"{title}:")
+                for b in items:
+                    typer.echo(f"- «{b.title}», {b.month}, `{b.rel}`")
+        if not info.later:
+            typer.echo("Брифов «позже» нет")
+            return
+        typer.echo("Брифы «позже»:")
+        for n, b in enumerate(info.later, start=1):
+            typer.echo(f"{n}. «{b.title}» ({b.kind}), {b.month}, `{b.rel}`")
+        typer.echo("Вернуть: `produce later --pick 1 --pick 2` или `--all`. Старые запуски не меняются")
+        return
+    wanted = list(range(1, len(info.later) + 1)) if everything else picks
+    bad = [n for n in wanted if not 1 <= n <= len(info.later)]
+    if bad or not wanted:
+        raise RunError(f"Нет брифа «позже» под номером {bad[0] if bad else '—'}. "
+                       f"Номера: 1–{len(info.later)}" if info.later else "Брифов «позже» нет")
+    run = history.require_run(channel, segment_id, month)
+    done = history.return_briefs(run, [info.later[n - 1] for n in dict.fromkeys(wanted)])
+    for old, target in done:
+        typer.echo(f"Бриф «{old.title}» из `{old.rel}` -> `briefs/{target.name}`, статус пустой")
+    typer.echo(f"Возвращено брифов: {len(done)}")
+
+
 CHECK_STEPS = ("strategy", "briefs", "plan")
 
 
-def _check_step(run: runs.Run, step: str, settings: dict) -> list[str]:
+def _check_step(channel: Path, run: runs.Run, step: str, settings: dict) -> list[str]:
     """Проверка шага стратегии, брифов или плана; печатает успех, возвращает проблемы."""
     if step == "strategy":
         status, problems = strategizing.check(run)
+        # Повтор отклонённой темы называется вместе с остальными ошибками файла.
+        problems += history.strategy_repeats(channel, run)
         if problems:
             return problems
         if status == strategizing.APPROVED:
@@ -397,6 +455,7 @@ def _check_step(run: runs.Run, step: str, settings: dict) -> list[str]:
         return problems
     if step == "briefs":
         found, problems = briefing.check(run)
+        problems += history.brief_repeats(channel, run)
         if problems:
             return problems
         for n, brief in enumerate(found, start=1):
@@ -428,7 +487,7 @@ def check_files(
             raise RunError(f"Неизвестный шаг «{step}». Допустимые: {', '.join(CHECK_STEPS)}")
         if step is not None:
             settings, _, run = _current_run(ctx.obj, segment)
-            problems = _check_step(run, step, settings)
+            problems = _check_step(ctx.obj, run, step, settings)
             for line in problems:
                 typer.echo(line)
             if problems:

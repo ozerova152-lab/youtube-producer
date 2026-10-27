@@ -82,6 +82,21 @@ def list_runs(channel_dir: Path, month: str, segment: str) -> list[Run]:
     return [load_run(p) for _, p in sorted(found)]
 
 
+def segment_run_dirs(channel_dir: Path, segment: str) -> list[tuple[str, int, Path]]:
+    """Все папки запусков сегмента по возрастанию (месяц, версия); другие сегменты не попадают.
+
+    Читает только имена папок: история не зависит от того, читается ли `run.json` старых запусков.
+    """
+    base = runs_dir(channel_dir)
+    found: list[tuple[str, int, Path]] = []
+    if base.is_dir():
+        for child in base.iterdir():
+            m = _NAME.match(child.name)
+            if m and m["segment"] == segment and child.is_dir():
+                found.append((m["month"], int(m["version"]), child))
+    return sorted(found)
+
+
 def _create(channel_dir: Path, month: str, segment: str, brief_lang: str, version: int,
             copy_cache_from: Run | None) -> Run:
     path = runs_dir(channel_dir) / f"{month}_{segment}_v{version}"
