@@ -9,6 +9,7 @@ from produce.core import analysis as analyzing
 from produce.core import collect as collecting
 from produce.core import comments as commenting
 from produce.core import importing, quota, report, runs
+from produce.core import niche as niching
 from produce.core import virals as finding
 from produce.core.errors import KeyMissingError, ProduceError, QuotaExceededError, RunError
 from produce.core.settings import (
@@ -378,7 +379,7 @@ CHECK_STEPS = ("strategy", "briefs", "plan")
 @app.command(name="check-files")
 def check_files(
     ctx: typer.Context,
-    step: Annotated[str | None, typer.Option(help="strategy, briefs или plan; без флага: разбор")] = None,
+    step: Annotated[str | None, typer.Option(help="strategy, briefs или plan; без флага: разбор, ниша и кандидаты")] = None,
     segment: Annotated[str | None, typer.Option(help="Сегмент; если он один, берётся он")] = None,
 ) -> None:
     """Проверить структуру файлов агента по шаблонам (смысл проверяет человек)."""
@@ -387,19 +388,36 @@ def check_files(
             raise RunError(f"Неизвестный шаг «{step}». Допустимые: {', '.join(CHECK_STEPS)}")
         if step is not None:
             raise RunError(f"Проверка шага «{step}» ещё не подключена: пока работает только "
-                           "проверка разбора (`check-files` без `--step`)")
+                           "проверка разбора, ниши и кандидатов (`check-files` без `--step`)")
         settings, seg, run = _current_run(ctx.obj, segment)
         _, minimum = commenting.limits_from(settings)
-        problems = analyzing.check(run, str(seg.get("language", "ru")), minimum)
+        niche_written = any((run.path / name).exists() for name in (niching.NICHE, niching.CANDIDATES))
+        virals = niching.load_virals(run) if niche_written else []
+        # Залётов нет — разбирать нечего (сценарий 03 пропущен), проверяется только ниша.
+        skip_analysis = niche_written and not virals
+        problems = [] if skip_analysis else analyzing.check(
+            run, str(seg.get("language", "ru")), minimum)
+        if not problems and not skip_analysis:
+            count = len(commenting.viral_ids(run))
+            runs.advance_stage(run, "разбор готов")
+            typer.echo(f"Проверено: разбор по {count} {_plural(count, 'залёту', 'залётам', 'залётам')}, "
+                       "ошибок нет")
+        if niche_written and not problems:
+            plan = collecting.make_plan(settings, seg)
+            known = set(plan.competitors) | ({plan.my_channel} if plan.my_channel else set())
+            problems = (niching.check_niche(run, virals)
+                        + niching.check_candidates(run, virals, known))
+            if not problems:
+                runs.advance_stage(run, "ниша готова")
+                found = len(niching.candidate_channels(niching.repeating_channels(virals), known))
+                typer.echo(f"Проверено: ниша по {len(virals)} {_plural(len(virals), 'залёту', 'залётам', 'залётам')}, "
+                           f"кандидатов в конкуренты: {found}, ошибок нет")
     except ProduceError as err:
         raise _fail(err) from err
     if problems:
         for line in problems:
             typer.echo(line)
         raise typer.Exit(code=1)
-    count = len(commenting.viral_ids(run))
-    runs.advance_stage(run, "разбор готов")
-    typer.echo(f"Проверено: разбор по {count} {_plural(count, 'залёту', 'залётам', 'залётам')}, ошибок нет")
 
 
 if __name__ == "__main__":
