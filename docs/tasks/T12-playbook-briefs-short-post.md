@@ -16,7 +16,7 @@ verify_attempts: 0
 ---
 ## Описание
 
-Расширяет `playbooks/05-briefs.md`, шаблоны `templates/brief-short.md` и `templates/brief-post.md`, образцы и проверку полей по виду. Идеи постов только по найденным трендам: данных Сообщества в API нет.
+Расширяет `playbooks/06-briefs-plan.md`, шаблоны `templates/brief-short.md` и `templates/brief-post.md`, образцы и проверку полей по виду. Идеи постов только по найденным трендам: данных Сообщества в API нет.
 
 ## Журнал
 
