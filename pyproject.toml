@@ -28,6 +28,8 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Сети в тестах нет: настоящий YouTube не вызывается, записанные ответы читаются с диска.
+addopts = "--block-network"
 
 [tool.ruff]
 line-length = 100

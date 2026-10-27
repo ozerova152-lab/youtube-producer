@@ -1,0 +1,17 @@
+# make setup (clean copy) tail
+Installing collected packages: wrapt, typing-extensions, shellingham, ruff, pyyaml, pygments, pluggy, packaging, mdurl, iniconfig, greenlet, annotated-doc, vcrpy, pytest, pyee, markdown-it-py, rich, pytest-recording, playwright, typer, produce
+
+Successfully installed annotated-doc-0.0.5 greenlet-3.5.6 iniconfig-2.3.1 markdown-it-py-4.2.0 mdurl-0.1.2 packaging-26.3 playwright-1.64.1 pluggy-1.7.0 produce-0.1.0 pyee-14.0.0 pygments-2.21.0 pytest-9.1.1 pytest-recording-0.14.0 pyyaml-6.0.3 rich-15.0.0 ruff-0.17.3 shellingham-1.5.4 typer-0.27.3 typing-extensions-4.16.0 vcrpy-9.2.0 wrapt-2.5.1
+.venv/bin/playwright install chromium
+exit=0
+
+# make check (clean copy, empty key)
+gitleaks detect --no-git --source . --config .gitleaks.toml --no-banner
+[90m10:36AM[0m [32mINF[0m scan completed in 196ms
+[90m10:36AM[0m [32mINF[0m no leaks found
+.venv/bin/ruff check src tests
+All checks passed!
+.venv/bin/pytest -q
+........................................................................ [ 75%]
+........................                                                 [100%]
+96 passed in 9.93s
