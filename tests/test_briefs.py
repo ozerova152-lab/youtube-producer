@@ -190,9 +190,10 @@ def test_broken_file_is_not_modified(channel, run):
     assert (run / "briefs" / "02.md").read_bytes() == before
 
 
-def test_plan_step_still_not_connected(channel, run):
+def test_plan_step_needs_briefs_first(channel, run):
+    # Шаг «план» подключён в T13: до проверки брифов он отправляет к шагу «брифы».
     res = invoke(channel, "check-files", "--step", "plan")
-    assert res.exit_code == 1 and "ещё не подключена" in res.output
+    assert res.exit_code == 1 and "Сначала брифы" in res.output
 
 
 def test_playbook_exists_and_keeps_places_for_t12_t13():

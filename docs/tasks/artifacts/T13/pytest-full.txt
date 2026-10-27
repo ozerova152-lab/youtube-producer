@@ -1,0 +1,8 @@
+E       AssertionError: assert (1 == 1 and 'briefs/02.md' in '`plan.md`: файла нет в /tmp/pytest-of-matebook/pytest-30/test_c6_two_status_lines_and_n0/chan/runs/2026-10_ru_v1. Статусы и пределы в порядке: соберите план из принятых брифов\n')
+E        +  where 1 = <Result SystemExit(1)>.exit_code
+E        +  and   '`plan.md`: файла нет в /tmp/pytest-of-matebook/pytest-30/test_c6_two_status_lines_and_n0/chan/runs/2026-10_ru_v1. Статусы и пределы в порядке: соберите план из принятых брифов\n' = <Result SystemExit(1)>.output
+
+tests/test_plan_verify.py:175: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_plan_verify.py::test_c6_two_status_lines_and_no_status_line
+1 failed, 821 passed, 1 xfailed in 34.50s

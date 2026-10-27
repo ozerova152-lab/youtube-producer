@@ -11,6 +11,7 @@ from produce.core import collect as collecting
 from produce.core import comments as commenting
 from produce.core import importing, quota, report, runs
 from produce.core import niche as niching
+from produce.core import plan as planning
 from produce.core import strategy as strategizing
 from produce.core import virals as finding
 from produce.core.errors import KeyMissingError, ProduceError, QuotaExceededError, RunError
@@ -378,7 +379,7 @@ def _comments(channel: Path, segment_id: str | None, confirm: bool, env_file: Pa
 CHECK_STEPS = ("strategy", "briefs", "plan")
 
 
-def _check_step(run: runs.Run, step: str) -> list[str]:
+def _check_step(run: runs.Run, step: str, settings: dict) -> list[str]:
     """Проверка шага стратегии, брифов или плана; печатает успех, возвращает проблемы."""
     if step == "strategy":
         status, problems = strategizing.check(run)
@@ -403,8 +404,16 @@ def _check_step(run: runs.Run, step: str) -> list[str]:
         runs.advance_stage(run, briefing.STAGE_DECISION)
         typer.echo(f"Проверено брифов: {len(found)}, ошибок нет")
         return []
-    return [(f"Проверка шага «{step}» ещё не подключена: стратегия утверждена, "
-             "но файлы этого шага пока не проверяются")]
+    minimum, maximum = planning.limits_from(settings)
+    found, problems = planning.check(run, minimum, maximum)
+    if problems:
+        return problems
+    accepted = sum(1 for b in found if b.status == planning.ACCEPTED)
+    runs.advance_stage(run, runs.FINAL_STAGE)
+    typer.echo(f"Проверено: план из {accepted} принятых брифов, пределы {minimum}–{maximum}, "
+               "ошибок нет")
+    typer.echo(planning.MSG_DONE)
+    return []
 
 
 @app.command(name="check-files")
@@ -418,8 +427,8 @@ def check_files(
         if step is not None and step not in CHECK_STEPS:
             raise RunError(f"Неизвестный шаг «{step}». Допустимые: {', '.join(CHECK_STEPS)}")
         if step is not None:
-            _, _, run = _current_run(ctx.obj, segment)
-            problems = _check_step(run, step)
+            settings, _, run = _current_run(ctx.obj, segment)
+            problems = _check_step(run, step, settings)
             for line in problems:
                 typer.echo(line)
             if problems:

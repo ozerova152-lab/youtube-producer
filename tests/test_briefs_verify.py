@@ -131,9 +131,8 @@ def test_playbook_gate_and_structure():
     assert "settings.yaml не менять" in low and ".env не читать" in low
     assert "Ничего не публиковать" in low
     assert "templates/brief-long.md" in low and "examples/demo/expected/briefs/01.md" in low
-    # разделы под T12/T13 на месте
-    assert "## Shorts и посты" in low and "T12" in low
-    assert "## Статусы и план" in low and "T13" in low
+    # разделы T12/T13 написаны (упоминания «допишет T12/T13» были заглушками и ушли)
+    assert "## Shorts и посты" in low and "## Статусы и план" in low
     # обязательные поля названы в сценарии
     for field in ("Идея", "Залёт", "Чем отличаемся", "Структура", "Первые 15 секунд", "Длина",
                   "Название 1", "Описание триггерное", "Описание SEO", "Хэштеги", "Теги",
@@ -531,11 +530,12 @@ def test_settings_unchanged_on_green_and_red(channel, run):
     assert sha(channel / "settings.yaml") == s
 
 
-def test_plan_step_still_not_connected(channel, run):
+def test_plan_step_needs_briefs_checked_first(channel, run):
+    # Шаг «план» подключён в T13: брифы записаны, но `--step briefs` не пройден.
     put(run)
     res = invoke(channel, "check-files", "--step", "plan")
     assert res.exit_code == 1
-    assert "ещё не подключена" in res.output
+    assert "Сначала брифы" in res.output
 
 
 def test_earlier_steps_still_work(channel, run):

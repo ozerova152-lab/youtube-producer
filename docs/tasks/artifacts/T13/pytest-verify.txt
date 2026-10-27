@@ -1,0 +1,23 @@
+.............F....................................                       [100%]
+=================================== FAILURES ===================================
+_________________ test_c6_two_status_lines_and_no_status_line __________________
+
+channel = PosixPath('/tmp/pytest-of-matebook/pytest-33/test_c6_two_status_lines_and_n0/chan')
+run = PosixPath('/tmp/pytest-of-matebook/pytest-33/test_c6_two_status_lines_and_n0/chan/runs/2026-10_ru_v1')
+
+    def test_c6_two_status_lines_and_no_status_line(channel, run):
+        setst(run, **{"01": "принят", "02": "принят", "03": "принят", "04": "отклонён", "05": "позже"})
+        f = run / "briefs" / "02.md"
+        t = f.read_text(encoding="utf-8")
+        f.write_text(t.replace("- Статус: принят", "- Статус: принят\n- Статус: отклонён", 1), encoding="utf-8")
+        h = sha(f)
+        res = plan_check(channel)
+>       assert res.exit_code == 1 and "briefs/02.md" in res.output and sha(f) == h
+E       AssertionError: assert (1 == 1 and 'briefs/02.md' in '`plan.md`: файла нет в /tmp/pytest-of-matebook/pytest-33/test_c6_two_status_lines_and_n0/chan/runs/2026-10_ru_v1. Статусы и пределы в порядке: соберите план из принятых брифов\n')
+E        +  where 1 = <Result SystemExit(1)>.exit_code
+E        +  and   '`plan.md`: файла нет в /tmp/pytest-of-matebook/pytest-33/test_c6_two_status_lines_and_n0/chan/runs/2026-10_ru_v1. Статусы и пределы в порядке: соберите план из принятых брифов\n' = <Result SystemExit(1)>.output
+
+tests/test_plan_verify.py:176: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_plan_verify.py::test_c6_two_status_lines_and_no_status_line
+1 failed, 49 passed in 2.14s

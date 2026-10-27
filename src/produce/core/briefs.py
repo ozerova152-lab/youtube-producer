@@ -282,8 +282,12 @@ def check_file(run: runs.Run, path_name: str, virals: dict[str, dict], decision_
     head_fields = _fields(head)
     problems += [re.sub(r"^``, : ", f"{where}, шапка: ", p)
                  for p in _placeholders("", "", head_fields, HEADER)]
-    status_line = next((m for m in map(_STATUS_LINE.match, head) if m), None)
-    if not status_line:
+    status_lines = [m for m in map(_STATUS_LINE.match, head) if m]
+    status_line = status_lines[0] if status_lines else None
+    if len(status_lines) > 1:
+        problems.append(f"{where}, шапка: {len(status_lines)} строк «- Статус:», должна быть одна")
+        status = ""
+    elif not status_line:
         problems.append(f"{where}, шапка: нет строки «- Статус:» (при создании она пустая)")
         status = ""
     else:
@@ -322,8 +326,13 @@ def _count_problems(run: runs.Run, found: list[Brief]) -> list[str]:
     return problems
 
 
-def check(run: runs.Run) -> tuple[list[Brief], list[str]]:
-    """Брифы запуска и проблемы всех файлов (пустой список проблем — всё в порядке)."""
+def check(run: runs.Run, match_strategy: bool = True) -> tuple[list[Brief], list[str]]:
+    """Брифы запуска и проблемы всех файлов (пустой список проблем — всё в порядке).
+
+    `match_strategy` — сверять число брифов каждого вида со `strategy.md` («ровно»). Это правило
+    шага «брифы» до решений человека; на шаге «план» отклонённые и «позже» остаются файлами,
+    число принятых проверяет `plan`, поэтому там сверка выключена.
+    """
     folder = run.path / BRIEFS_DIR
     names = sorted(p.name for p in folder.glob("*.md")) if folder.is_dir() else []
     if not names:
@@ -343,4 +352,4 @@ def check(run: runs.Run) -> tuple[list[Brief], list[str]]:
         problems += file_problems
         if brief:
             found.append(brief)
-    return found, problems + _count_problems(run, found)
+    return found, problems + (_count_problems(run, found) if match_strategy else [])
