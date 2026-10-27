@@ -1,0 +1,29 @@
+Загружено: 11 видео, 2 канала. Обращений к YouTube: 0
+Каналов с менее чем 5 роликами: 1, они пропущены
+- Нейросеть для отчётов: быстрый разбор: 9 000 просмотров, норма 2 050, ×4.39
+041e6057414ceafe716b6b822eb99d6c24dadb7c02f92409609e1484c94c12c3  /tmp/claude-1000/-home-matebook-vibecoding-projects-youtube-producer/a49a8810-c8ff-436d-9f3d-7a65c6add235/scratchpad/tmp.nHeotPj2a9/chan/settings.yaml
+--- нет файла
+`strategy.md`: файла нет в /tmp/claude-1000/-home-matebook-vibecoding-projects-youtube-producer/a49a8810-c8ff-436d-9f3d-7a65c6add235/scratchpad/tmp.nHeotPj2a9/chan/runs/2026-10_ru_v1. Агент ещё не записал его
+exit=1
+--- черновик
+Проверено: стратегия, статус «черновик», ошибок нет
+exit=0
+  "stage": "стратегия ждёт утверждения",
+В файле статус «черновик». Замените его сами и напишите «готово». Дальше не иду
+exit=1
+В файле статус «черновик». Замените его сами и напишите «готово». Дальше не иду
+exit=1
+3ff0c1b884c9aa9f90a6f2992d07c891f4e0656d278ffb0cd6bd6e72129ce748  /tmp/claude-1000/-home-matebook-vibecoding-projects-youtube-producer/a49a8810-c8ff-436d-9f3d-7a65c6add235/scratchpad/tmp.nHeotPj2a9/chan/runs/2026-10_ru_v1/strategy.md
+--- битая
+`strategy.md`, строка 5: статус «Статус:  утвержденА » не распознан. Допустимо ровно «Статус: черновик» или «Статус: утверждена» (один пробел, строчные буквы, без лишнего в строке)
+exit=1
+3ff0c1b884c9aa9f90a6f2992d07c891f4e0656d278ffb0cd6bd6e72129ce748  /tmp/claude-1000/-home-matebook-vibecoding-projects-youtube-producer/a49a8810-c8ff-436d-9f3d-7a65c6add235/scratchpad/tmp.nHeotPj2a9/chan/runs/2026-10_ru_v1/strategy.md
+  "stage": "стратегия ждёт утверждения",
+--- утверждена
+Стратегия утверждена, перехожу к брифам
+exit=0
+  "stage": "стратегия утверждена",
+041e6057414ceafe716b6b822eb99d6c24dadb7c02f92409609e1484c94c12c3  /tmp/claude-1000/-home-matebook-vibecoding-projects-youtube-producer/a49a8810-c8ff-436d-9f3d-7a65c6add235/scratchpad/tmp.nHeotPj2a9/chan/settings.yaml
+--- not_found + выдуманные id
+Стратегия утверждена, перехожу к брифам
+exit=0

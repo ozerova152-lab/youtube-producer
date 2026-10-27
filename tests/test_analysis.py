@@ -314,8 +314,8 @@ def test_unknown_and_unready_steps(channel):
     prepare(channel)
     assert "Неизвестный шаг" in CliRunner().invoke(
         app, ["--channel", str(channel), "check-files", "--step", "x"]).output
-    res = invoke(channel, "check-files", "--step", "strategy")
-    assert res.exit_code == 1 and "ещё не подключена" in res.output
+    res = invoke(channel, "check-files", "--step", "briefs")
+    assert res.exit_code == 1 and "strategy.md" in res.output  # стратегии ещё нет
 
 
 def test_injection_comment_stays_data_and_canary_never_appears(channel, env_file, fake_api, caplog):

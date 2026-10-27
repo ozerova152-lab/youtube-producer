@@ -10,6 +10,7 @@ from produce.core import collect as collecting
 from produce.core import comments as commenting
 from produce.core import importing, quota, report, runs
 from produce.core import niche as niching
+from produce.core import strategy as strategizing
 from produce.core import virals as finding
 from produce.core.errors import KeyMissingError, ProduceError, QuotaExceededError, RunError
 from produce.core.settings import (
@@ -376,6 +377,26 @@ def _comments(channel: Path, segment_id: str | None, confirm: bool, env_file: Pa
 CHECK_STEPS = ("strategy", "briefs", "plan")
 
 
+def _check_step(run: runs.Run, step: str) -> list[str]:
+    """Проверка шага стратегии, брифов или плана; печатает успех, возвращает проблемы."""
+    if step == "strategy":
+        status, problems = strategizing.check(run)
+        if problems:
+            return problems
+        if status == strategizing.APPROVED:
+            runs.advance_stage(run, "стратегия утверждена")
+            typer.echo(strategizing.MSG_APPROVED)
+        else:
+            runs.advance_stage(run, "стратегия ждёт утверждения")
+            typer.echo("Проверено: стратегия, статус «черновик», ошибок нет")
+        return []
+    problems = strategizing.gate(run)
+    if problems:
+        return problems
+    return [(f"Проверка шага «{step}» ещё не подключена: стратегия утверждена, "
+             "но файлы этого шага пока не проверяются")]
+
+
 @app.command(name="check-files")
 def check_files(
     ctx: typer.Context,
@@ -387,8 +408,13 @@ def check_files(
         if step is not None and step not in CHECK_STEPS:
             raise RunError(f"Неизвестный шаг «{step}». Допустимые: {', '.join(CHECK_STEPS)}")
         if step is not None:
-            raise RunError(f"Проверка шага «{step}» ещё не подключена: пока работает только "
-                           "проверка разбора, ниши и кандидатов (`check-files` без `--step`)")
+            _, _, run = _current_run(ctx.obj, segment)
+            problems = _check_step(run, step)
+            for line in problems:
+                typer.echo(line)
+            if problems:
+                raise typer.Exit(code=1)
+            return
         settings, seg, run = _current_run(ctx.obj, segment)
         _, minimum = commenting.limits_from(settings)
         niche_written = any((run.path / name).exists() for name in (niching.NICHE, niching.CANDIDATES))

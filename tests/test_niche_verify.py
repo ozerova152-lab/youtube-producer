@@ -542,7 +542,7 @@ def test_regression_analysis_only_and_future_steps(channel):
     assert stage(run) == "разбор готов"
     for step in ("strategy", "briefs", "plan"):
         r = invoke(channel, "check-files", "--step", step)
-        assert r.exit_code == 1 and "ещё не подключена" in r.output
+        assert r.exit_code == 1 and "strategy.md" in r.output  # стратегии ещё нет (T10)
     r = invoke(channel, "check-files", "--step", "bogus")
     assert r.exit_code == 1 and "Неизвестный шаг" in r.output
 
