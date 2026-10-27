@@ -1,0 +1,26 @@
+interactions:
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=%D0%BD%D0%B5%D0%B9%D1%80%D0%BE%D1%81%D0%B5%D1%82%D1%8C&type=video&order=viewCount&regionCode=RU&relevanceLanguage=ru&maxResults=25&alt=json
+  response:
+    body:
+      string: "{\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not\
+        \ valid. Please pass a valid API key.\",\n    \"errors\": [\n      {\n   \
+        \     \"message\": \"API key not valid. Please pass a valid API key.\",\n\
+        \        \"domain\": \"global\",\n        \"reason\": \"badRequest\"\n   \
+        \   }\n    ],\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n\
+        \      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\"\
+        ,\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\"\
+        ,\n        \"metadata\": {\n          \"service\": \"youtube.googleapis.com\"\
+        \n        }\n      }\n    ]\n  }\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 400
+      message: Bad Request
+version: 1

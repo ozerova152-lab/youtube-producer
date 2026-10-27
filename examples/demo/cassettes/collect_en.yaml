@@ -1,0 +1,272 @@
+interactions:
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=AI+tools&type=video&order=viewCount&regionCode=US&relevanceLanguage=en&maxResults=25&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#searchListResponse\",\n  \"etag\": \"demo\"\
+        ,\n  \"regionCode\": \"US\",\n  \"pageInfo\": {\n    \"totalResults\": 2,\n\
+        \    \"resultsPerPage\": 2\n  },\n  \"items\": [\n    {\n      \"kind\": \"\
+        youtube#searchResult\",\n      \"etag\": \"demo\",\n      \"id\": {\n    \
+        \    \"kind\": \"youtube#video\",\n        \"videoId\": \"demoEn_a01\"\n \
+        \     },\n      \"snippet\": {\n        \"publishedAt\": \"2026-10-11T10:00:00Z\"\
+        ,\n        \"channelId\": \"UC_demo_en1\",\n        \"title\": \"ChatGPT tutorial\
+        \ for absolute beginners\",\n        \"description\": \"Описание ролика «ChatGPT\
+        \ tutorial for absolute beginners»\",\n        \"channelTitle\": \"AI Basics\"\
+        ,\n        \"liveBroadcastContent\": \"none\",\n        \"publishTime\": \"\
+        2026-10-11T10:00:00Z\"\n      }\n    },\n    {\n      \"kind\": \"youtube#searchResult\"\
+        ,\n      \"etag\": \"demo\",\n      \"id\": {\n        \"kind\": \"youtube#video\"\
+        ,\n        \"videoId\": \"demoEn_b01\"\n      },\n      \"snippet\": {\n \
+        \       \"publishedAt\": \"2026-10-14T10:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_en2\",\n        \"title\": \"AI for beginners: first steps\",\n\
+        \        \"description\": \"Описание ролика «AI for beginners: first steps»\"\
+        ,\n        \"channelTitle\": \"Prompt Garage\",\n        \"liveBroadcastContent\"\
+        : \"none\",\n        \"publishTime\": \"2026-10-14T10:00:00Z\"\n      }\n\
+        \    }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=ChatGPT+tutorial&type=video&order=viewCount&regionCode=US&relevanceLanguage=en&maxResults=25&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#searchListResponse\",\n  \"etag\": \"demo\"\
+        ,\n  \"regionCode\": \"US\",\n  \"pageInfo\": {\n    \"totalResults\": 2,\n\
+        \    \"resultsPerPage\": 2\n  },\n  \"items\": [\n    {\n      \"kind\": \"\
+        youtube#searchResult\",\n      \"etag\": \"demo\",\n      \"id\": {\n    \
+        \    \"kind\": \"youtube#video\",\n        \"videoId\": \"demoEn_a01\"\n \
+        \     },\n      \"snippet\": {\n        \"publishedAt\": \"2026-10-11T10:00:00Z\"\
+        ,\n        \"channelId\": \"UC_demo_en1\",\n        \"title\": \"ChatGPT tutorial\
+        \ for absolute beginners\",\n        \"description\": \"Описание ролика «ChatGPT\
+        \ tutorial for absolute beginners»\",\n        \"channelTitle\": \"AI Basics\"\
+        ,\n        \"liveBroadcastContent\": \"none\",\n        \"publishTime\": \"\
+        2026-10-11T10:00:00Z\"\n      }\n    },\n    {\n      \"kind\": \"youtube#searchResult\"\
+        ,\n      \"etag\": \"demo\",\n      \"id\": {\n        \"kind\": \"youtube#video\"\
+        ,\n        \"videoId\": \"demoEn_a02\"\n      },\n      \"snippet\": {\n \
+        \       \"publishedAt\": \"2026-09-18T10:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_en1\",\n        \"title\": \"AI tools I use every day\",\n   \
+        \     \"description\": \"Описание ролика «AI tools I use every day»\",\n \
+        \       \"channelTitle\": \"AI Basics\",\n        \"liveBroadcastContent\"\
+        : \"none\",\n        \"publishTime\": \"2026-09-18T10:00:00Z\"\n      }\n\
+        \    }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=AI+for+beginners&type=video&order=viewCount&regionCode=US&relevanceLanguage=en&maxResults=25&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#searchListResponse\",\n  \"etag\": \"demo\"\
+        ,\n  \"regionCode\": \"US\",\n  \"pageInfo\": {\n    \"totalResults\": 2,\n\
+        \    \"resultsPerPage\": 2\n  },\n  \"items\": [\n    {\n      \"kind\": \"\
+        youtube#searchResult\",\n      \"etag\": \"demo\",\n      \"id\": {\n    \
+        \    \"kind\": \"youtube#video\",\n        \"videoId\": \"demoEn_b01\"\n \
+        \     },\n      \"snippet\": {\n        \"publishedAt\": \"2026-10-14T10:00:00Z\"\
+        ,\n        \"channelId\": \"UC_demo_en2\",\n        \"title\": \"AI for beginners:\
+        \ first steps\",\n        \"description\": \"Описание ролика «AI for beginners:\
+        \ first steps»\",\n        \"channelTitle\": \"Prompt Garage\",\n        \"\
+        liveBroadcastContent\": \"none\",\n        \"publishTime\": \"2026-10-14T10:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#searchResult\",\n    \
+        \  \"etag\": \"demo\",\n      \"id\": {\n        \"kind\": \"youtube#video\"\
+        ,\n        \"videoId\": \"demoEn_a02\"\n      },\n      \"snippet\": {\n \
+        \       \"publishedAt\": \"2026-09-18T10:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_en1\",\n        \"title\": \"AI tools I use every day\",\n   \
+        \     \"description\": \"Описание ролика «AI tools I use every day»\",\n \
+        \       \"channelTitle\": \"AI Basics\",\n        \"liveBroadcastContent\"\
+        : \"none\",\n        \"publishTime\": \"2026-09-18T10:00:00Z\"\n      }\n\
+        \    }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics%2CliveStreamingDetails&id=demoEn_a01%2CdemoEn_a02%2CdemoEn_b01&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#videoListResponse\",\n  \"etag\": \"demo\"\
+        ,\n  \"pageInfo\": {\n    \"totalResults\": 3,\n    \"resultsPerPage\": 3\n\
+        \  },\n  \"items\": [\n    {\n      \"kind\": \"youtube#video\",\n      \"\
+        etag\": \"demo\",\n      \"id\": \"demoEn_a01\",\n      \"snippet\": {\n \
+        \       \"publishedAt\": \"2026-10-11T10:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_en1\",\n        \"title\": \"ChatGPT tutorial for absolute beginners\"\
+        ,\n        \"description\": \"Описание ролика «ChatGPT tutorial for absolute\
+        \ beginners»\",\n        \"channelTitle\": \"AI Basics\",\n        \"liveBroadcastContent\"\
+        : \"none\"\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
+        \n      },\n      \"statistics\": {\n        \"viewCount\": \"60000\",\n \
+        \       \"favoriteCount\": \"0\",\n        \"likeCount\": \"2000\",\n    \
+        \    \"commentCount\": \"250\"\n      }\n    },\n    {\n      \"kind\": \"\
+        youtube#video\",\n      \"etag\": \"demo\",\n      \"id\": \"demoEn_a02\"\
+        ,\n      \"snippet\": {\n        \"publishedAt\": \"2026-09-18T10:00:00Z\"\
+        ,\n        \"channelId\": \"UC_demo_en1\",\n        \"title\": \"AI tools\
+        \ I use every day\",\n        \"description\": \"Описание ролика «AI tools\
+        \ I use every day»\",\n        \"channelTitle\": \"AI Basics\",\n        \"\
+        liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\": {\n\
+        \        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n    \
+        \    \"definition\": \"hd\"\n      },\n      \"statistics\": {\n        \"\
+        viewCount\": \"7000\",\n        \"favoriteCount\": \"0\",\n        \"likeCount\"\
+        : \"200\",\n        \"commentCount\": \"30\"\n      }\n    },\n    {\n   \
+        \   \"kind\": \"youtube#video\",\n      \"etag\": \"demo\",\n      \"id\"\
+        : \"demoEn_b01\",\n      \"snippet\": {\n        \"publishedAt\": \"2026-10-14T10:00:00Z\"\
+        ,\n        \"channelId\": \"UC_demo_en2\",\n        \"title\": \"AI for beginners:\
+        \ first steps\",\n        \"description\": \"Описание ролика «AI for beginners:\
+        \ first steps»\",\n        \"channelTitle\": \"Prompt Garage\",\n        \"\
+        liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\": {\n\
+        \        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n    \
+        \    \"definition\": \"hd\"\n      },\n      \"statistics\": {\n        \"\
+        viewCount\": \"3000\",\n        \"favoriteCount\": \"0\",\n        \"likeCount\"\
+        : \"90\",\n        \"commentCount\": \"12\"\n      }\n    }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2Cstatistics%2CcontentDetails&id=UC_demo_en1%2CUC_demo_en2&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#channelListResponse\",\n  \"etag\": \"demo\"\
+        ,\n  \"pageInfo\": {\n    \"totalResults\": 2,\n    \"resultsPerPage\": 2\n\
+        \  },\n  \"items\": [\n    {\n      \"kind\": \"youtube#channel\",\n     \
+        \ \"etag\": \"demo\",\n      \"id\": \"UC_demo_en1\",\n      \"snippet\":\
+        \ {\n        \"title\": \"AI Basics\"\n      },\n      \"contentDetails\"\
+        : {\n        \"relatedPlaylists\": {\n          \"uploads\": \"UU_demo_en1\"\
+        \n        }\n      },\n      \"statistics\": {\n        \"viewCount\": \"\
+        1000000\",\n        \"videoCount\": \"3\",\n        \"hiddenSubscriberCount\"\
+        : false,\n        \"subscriberCount\": \"30000\"\n      }\n    },\n    {\n\
+        \      \"kind\": \"youtube#channel\",\n      \"etag\": \"demo\",\n      \"\
+        id\": \"UC_demo_en2\",\n      \"snippet\": {\n        \"title\": \"Prompt\
+        \ Garage\"\n      },\n      \"contentDetails\": {\n        \"relatedPlaylists\"\
+        : {\n          \"uploads\": \"UU_demo_en2\"\n        }\n      },\n      \"\
+        statistics\": {\n        \"viewCount\": \"1000000\",\n        \"videoCount\"\
+        : \"2\",\n        \"hiddenSubscriberCount\": false,\n        \"subscriberCount\"\
+        : \"9000\"\n      }\n    }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=UU_demo_en1&maxResults=20&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#playlistItemListResponse\",\n  \"etag\": \"\
+        demo\",\n  \"pageInfo\": {\n    \"totalResults\": 3,\n    \"resultsPerPage\"\
+        : 3\n  },\n  \"items\": [\n    {\n      \"kind\": \"youtube#playlistItem\"\
+        ,\n      \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\"\
+        : \"demoEn_a01\",\n        \"videoPublishedAt\": \"2026-10-11T10:00:00Z\"\n\
+        \      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n     \
+        \ \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\": \"\
+        demoEn_a02\",\n        \"videoPublishedAt\": \"2026-09-18T10:00:00Z\"\n  \
+        \    }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n      \"\
+        etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\": \"demoEn_a03\"\
+        ,\n        \"videoPublishedAt\": \"2026-09-01T10:00:00Z\"\n      }\n    }\n\
+        \  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=UU_demo_en2&maxResults=20&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#playlistItemListResponse\",\n  \"etag\": \"\
+        demo\",\n  \"pageInfo\": {\n    \"totalResults\": 2,\n    \"resultsPerPage\"\
+        : 2\n  },\n  \"items\": [\n    {\n      \"kind\": \"youtube#playlistItem\"\
+        ,\n      \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\"\
+        : \"demoEn_b01\",\n        \"videoPublishedAt\": \"2026-10-14T10:00:00Z\"\n\
+        \      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n     \
+        \ \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\": \"\
+        demoEn_b02\",\n        \"videoPublishedAt\": \"2026-09-22T10:00:00Z\"\n  \
+        \    }\n    }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics%2CliveStreamingDetails&id=demoEn_a03%2CdemoEn_b02&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#videoListResponse\",\n  \"etag\": \"demo\"\
+        ,\n  \"pageInfo\": {\n    \"totalResults\": 2,\n    \"resultsPerPage\": 2\n\
+        \  },\n  \"items\": [\n    {\n      \"kind\": \"youtube#video\",\n      \"\
+        etag\": \"demo\",\n      \"id\": \"demoEn_a03\",\n      \"snippet\": {\n \
+        \       \"publishedAt\": \"2026-09-01T10:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_en1\",\n        \"title\": \"Prompt tricks\",\n        \"description\"\
+        : \"Описание ролика «Prompt tricks»\",\n        \"channelTitle\": \"AI Basics\"\
+        ,\n        \"liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\"\
+        : {\n        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n\
+        \        \"definition\": \"hd\"\n      },\n      \"statistics\": {\n     \
+        \   \"viewCount\": \"6500\",\n        \"favoriteCount\": \"0\",\n        \"\
+        likeCount\": \"190\",\n        \"commentCount\": \"20\"\n      }\n    },\n\
+        \    {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"demo\",\n  \
+        \    \"id\": \"demoEn_b02\",\n      \"snippet\": {\n        \"publishedAt\"\
+        : \"2026-09-22T10:00:00Z\",\n        \"channelId\": \"UC_demo_en2\",\n   \
+        \     \"title\": \"Ten useful AI tools\",\n        \"description\": \"Описание\
+        \ ролика «Ten useful AI tools»\",\n        \"channelTitle\": \"Prompt Garage\"\
+        ,\n        \"liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\"\
+        : {\n        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n\
+        \        \"definition\": \"hd\"\n      },\n      \"statistics\": {\n     \
+        \   \"viewCount\": \"2800\",\n        \"favoriteCount\": \"0\",\n        \"\
+        likeCount\": \"80\",\n        \"commentCount\": \"9\"\n      }\n    }\n  ]\n\
+        }"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1

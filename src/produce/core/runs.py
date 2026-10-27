@@ -135,3 +135,20 @@ def record_usage(run: Run, units: int, requests: int, ledger: Path,
     run.data["requests_count"] += requests
     write_json_atomic(run.path / "run.json", run.data)
     return total
+
+
+def set_awaiting(run: Run, awaiting: bool) -> None:
+    """Отметка «ожидает подтверждения»: оценка квоты показана, слова человека ещё нет."""
+    run.data["awaiting_confirmation"] = awaiting
+    write_json_atomic(run.path / "run.json", run.data)
+
+
+def set_incomplete(run: Run, ids: list[str]) -> None:
+    run.data["incomplete_data"] = ids
+    write_json_atomic(run.path / "run.json", run.data)
+
+
+def advance_stage(run: Run, stage: str) -> None:
+    """Двигает этап только вперёд: повторный сбор не откатывает уже пройденное."""
+    if STAGES.index(check_stage(stage)) > STAGES.index(run.stage):
+        set_stage(run, stage)

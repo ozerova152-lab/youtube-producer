@@ -14,3 +14,15 @@ def channel(tmp_path) -> Path:
     dest = tmp_path / "chan"
     shutil.copytree(DEMO, dest)
     return dest
+
+
+@pytest.fixture(scope="module")
+def vcr_cassette_dir() -> str:
+    return str(DEMO / "cassettes")
+
+
+@pytest.fixture(scope="module")
+def vcr_config() -> dict:
+    # Ключ и дата начала периода меняются от запуска к запуску: в кассете их нет,
+    # при сопоставлении запросов они тоже отбрасываются.
+    return {"filter_query_parameters": ["key", "publishedAfter"], "record_mode": "none"}

@@ -1,0 +1,5 @@
+Считаю расход квоты…
+Расход: ~20 из 10 000 единиц (0 поисков, 0 запросов; в сумму входит до 20 на комментарии залётов). На сегодня хватает. Запускаем сбор?
+Жду вашего «да».
+
+{'month': '2026-10', 'segment': 'ru', 'brief_lang': 'ru', 'version': 1, 'stage': 'собрано', 'quota_spent': 307, 'requests_count': 10, 'awaiting_confirmation': True, 'incomplete_data': ['demoVid_b99']}

@@ -5,9 +5,11 @@ from typing import Annotated
 
 import typer
 
-from produce.core import runs
-from produce.core.errors import ProduceError, RunError
-from produce.core.settings import get_segment, list_segments, load_settings
+from produce.core import collect as collecting
+from produce.core import quota, report, runs
+from produce.core.errors import KeyMissingError, ProduceError, RunError
+from produce.core.settings import get_segment, list_segments, load_api_key, load_settings
+from produce.core.youtube import YouTubeApi
 
 app = typer.Typer(add_completion=False, help="AI-продюсер YouTube-канала")
 
@@ -86,6 +88,115 @@ def start(
         )
     else:
         typer.echo(f"Запуск {result.run.path.name} создан. Этап: {data['stage']}")
+
+
+def _num(n: int) -> str:
+    return f"{n:,}".replace(",", " ")
+
+
+def _plural(n: int, one: str, few: str, many: str) -> str:
+    if n % 10 == 1 and n % 100 != 11:
+        return one
+    if 2 <= n % 10 <= 4 and not 12 <= n % 100 <= 14:
+        return few
+    return many
+
+
+@app.command()
+def collect(
+    ctx: typer.Context,
+    segment: Annotated[str | None, typer.Option(help="Сегмент; если он один, берётся он")] = None,
+    confirm: Annotated[bool, typer.Option(help="Слово человека получено: идти за данными")] = False,
+    env_file: Annotated[Path, typer.Option(help="Файл с ключом YouTube")] = Path(".env"),
+) -> None:
+    """Оценить квоту (без флага) или собрать данные YouTube (`--confirm`)."""
+    try:
+        _collect(ctx.obj, segment, confirm, env_file)
+    except ProduceError as err:
+        raise _fail(err) from err
+
+
+def _collect(channel: Path, segment_id: str | None, confirm: bool, env_file: Path) -> None:
+    settings = load_settings(channel)
+    ids = [str(s["id"]) for s in list_segments(settings)]
+    if segment_id is None:
+        if len(ids) != 1:
+            raise RunError(f"Укажите сегмент: --segment ({', '.join(ids)})")
+        segment_id = ids[0]
+    segment = get_segment(settings, segment_id)
+    plan = collecting.make_plan(settings, segment)
+
+    key = load_api_key(env_file)
+    if key is None:
+        raise KeyMissingError(
+            "Ключа YouTube нет. Можно (1) получить бесплатный ключ: шаги в README, "
+            "и положить его в файл `.env` строкой YOUTUBE_API_KEY=ваш_ключ, "
+            "или (2) загрузить видео из файла CSV/JSON. Что выбираете?"
+        )
+
+    month = runs.current_month(collecting.now().date())
+    existing = runs.list_runs(channel, month, segment_id)
+    run = existing[-1] if existing else runs.start_run(
+        channel, month, segment_id, str(segment.get("language", "ru"))).run
+    cache = collecting.Cache(run.path / "cache")
+    ledger = quota.ledger_path(channel)
+
+    typer.echo("Считаю расход квоты…")
+    est = collecting.estimate(plan, cache)
+    available = quota.remaining_today(ledger)
+    runs.advance_stage(run, "оценка квоты")
+    if est.total > available:
+        runs.set_awaiting(run, False)
+        raise ProduceError(
+            f"Нужно ~{_num(est.total)}, доступно {_num(available)}. "
+            "Продолжим завтра, прогресс сохранится"
+        )
+    if not confirm:
+        runs.set_awaiting(run, True)
+        typer.echo(
+            f"Расход: ~{_num(est.total)} из {_num(quota.DAILY_LIMIT)} единиц "
+            f"({est.searches} {_plural(est.searches, 'поиск', 'поиска', 'поисков')}, "
+            f"{est.requests} {_plural(est.requests, 'запрос', 'запроса', 'запросов')}; "
+            f"в сумму входит до {est.comment_units} на комментарии залётов). "
+            "На сегодня хватает. Запускаем сбор?"
+        )
+        typer.echo("Жду вашего «да».")
+        return
+
+    runs.set_awaiting(run, False)
+    api = YouTubeApi(key, on_request=lambda cost: runs.record_usage(run, cost, 1, ledger))
+    summary = collecting.collect(run, plan, api, cache,
+                                 progress=lambda text: typer.echo(f"Собираю: {text}…"))
+    runs.advance_stage(run, "собрано")
+    typer.echo(
+        f"Собрано: {summary.videos} видео, {summary.channels} "
+        f"{_plural(summary.channels, 'канал', 'канала', 'каналов')}. "
+        f"Расход: {_num(summary.quota_spent)} ед. Обращений: {summary.requests}. "
+        f"Неполные данные: {summary.incomplete} видео"
+    )
+
+
+@app.command(name="report")
+def report_command(
+    ctx: typer.Context,
+    segment: Annotated[str | None, typer.Option(help="Сегмент; если он один, берётся он")] = None,
+) -> None:
+    """Собрать `report.md` запуска."""
+    try:
+        settings = load_settings(ctx.obj)
+        ids = [str(s["id"]) for s in list_segments(settings)]
+        if segment is None:
+            if len(ids) != 1:
+                raise RunError(f"Укажите сегмент: --segment ({', '.join(ids)})")
+            segment = ids[0]
+        get_segment(settings, segment)
+        found = runs.list_runs(ctx.obj, runs.current_month(collecting.now().date()), segment)
+        if not found:
+            raise RunError(f"Запуска для сегмента {segment} ещё нет: сначала `produce collect`")
+        report.write_report(found[-1])
+        typer.echo(f"Отчёт записан: {found[-1].path / 'report.md'}")
+    except ProduceError as err:
+        raise _fail(err) from err
 
 
 if __name__ == "__main__":
