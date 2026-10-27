@@ -6,6 +6,7 @@ BIN := $(VENV)/bin
 setup:
 	python3 -m venv $(VENV)
 	$(BIN)/pip install -e ".[dev]"
+	$(BIN)/playwright install chromium
 
 check: secrets
 	$(BIN)/ruff check src tests

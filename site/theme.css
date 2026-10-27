@@ -1,0 +1,155 @@
+/* Тема страницы-витрины: значения из DESIGN.md поверх Pico CSS 2.1.1.
+   Цвета и размеры меняем здесь и в DESIGN.md, а не в разметке. */
+
+@font-face {
+  font-family: "Onest";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/onest-cyrillic-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Onest";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/onest-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Тот же селектор, что у светлой темы Pico, иначе переменные не перекроются. */
+:host(:not([data-theme="dark"])),
+:root:not([data-theme="dark"]),
+[data-theme="light"] {
+  --pico-font-family: "Onest", system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+  --pico-border-radius: 0.75rem;
+
+  --pico-background-color: #fbfdfb;
+  --pico-color: #1d2a24;
+  --pico-h1-color: #1d2a24;
+  --pico-h2-color: #1d2a24;
+  --pico-h3-color: #1d2a24;
+  --pico-muted-color: #566860;
+  --pico-muted-border-color: #d9e6de;
+
+  --pico-primary: #007a50;
+  --pico-primary-background: #007a50;
+  --pico-primary-underline: rgba(0, 122, 80, 0.5);
+  --pico-primary-hover: #00633f;
+  --pico-primary-hover-background: #00633f;
+  --pico-primary-hover-underline: #00633f;
+  --pico-primary-focus: rgba(0, 122, 80, 0.4);
+  --pico-primary-inverse: #ffffff;
+
+  --pico-card-background-color: #ffffff;
+  --pico-card-border-color: #d9e6de;
+  --pico-card-box-shadow: none;
+  --pico-card-sectioning-background-color: #ffffff;
+  --pico-code-background-color: #ffffff;
+
+  --note-background: #e4f3ea;
+}
+
+h1,
+h2 {
+  --pico-font-weight: 800;
+}
+
+h1 {
+  --pico-font-size: clamp(2rem, 6vw, 3.25rem);
+  line-height: 1.1;
+}
+
+h2 {
+  --pico-font-size: 2rem;
+  line-height: 1.2;
+}
+
+[role="button"],
+button {
+  --pico-font-weight: 800;
+}
+
+article {
+  border: var(--pico-border-width) solid var(--pico-card-border-color);
+  border-radius: 1rem;
+}
+
+.note {
+  background: var(--note-background);
+  border-radius: var(--pico-border-radius);
+  padding: 1rem;
+}
+
+/* Блоки кода и таблицы прокручиваются внутри себя, страница вбок не едет. */
+pre,
+figure {
+  overflow-x: auto;
+}
+
+/* Блоки страницы-витрины. */
+main > header,
+main > section {
+  margin-bottom: 4rem;
+}
+
+main > header {
+  padding-top: 2rem;
+}
+
+.lead {
+  font-size: 1.25em;
+  max-width: 40rem;
+}
+
+.steps li::marker {
+  color: var(--pico-primary);
+  font-weight: 800;
+}
+
+.caption {
+  color: var(--pico-muted-color);
+  font-size: 0.9rem;
+}
+
+/* Подсказка только для телефона: запускать проект нужно на компьютере. */
+.phone-only {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .phone-only {
+    display: block;
+  }
+}
+
+/* Длинный адрес переносится, а не ломает ширину; клик выделяет его целиком. */
+.address code {
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
+#copy-address {
+  width: auto;
+}
+
+#copy-address .icon {
+  vertical-align: -0.2em;
+  margin-right: 0.25rem;
+}
+
+#copy-address[hidden],
+#copy-address .icon[hidden] {
+  display: none;
+}
+
+dt {
+  font-weight: 800;
+}
+
+dd {
+  margin-left: 0;
+  margin-bottom: 0.75rem;
+}

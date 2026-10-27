@@ -12,6 +12,7 @@ dependencies = [
 dev = [
   "pytest>=8.0",
   "pytest-recording>=0.13",
+  "playwright>=1.64",
   "ruff>=0.6",
 ]
 
