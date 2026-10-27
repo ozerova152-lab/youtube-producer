@@ -15,6 +15,11 @@ from produce.core.files import read_json
 RUN = "2026-10_ru_v1"
 SAMPLE = (DEMO / "expected" / "briefs" / "01.md").read_text(encoding="utf-8")
 STRATEGY = (DEMO / "expected" / "strategy.md").read_text(encoding="utf-8")
+# T12: число брифов каждого вида сверяется со стратегией; у этих тестов один бриф длинного видео.
+STRATEGY = (STRATEGY.replace("Длинные видео в месяц: 4", "Длинные видео в месяц: 1")
+            .replace("Shorts в месяц: 2", "Shorts в месяц: 0")
+            .replace("Посты в Сообществе в месяц: 4", "Посты в Сообществе в месяц: 0")
+            .replace("Роликов в месяц: 6", "Роликов в месяц: 1"))
 
 
 @pytest.fixture(autouse=True)

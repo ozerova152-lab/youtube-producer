@@ -3,19 +3,26 @@
 Один бриф — один файл, вид и статус в шапке. Скрипт сверяет бриф с `virals.json`: образцы
 и залёт-основа существуют, ссылки настоящие; поля вида заполнены; язык значений совпадает
 с `brief_lang` запуска; статус при создании пустой (его ставит человек, не агент).
-Качество идей проверяет человек. Вид «длинное видео» — T11; Shorts и посты добавит T12.
+Качество идей проверяет человек. Три вида: длинное видео (T11), Shorts и пост в Сообщество (T12);
+число брифов каждого вида сверяется с балансом форматов в `strategy.md`.
 """
 
 import re
 
 from produce.core import runs
+from produce.core import strategy as strategizing
 from produce.core.errors import FileFormatError
 from produce.core.files import read_json
 from produce.core.niche import _fields, _placeholders, _split
 
 BRIEFS_DIR = "briefs"
 KIND_LONG = "длинное видео"
-KINDS = (KIND_LONG,)
+KIND_SHORT = "Shorts"
+KIND_POST = "пост в Сообщество"
+KINDS = (KIND_LONG, KIND_SHORT, KIND_POST)
+# Вид брифа -> ключ в strategy.format_counts и название для сообщения о числе брифов.
+KIND_COUNTS = {KIND_LONG: ("long", "длинных видео"), KIND_SHORT: ("shorts", "Shorts"),
+               KIND_POST: ("post", "постов в Сообщество")}
 STATUSES = ("принят", "отклонён", "позже")
 STAGE_DECISION = "брифы на решение"
 
@@ -27,17 +34,34 @@ LONG_SECTIONS = {
                  "Хэштеги", "Теги", "Идея обложки"],
     "Главные эмоции": ["Эмоции"],
 }
+PACKAGING = ["Название 1", "Название 2", "Описание триггерное", "Описание SEO",
+             "Хэштеги", "Теги", "Идея обложки"]
+SHORT_SECTIONS = {
+    "Хук и идея": ["Хук", "Идея", "Залёт"],
+    "Упаковка": PACKAGING,
+    "Главные эмоции": ["Эмоции"],
+}
+POST_SECTIONS = {
+    "Идея и основа": ["Идея", "Залёт"],
+    "Опрос или картинка": ["Формат", "Содержание"],
+    "Главные эмоции": ["Эмоции"],
+}
+POST_FORMATS = ("опрос", "картинка")
+SHORT_MIN_SECONDS, SHORT_MAX_SECONDS = 30, 60
 MIN_STRUCTURE_LINES = 3
 EDIT_MARK = "монтаж"
 TITLE_LIMIT = 100  # длина названия на YouTube
 # Поля, текст которых должен быть на языке брифа (названия полей остаются русскими).
 LANG_FIELDS = ["Идея", "Первые 15 секунд", "Название 1", "Описание триггерное", "Описание SEO"]
+SHORT_LANG_FIELDS = ["Хук", "Идея", "Название 1", "Описание триггерное", "Описание SEO"]
+POST_LANG_FIELDS = ["Идея", "Содержание"]
 CYRILLIC_LANGS = {"ru", "uk", "be", "bg", "kk", "sr", "mk", "ky", "mn"}
 LATIN_LANGS = {"en", "de", "fr", "es", "pt", "it", "pl", "tr", "nl", "cs", "ro", "id"}
 
 _FILE = re.compile(r"^(\d+)\.md$")
 _TITLE = re.compile(r"^#\s+Бриф\s+(\d+)\s*:\s*(.*)$")
 _STATUS_LINE = re.compile(r"^-\s+Статус\s*:\s*(.*)$")
+_TIMECODE = re.compile(r"(\d+):(\d{2})\s*[–-]\s*(\d+):(\d{2})")
 _SAMPLE = re.compile(r"^-\s+`?([^:\s`]+)`?\s*:\s*(\S+)")
 
 
@@ -55,7 +79,8 @@ def _script_ratio(text: str, letters: str) -> float:
     return sum(1 for c in found if re.match(letters, c)) / len(found)
 
 
-def _language_problems(where: str, language: str, fields: dict[str, str]) -> list[str]:
+def _language_problems(where: str, language: str, fields: dict[str, str],
+                       names: list[str] = LANG_FIELDS) -> list[str]:
     if language in CYRILLIC_LANGS:
         pattern, script = r"[а-яёіїєґ]", "кириллицей"
     elif language in LATIN_LANGS:
@@ -63,7 +88,7 @@ def _language_problems(where: str, language: str, fields: dict[str, str]) -> lis
     else:
         return []  # язык вне списка: письмо не определить, смысл смотрит человек
     problems = []
-    for name in LANG_FIELDS:
+    for name in names:
         value = fields.get(name, "")
         if value and not _placeholders_in(value) and _script_ratio(value.lower(), pattern) < 0.5:
             problems.append(f"{where}: поле «{name}» не на языке брифа «{language}» "
@@ -106,11 +131,12 @@ def _check_samples(where: str, lines: list[str], virals: dict[str, dict],
     return problems
 
 
-def _check_long(where: str, sections: dict[str, list[str]], run_language: str,
-                virals: dict[str, dict]) -> list[str]:
+def _required_fields(where: str, sections: dict[str, list[str]], spec: dict[str, list[str]]
+                     ) -> tuple[dict[str, str], list[str]]:
+    """Поля обязательных разделов вида и проблемы: нет раздела, нет поля, пусто, шаблонный текст."""
     problems: list[str] = []
     fields: dict[str, str] = {}
-    for title, required in LONG_SECTIONS.items():
+    for title, required in spec.items():
         if title not in sections:
             problems.append(f"{where}: нет раздела «{title}»")
             continue
@@ -118,22 +144,12 @@ def _check_long(where: str, sections: dict[str, list[str]], run_language: str,
         fields.update(section_fields)
         problems += _placeholders("", "", section_fields, required)
     # Префикс «`имя`, место» ставится ниже: _placeholders пишет «`…`, …: сообщение».
-    problems = [re.sub(r"^``, : ", f"{where}: ", p) for p in problems]
+    return fields, [re.sub(r"^``, : ", f"{where}: ", p) for p in problems]
 
-    structure = sections.get("Структура")
-    if structure is None:
-        problems.append(f"{where}: нет раздела «Структура»")
-    else:
-        items = [line for line in structure if line.startswith("-")]
-        if len(items) < MIN_STRUCTURE_LINES:
-            problems.append(f"{where}: в разделе «Структура» {len(items)} "
-                            f"{'строка' if len(items) == 1 else 'строк'}, нужно не меньше {MIN_STRUCTURE_LINES}")
-        elif not any(EDIT_MARK in line.lower() for line in items):
-            problems.append(f"{where}: в разделе «Структура» нет пометок по монтажу "
-                            f"(слово «{EDIT_MARK}» в строке)")
-        if any(_placeholders_in(line) for line in items):
-            problems.append(f"{where}: раздел «Структура» не заполнен (остался шаблонный текст)")
 
+def _check_packaging(where: str, fields: dict[str, str]) -> list[str]:
+    """Упаковка длинного видео и Shorts: длина названий, хэштеги с «#»."""
+    problems = []
     for name in ("Название 1", "Название 2", "Название 3"):
         if len(fields.get(name, "")) > TITLE_LIMIT:
             problems.append(f"{where}: «{name}» длиннее {TITLE_LIMIT} знаков")
@@ -143,17 +159,97 @@ def _check_long(where: str, sections: dict[str, list[str]], run_language: str,
     tags = fields.get("Хэштеги", "")
     if tags and not _placeholders_in(tags) and not all(t.startswith("#") for t in tags.split()):
         problems.append(f"{where}: в поле «Хэштеги» каждый хэштег начинается с «#»")
-    length = fields.get("Длина", "")
-    if length and not _placeholders_in(length) and not re.search(r"\d", length):
-        problems.append(f"{where}: в поле «Длина» нужно число, а там «{length}»")
+    return problems
 
+
+def _check_base_and_samples(where: str, sections: dict[str, list[str]], fields: dict[str, str],
+                            virals: dict[str, dict]) -> list[str]:
+    """Залёт-основа существует в `virals.json`, образцы настоящие и среди них основа."""
+    problems = []
     base = fields.get("Залёт", "").strip("` ") or None
     if base and not _placeholders_in(base) and base not in virals:
         problems.append(f"{where}: залёт `{base}` не найден в `virals.json`")
-    problems += _check_samples(where, sections.get("Образцы", []), virals, base) \
-        if "Образцы" in sections else [f"{where}: нет раздела «Образцы»"]
-    problems += _language_problems(where, run_language, fields)
+    if "Образцы" in sections:
+        problems += _check_samples(where, sections["Образцы"], virals, base)
+    else:
+        problems.append(f"{where}: нет раздела «Образцы»")
     return problems
+
+
+def _scenario_lines(where: str, sections: dict[str, list[str]], title: str
+                    ) -> tuple[list[str], list[str]]:
+    """Строки списка раздела и проблемы: не меньше трёх, есть пометки по монтажу, нет шаблонного текста."""
+    block = sections.get(title)
+    if block is None:
+        return [], [f"{where}: нет раздела «{title}»"]
+    items = [line for line in block if line.startswith("-")]
+    problems = []
+    if len(items) < MIN_STRUCTURE_LINES:
+        problems.append(f"{where}: в разделе «{title}» {len(items)} "
+                        f"{'строка' if len(items) == 1 else 'строк'}, нужно не меньше {MIN_STRUCTURE_LINES}")
+    elif not any(EDIT_MARK in line.lower() for line in items):
+        problems.append(f"{where}: в разделе «{title}» нет пометок по монтажу "
+                        f"(слово «{EDIT_MARK}» в строке)")
+    if any(_placeholders_in(line) for line in items):
+        problems.append(f"{where}: раздел «{title}» не заполнен (остался шаблонный текст)")
+    return items, problems
+
+
+def _check_long(where: str, sections: dict[str, list[str]], run_language: str,
+                virals: dict[str, dict]) -> list[str]:
+    fields, problems = _required_fields(where, sections, LONG_SECTIONS)
+    _, structure_problems = _scenario_lines(where, sections, "Структура")
+    problems += structure_problems + _check_packaging(where, fields)
+    length = fields.get("Длина", "")
+    if length and not _placeholders_in(length) and not re.search(r"\d", length):
+        problems.append(f"{where}: в поле «Длина» нужно число, а там «{length}»")
+    problems += _check_base_and_samples(where, sections, fields, virals)
+    return problems + _language_problems(where, run_language, fields)
+
+
+def _check_short(where: str, sections: dict[str, list[str]], run_language: str,
+                 virals: dict[str, dict]) -> list[str]:
+    """Shorts: хук, идея, сценарий на 30–60 секунд с пометками монтажа, упаковка, образцы, эмоции."""
+    fields, problems = _required_fields(where, sections, SHORT_SECTIONS)
+    items, scenario_problems = _scenario_lines(where, sections, "Сценарий")
+    problems += scenario_problems
+    if items and not scenario_problems:
+        ends = [int(m[3]) * 60 + int(m[4]) for m in map(_TIMECODE.search, items) if m]
+        if len(ends) < len(items):
+            problems.append(f"{where}: в разделе «Сценарий» у каждой строки нужны секунды "
+                            "в виде «0:00–0:05»")
+        elif not SHORT_MIN_SECONDS <= max(ends) <= SHORT_MAX_SECONDS:
+            problems.append(f"{where}: сценарий идёт {max(ends)} с, нужно "
+                            f"{SHORT_MIN_SECONDS}–{SHORT_MAX_SECONDS} с (по концу последней строки)")
+    problems += _check_packaging(where, fields)
+    problems += _check_base_and_samples(where, sections, fields, virals)
+    return problems + _language_problems(where, run_language, fields, SHORT_LANG_FIELDS)
+
+
+def _check_post(where: str, sections: dict[str, list[str]], run_language: str,
+                virals: dict[str, dict]) -> list[str]:
+    """Пост в Сообщество: готовый текст «как есть», опрос или картинка, образцы, эмоции."""
+    fields, problems = _required_fields(where, sections, POST_SECTIONS)
+    text = [line for line in sections.get("Готовый текст", []) if line.strip()
+            and not line.startswith(">")]
+    if "Готовый текст" not in sections:
+        problems.append(f"{where}: нет раздела «Готовый текст»")
+    elif not text:
+        problems.append(f"{where}: раздел «Готовый текст» пустой")
+    elif any(_placeholders_in(line) for line in text):
+        problems.append(f"{where}: раздел «Готовый текст» не заполнен (остался шаблонный текст)")
+    elif any(line.startswith("#") for line in text):
+        problems.append(f"{where}: в разделе «Готовый текст» только текст поста: заголовки "
+                        "и пояснения туда не вставляются")
+    kind = fields.get("Формат", "")
+    if kind and not _placeholders_in(kind) and kind not in POST_FORMATS:
+        problems.append(f"{where}: формат «{kind}» не распознан. Допустимо: {', '.join(POST_FORMATS)}")
+    problems += _check_base_and_samples(where, sections, fields, virals)
+    fields = {**fields, "Текст": " ".join(text)}
+    return problems + _language_problems(where, run_language, fields, POST_LANG_FIELDS + ["Текст"])
+
+
+CHECKERS = {KIND_LONG: _check_long, KIND_SHORT: _check_short, KIND_POST: _check_post}
 
 
 def _placeholders_in(text: str) -> bool:
@@ -207,9 +303,23 @@ def check_file(run: runs.Run, path_name: str, virals: dict[str, dict], decision_
                         f"«{run_language}»")
     if kind and kind not in KINDS:
         problems.append(f"{where}, шапка: вид «{kind}» не распознан. Допустимо: {', '.join(KINDS)}")
-    elif kind == KIND_LONG:
-        problems += _check_long(where, dict(blocks), run_language, virals)
+    elif kind in CHECKERS:
+        problems += CHECKERS[kind](where, dict(blocks), run_language, virals)
     return Brief(file_number, title, kind, status, path_name), problems
+
+
+def _count_problems(run: runs.Run, found: list[Brief]) -> list[str]:
+    """Число брифов каждого вида должно совпасть с балансом форматов в `strategy.md`."""
+    wanted = strategizing.format_counts(run)
+    if wanted is None:
+        return []  # баланс не читается: это скажет проверка стратегии
+    problems = []
+    for kind, (key, label) in KIND_COUNTS.items():
+        have = sum(1 for b in found if b.kind == kind)
+        if have != wanted[key]:
+            problems.append(f"`{BRIEFS_DIR}/`: по `strategy.md` {label} {wanted[key]}, "
+                            f"а брифов этого вида {have}")
+    return problems
 
 
 def check(run: runs.Run) -> tuple[list[Brief], list[str]]:
@@ -233,4 +343,4 @@ def check(run: runs.Run) -> tuple[list[Brief], list[str]]:
         problems += file_problems
         if brief:
             found.append(brief)
-    return found, problems
+    return found, problems + _count_problems(run, found)

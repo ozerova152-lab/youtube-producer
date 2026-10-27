@@ -1,0 +1,17 @@
+== green
+Бриф 1 из 3: длинное видео «Нейросеть для таблиц без формул»
+Бриф 2 из 3: Shorts «Письмо начальнику за 40 секунд»
+Бриф 3 из 3: пост в Сообщество «Что разобрать дальше: таблицы или презентации»
+Проверено брифов: 3, ошибок нет
+exit 0
+  "stage": "брифы на решение",
+== red 105s
+`briefs/02.md`: сценарий идёт 105 с, нужно 30–60 с (по концу последней строки)
+exit 1
+== missing post
+`briefs/02.md`: сценарий идёт 105 с, нужно 30–60 с (по концу последней строки)
+`briefs/`: по `strategy.md` постов в Сообщество 1, а брифов этого вида 0
+exit 1
+== settings
+041e6057414ceafe716b6b822eb99d6c24dadb7c02f92409609e1484c94c12c3  /tmp/claude-1000/-home-matebook-vibecoding-projects-youtube-producer/a49a8810-c8ff-436d-9f3d-7a65c6add235/scratchpad/ch/settings.yaml
+041e6057414ceafe716b6b822eb99d6c24dadb7c02f92409609e1484c94c12c3  /tmp/claude-1000/-home-matebook-vibecoding-projects-youtube-producer/a49a8810-c8ff-436d-9f3d-7a65c6add235/scratchpad/ch/settings.yaml

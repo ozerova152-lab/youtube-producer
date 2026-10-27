@@ -136,6 +136,28 @@ def _check_evidence(run: runs.Run, fields: dict[str, str]) -> list[str]:
     return problems
 
 
+def format_counts(run: runs.Run) -> dict[str, int] | None:
+    """Сколько брифов каждого вида просит стратегия: ключи long, shorts, post.
+
+    None, если баланс форматов не читается или поля не числа: об этом скажет проверка стратегии.
+    """
+    lines, _ = _read(run, STRATEGY)
+    if lines is None:
+        return None
+    sections = dict(_split(lines, "##")[1])
+    if "Баланс форматов" not in sections:
+        return None
+    fields = _fields(sections["Баланс форматов"])
+    result: dict[str, int] = {}
+    for key, name in (("long", "Длинные видео в месяц"), ("shorts", "Shorts в месяц"),
+                      ("post", "Посты в Сообществе в месяц")):
+        number, _ = _count(fields, name, "раздел «Баланс форматов»")
+        if number is None:
+            return None
+        result[key] = number
+    return result
+
+
 def gate(run: runs.Run) -> list[str]:
     """Пускает к брифам и плану только при статусе «утверждена»; иначе список причин отказа."""
     status, problems = read_status(run)

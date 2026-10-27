@@ -21,6 +21,11 @@ RUN = "2026-10_ru_v1"
 ROOT = Path(__file__).parent.parent
 SAMPLE = (DEMO / "expected" / "briefs" / "01.md").read_text(encoding="utf-8")
 STRATEGY = (DEMO / "expected" / "strategy.md").read_text(encoding="utf-8")
+# T12: число брифов каждого вида сверяется со стратегией; у этих тестов один бриф длинного видео.
+STRATEGY = (STRATEGY.replace("Длинные видео в месяц: 4", "Длинные видео в месяц: 1")
+            .replace("Shorts в месяц: 2", "Shorts в месяц: 0")
+            .replace("Посты в Сообществе в месяц: 4", "Посты в Сообществе в месяц: 0")
+            .replace("Роликов в месяц: 6", "Роликов в месяц: 1"))
 PLAYBOOK = (ROOT / "playbooks" / "06-briefs-plan.md").read_text(encoding="utf-8")
 TEMPLATE = (ROOT / "templates" / "brief-long.md").read_text(encoding="utf-8")
 U1 = "https://www.youtube.com/watch?v=demo_v01"
@@ -437,6 +442,11 @@ def test_second_good_brief_and_bad_one_named(channel, run):
 
 
 def test_two_good_briefs(channel, run):
+    # стратегия просит два длинных видео (T12: число брифов сверяется со стратегией)
+    text = (run / "strategy.md").read_text(encoding="utf-8")
+    (run / "strategy.md").write_text(
+        text.replace("Длинные видео в месяц: 1", "Длинные видео в месяц: 2")
+        .replace("Роликов в месяц: 1", "Роликов в месяц: 2"), encoding="utf-8")
     put(run)
     put(run, sub("# Бриф 1:", "# Бриф 2:"), name="02.md")
     res = check(channel)
