@@ -1,0 +1,263 @@
+interactions:
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=UU_demo_a&maxResults=20&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#playlistItemListResponse\",\n  \"etag\": \"\
+        demo\",\n  \"pageInfo\": {\n    \"totalResults\": 6,\n    \"resultsPerPage\"\
+        : 6\n  },\n  \"items\": [\n    {\n      \"kind\": \"youtube#playlistItem\"\
+        ,\n      \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\"\
+        : \"demoVid_a01\",\n        \"videoPublishedAt\": \"2026-10-12T10:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_a02\",\n        \"videoPublishedAt\": \"2026-10-03T10:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_a03\",\n        \"videoPublishedAt\": \"2026-09-20T10:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_a04\",\n        \"videoPublishedAt\": \"2026-09-05T10:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_a05\",\n        \"videoPublishedAt\": \"2026-08-25T10:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_a06\",\n        \"videoPublishedAt\": \"2026-08-10T10:00:00Z\"\
+        \n      }\n    }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=UU_demo_b&maxResults=20&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#playlistItemListResponse\",\n  \"etag\": \"\
+        demo\",\n  \"pageInfo\": {\n    \"totalResults\": 6,\n    \"resultsPerPage\"\
+        : 6\n  },\n  \"items\": [\n    {\n      \"kind\": \"youtube#playlistItem\"\
+        ,\n      \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\"\
+        : \"demoVid_b99\",\n        \"videoPublishedAt\": \"2026-10-20T12:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_b02\",\n        \"videoPublishedAt\": \"2026-10-15T12:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_b01\",\n        \"videoPublishedAt\": \"2026-10-08T12:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_b03\",\n        \"videoPublishedAt\": \"2026-09-12T12:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_b04\",\n        \"videoPublishedAt\": \"2026-08-30T12:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_b05\",\n        \"videoPublishedAt\": \"2026-08-15T12:00:00Z\"\
+        \n      }\n    }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=UU_demo_c&maxResults=20&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#playlistItemListResponse\",\n  \"etag\": \"\
+        demo\",\n  \"pageInfo\": {\n    \"totalResults\": 3,\n    \"resultsPerPage\"\
+        : 3\n  },\n  \"items\": [\n    {\n      \"kind\": \"youtube#playlistItem\"\
+        ,\n      \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\"\
+        : \"demoVid_c02\",\n        \"videoPublishedAt\": \"2026-10-18T09:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_c01\",\n        \"videoPublishedAt\": \"2026-10-10T09:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_c03\",\n        \"videoPublishedAt\": \"2026-09-02T09:00:00Z\"\
+        \n      }\n    }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=UU_demo_d&maxResults=20&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#playlistItemListResponse\",\n  \"etag\": \"\
+        demo\",\n  \"pageInfo\": {\n    \"totalResults\": 5,\n    \"resultsPerPage\"\
+        : 5\n  },\n  \"items\": [\n    {\n      \"kind\": \"youtube#playlistItem\"\
+        ,\n      \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\"\
+        : \"demoVid_d02\",\n        \"videoPublishedAt\": \"2026-10-19T15:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_d01\",\n        \"videoPublishedAt\": \"2026-10-05T15:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_d03\",\n        \"videoPublishedAt\": \"2026-09-25T15:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_d04\",\n        \"videoPublishedAt\": \"2026-09-15T15:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#playlistItem\",\n    \
+        \  \"etag\": \"demo\",\n      \"contentDetails\": {\n        \"videoId\":\
+        \ \"demoVid_d05\",\n        \"videoPublishedAt\": \"2026-09-01T15:00:00Z\"\
+        \n      }\n    }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics%2CliveStreamingDetails&id=demoVid_a03%2CdemoVid_a04%2CdemoVid_a05%2CdemoVid_a06%2CdemoVid_b03%2CdemoVid_b04%2CdemoVid_b05%2CdemoVid_b99%2CdemoVid_c03%2CdemoVid_d03%2CdemoVid_d04%2CdemoVid_d05&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#videoListResponse\",\n  \"etag\": \"demo\"\
+        ,\n  \"pageInfo\": {\n    \"totalResults\": 11,\n    \"resultsPerPage\": 11\n\
+        \  },\n  \"items\": [\n    {\n      \"kind\": \"youtube#video\",\n      \"\
+        etag\": \"demo\",\n      \"id\": \"demoVid_a03\",\n      \"snippet\": {\n\
+        \        \"publishedAt\": \"2026-09-20T10:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_a\",\n        \"title\": \"Нейросеть против Excel\",\n       \
+        \ \"description\": \"Описание ролика «Нейросеть против Excel»\",\n       \
+        \ \"channelTitle\": \"Нейро для всех\",\n        \"liveBroadcastContent\"\
+        : \"none\"\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
+        \n      },\n      \"statistics\": {\n        \"viewCount\": \"5100\",\n  \
+        \      \"favoriteCount\": \"0\",\n        \"likeCount\": \"180\",\n      \
+        \  \"commentCount\": \"22\"\n      }\n    },\n    {\n      \"kind\": \"youtube#video\"\
+        ,\n      \"etag\": \"demo\",\n      \"id\": \"demoVid_a04\",\n      \"snippet\"\
+        : {\n        \"publishedAt\": \"2026-09-05T10:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_a\",\n        \"title\": \"Промпты для писем\",\n        \"description\"\
+        : \"Описание ролика «Промпты для писем»\",\n        \"channelTitle\": \"Нейро\
+        \ для всех\",\n        \"liveBroadcastContent\": \"none\"\n      },\n    \
+        \  \"contentDetails\": {\n        \"duration\": \"PT8M30S\",\n        \"dimension\"\
+        : \"2d\",\n        \"definition\": \"hd\"\n      },\n      \"statistics\"\
+        : {\n        \"viewCount\": \"4800\",\n        \"favoriteCount\": \"0\",\n\
+        \        \"likeCount\": \"150\",\n        \"commentCount\": \"18\"\n     \
+        \ }\n    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"\
+        demo\",\n      \"id\": \"demoVid_a05\",\n      \"snippet\": {\n        \"\
+        publishedAt\": \"2026-08-25T10:00:00Z\",\n        \"channelId\": \"UC_demo_a\"\
+        ,\n        \"title\": \"Шпаргалка по ChatGPT\",\n        \"description\":\
+        \ \"Описание ролика «Шпаргалка по ChatGPT»\",\n        \"channelTitle\": \"\
+        Нейро для всех\",\n        \"liveBroadcastContent\": \"none\"\n      },\n\
+        \      \"contentDetails\": {\n        \"duration\": \"PT45S\",\n        \"\
+        dimension\": \"2d\",\n        \"definition\": \"hd\"\n      },\n      \"statistics\"\
+        : {\n        \"viewCount\": \"5300\",\n        \"favoriteCount\": \"0\",\n\
+        \        \"likeCount\": \"190\",\n        \"commentCount\": \"25\"\n     \
+        \ }\n    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"\
+        demo\",\n      \"id\": \"demoVid_a06\",\n      \"snippet\": {\n        \"\
+        publishedAt\": \"2026-08-10T10:00:00Z\",\n        \"channelId\": \"UC_demo_a\"\
+        ,\n        \"title\": \"Обзор новых моделей\",\n        \"description\": \"\
+        Описание ролика «Обзор новых моделей»\",\n        \"channelTitle\": \"Нейро\
+        \ для всех\",\n        \"liveBroadcastContent\": \"none\"\n      },\n    \
+        \  \"contentDetails\": {\n        \"duration\": \"PT8M30S\",\n        \"dimension\"\
+        : \"2d\",\n        \"definition\": \"hd\"\n      },\n      \"statistics\"\
+        : {\n        \"viewCount\": \"4500\",\n        \"favoriteCount\": \"0\",\n\
+        \        \"likeCount\": \"120\",\n        \"commentCount\": \"12\"\n     \
+        \ }\n    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"\
+        demo\",\n      \"id\": \"demoVid_b03\",\n      \"snippet\": {\n        \"\
+        publishedAt\": \"2026-09-12T12:00:00Z\",\n        \"channelId\": \"UC_demo_b\"\
+        ,\n        \"title\": \"Что умеет нейросеть сегодня\",\n        \"description\"\
+        : \"Описание ролика «Что умеет нейросеть сегодня»\",\n        \"channelTitle\"\
+        : \"ИИ с нуля\",\n        \"liveBroadcastContent\": \"none\"\n      },\n \
+        \     \"contentDetails\": {\n        \"duration\": \"PT8M30S\",\n        \"\
+        dimension\": \"2d\",\n        \"definition\": \"hd\"\n      },\n      \"statistics\"\
+        : {\n        \"viewCount\": \"2100\",\n        \"favoriteCount\": \"0\",\n\
+        \        \"likeCount\": \"50\",\n        \"commentCount\": \"6\"\n      }\n\
+        \    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"demo\"\
+        ,\n      \"id\": \"demoVid_b04\",\n      \"snippet\": {\n        \"publishedAt\"\
+        : \"2026-08-30T12:00:00Z\",\n        \"channelId\": \"UC_demo_b\",\n     \
+        \   \"title\": \"Мой набор ИИ-инструментов\",\n        \"description\": \"\
+        Описание ролика «Мой набор ИИ-инструментов»\",\n        \"channelTitle\":\
+        \ \"ИИ с нуля\",\n        \"liveBroadcastContent\": \"none\"\n      },\n \
+        \     \"contentDetails\": {\n        \"duration\": \"PT8M30S\",\n        \"\
+        dimension\": \"2d\",\n        \"definition\": \"hd\"\n      },\n      \"statistics\"\
+        : {\n        \"viewCount\": \"1700\",\n        \"favoriteCount\": \"0\",\n\
+        \        \"likeCount\": \"30\",\n        \"commentCount\": \"5\"\n      }\n\
+        \    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"demo\"\
+        ,\n      \"id\": \"demoVid_b05\",\n      \"snippet\": {\n        \"publishedAt\"\
+        : \"2026-08-15T12:00:00Z\",\n        \"channelId\": \"UC_demo_b\",\n     \
+        \   \"title\": \"Ошибки новичков\",\n        \"description\": \"Описание ролика\
+        \ «Ошибки новичков»\",\n        \"channelTitle\": \"ИИ с нуля\",\n       \
+        \ \"liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\":\
+        \ {\n        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n\
+        \        \"definition\": \"hd\"\n      },\n      \"statistics\": {\n     \
+        \   \"viewCount\": \"2300\",\n        \"favoriteCount\": \"0\",\n        \"\
+        likeCount\": \"45\",\n        \"commentCount\": \"7\"\n      }\n    },\n \
+        \   {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"demo\",\n   \
+        \   \"id\": \"demoVid_c03\",\n      \"snippet\": {\n        \"publishedAt\"\
+        : \"2026-09-02T09:00:00Z\",\n        \"channelId\": \"UC_demo_c\",\n     \
+        \   \"title\": \"Тест генератора картинок\",\n        \"description\": \"\
+        Описание ролика «Тест генератора картинок»\",\n        \"channelTitle\": \"\
+        Мини-канал\",\n        \"liveBroadcastContent\": \"none\"\n      },\n    \
+        \  \"contentDetails\": {\n        \"duration\": \"PT8M30S\",\n        \"dimension\"\
+        : \"2d\",\n        \"definition\": \"hd\"\n      },\n      \"statistics\"\
+        : {\n        \"viewCount\": \"350\",\n        \"favoriteCount\": \"0\"\n \
+        \     }\n    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\"\
+        : \"demo\",\n      \"id\": \"demoVid_d03\",\n      \"snippet\": {\n      \
+        \  \"publishedAt\": \"2026-09-25T15:00:00Z\",\n        \"channelId\": \"UC_demo_d\"\
+        ,\n        \"title\": \"Разбор промптов подписчиков\",\n        \"description\"\
+        : \"Описание ролика «Разбор промптов подписчиков»\",\n        \"channelTitle\"\
+        : \"Промпт-лаб\",\n        \"liveBroadcastContent\": \"none\"\n      },\n\
+        \      \"contentDetails\": {\n        \"duration\": \"PT8M30S\",\n       \
+        \ \"dimension\": \"2d\",\n        \"definition\": \"hd\"\n      },\n     \
+        \ \"statistics\": {\n        \"viewCount\": \"19000\",\n        \"favoriteCount\"\
+        : \"0\",\n        \"likeCount\": \"700\",\n        \"commentCount\": \"80\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\"\
+        : \"demo\",\n      \"id\": \"demoVid_d04\",\n      \"snippet\": {\n      \
+        \  \"publishedAt\": \"2026-09-15T15:00:00Z\",\n        \"channelId\": \"UC_demo_d\"\
+        ,\n        \"title\": \"Прямой эфир: вопросы про ИИ\",\n        \"description\"\
+        : \"Описание ролика «Прямой эфир: вопросы про ИИ»\",\n        \"channelTitle\"\
+        : \"Промпт-лаб\",\n        \"liveBroadcastContent\": \"none\"\n      },\n\
+        \      \"contentDetails\": {\n        \"duration\": \"PT1H20M\",\n       \
+        \ \"dimension\": \"2d\",\n        \"definition\": \"hd\"\n      },\n     \
+        \ \"statistics\": {\n        \"viewCount\": \"15000\",\n        \"favoriteCount\"\
+        : \"0\",\n        \"likeCount\": \"500\",\n        \"commentCount\": \"300\"\
+        \n      },\n      \"liveStreamingDetails\": {\n        \"actualStartTime\"\
+        : \"2026-09-15T15:00:00Z\",\n        \"actualEndTime\": \"2026-09-15T15:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\"\
+        : \"demo\",\n      \"id\": \"demoVid_d05\",\n      \"snippet\": {\n      \
+        \  \"publishedAt\": \"2026-09-01T15:00:00Z\",\n        \"channelId\": \"UC_demo_d\"\
+        ,\n        \"title\": \"Агенты на практике\",\n        \"description\": \"\
+        Описание ролика «Агенты на практике»\",\n        \"channelTitle\": \"Промпт-лаб\"\
+        ,\n        \"liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\"\
+        : {\n        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n\
+        \        \"definition\": \"hd\"\n      },\n      \"statistics\": {\n     \
+        \   \"viewCount\": \"23000\",\n        \"favoriteCount\": \"0\",\n       \
+        \ \"likeCount\": \"800\",\n        \"commentCount\": \"90\"\n      }\n   \
+        \ }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1

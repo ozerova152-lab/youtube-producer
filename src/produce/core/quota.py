@@ -46,3 +46,11 @@ def add_spent(ledger: Path, units: int, day: date | None = None) -> int:
     data[day.isoformat()] = int(data.get(day.isoformat(), 0)) + units
     write_json_atomic(ledger, data)
     return data[day.isoformat()]
+
+
+def mark_exhausted(ledger: Path, day: date | None = None) -> None:
+    """YouTube сказал «квота закончилась»: до завтра считаем сутки потраченными."""
+    day = day or quota_day()
+    left = remaining_today(ledger, day)
+    if left:
+        add_spent(ledger, left, day)

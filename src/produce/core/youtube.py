@@ -8,6 +8,7 @@
 import json
 import logging
 import re
+import time
 from collections.abc import Callable
 from datetime import datetime
 
@@ -27,6 +28,13 @@ _KEY_REASONS = {
     "API_KEY_SERVICE_BLOCKED", "API_KEY_HTTP_REFERRER_BLOCKED",
 }
 _QUOTA_REASONS = {"quotaExceeded", "dailyLimitExceeded"}
+_RATE_REASONS = {"rateLimitExceeded", "userRateLimitExceeded"}  # временный отказ, не дневная квота
+RETRIES = 3  # повторов после первой неудачи
+BACKOFF = (1, 2, 4)  # пауза в секундах перед 1-м, 2-м и 3-м повтором: растёт
+GIVE_UP = (
+    "YouTube не отвечает: 3 попытки подряд. Собранное сохранено. "
+    "Запустите позже, повторно квота не потратится; «да» понадобится снова"
+)
 _DURATION = re.compile(r"^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$")
 
 
@@ -42,6 +50,15 @@ class _HideKey(logging.Filter):
         if self._key in text:
             record.msg, record.args = text.replace(self._key, "***"), None
         return True
+
+
+def pause(seconds: float) -> None:
+    """Пауза между повторами. Отдельной функцией, чтобы автотесты её подменяли."""
+    time.sleep(seconds)
+
+
+class _Transient(Exception):
+    """Внутренний сигнал: сбой, который имеет смысл повторить."""
 
 
 class PlaylistNotFound(Exception):
@@ -83,8 +100,23 @@ class YouTubeApi:
         self._on_request = on_request or (lambda cost: None)
 
     def _run(self, request, cost: int) -> dict:
+        """Один запрос с повторами при сбоях YouTube; ключ и квота повторов не получают."""
+        for attempt in range(RETRIES + 1):
+            try:
+                response = self._once(request, cost)
+            except _Transient:
+                if attempt == RETRIES:
+                    raise NetworkError(GIVE_UP) from None
+                logging.getLogger(__name__).info("сбой YouTube, повтор %d из %d", attempt + 1, RETRIES)
+                pause(BACKOFF[attempt])
+                continue
+            self._on_request(cost)
+            return response
+        raise AssertionError("недостижимо")  # pragma: no cover
+
+    def _once(self, request, cost: int) -> dict:
         try:
-            response = request.execute()
+            return request.execute()
         except HttpError as err:
             reasons, message = _reasons(err)
             status = err.resp.status
@@ -98,17 +130,15 @@ class YouTubeApi:
             if status == 404 and "playlistNotFound" in reasons:
                 self._on_request(cost)
                 raise PlaylistNotFound() from None
+            if status >= 500 or status == 429 or reasons & _RATE_REASONS:
+                raise _Transient() from None
+            # Остальные отказы (400, 403, 404) повтором не лечатся.
             raise NetworkError(
-                "YouTube не ответил как надо. Собранное сохранено. "
+                "YouTube ответил отказом на запрос. Собранное сохранено. "
                 "Запустите позже, повторно квота не потратится; «да» понадобится снова"
             ) from None
         except (OSError, httplib2.HttpLib2Error):
-            raise NetworkError(
-                "YouTube не отвечает. Собранное сохранено. Запустите позже, "
-                "повторно квота не потратится; «да» понадобится снова"
-            ) from None
-        self._on_request(cost)
-        return response
+            raise _Transient() from None
 
     def search(self, query: str, region: str, language: str,
                published_after: datetime) -> list[dict]:

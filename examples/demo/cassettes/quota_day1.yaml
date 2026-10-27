@@ -1,0 +1,307 @@
+interactions:
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=%D0%BD%D0%B5%D0%B9%D1%80%D0%BE%D1%81%D0%B5%D1%82%D1%8C&type=video&order=viewCount&regionCode=RU&relevanceLanguage=ru&maxResults=25&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#searchListResponse\",\n  \"etag\": \"demo\"\
+        ,\n  \"regionCode\": \"RU\",\n  \"pageInfo\": {\n    \"totalResults\": 4,\n\
+        \    \"resultsPerPage\": 4\n  },\n  \"items\": [\n    {\n      \"kind\": \"\
+        youtube#searchResult\",\n      \"etag\": \"demo\",\n      \"id\": {\n    \
+        \    \"kind\": \"youtube#video\",\n        \"videoId\": \"demoVid_a01\"\n\
+        \      },\n      \"snippet\": {\n        \"publishedAt\": \"2026-10-12T10:00:00Z\"\
+        ,\n        \"channelId\": \"UC_demo_a\",\n        \"title\": \"Как я заменил\
+        \ ассистента нейросетью за вечер\",\n        \"description\": \"Описание ролика\
+        \ «Как я заменил ассистента нейросетью за вечер»\",\n        \"channelTitle\"\
+        : \"Нейро для всех\",\n        \"liveBroadcastContent\": \"none\",\n     \
+        \   \"publishTime\": \"2026-10-12T10:00:00Z\"\n      }\n    },\n    {\n  \
+        \    \"kind\": \"youtube#searchResult\",\n      \"etag\": \"demo\",\n    \
+        \  \"id\": {\n        \"kind\": \"youtube#video\",\n        \"videoId\": \"\
+        demoVid_d01\"\n      },\n      \"snippet\": {\n        \"publishedAt\": \"\
+        2026-10-05T15:00:00Z\",\n        \"channelId\": \"UC_demo_d\",\n        \"\
+        title\": \"ChatGPT tutorial на русском: полный курс\",\n        \"description\"\
+        : \"Описание ролика «ChatGPT tutorial на русском: полный курс»\",\n      \
+        \  \"channelTitle\": \"Промпт-лаб\",\n        \"liveBroadcastContent\": \"\
+        none\",\n        \"publishTime\": \"2026-10-05T15:00:00Z\"\n      }\n    },\n\
+        \    {\n      \"kind\": \"youtube#searchResult\",\n      \"etag\": \"demo\"\
+        ,\n      \"id\": {\n        \"kind\": \"youtube#video\",\n        \"videoId\"\
+        : \"demoVid_b01\"\n      },\n      \"snippet\": {\n        \"publishedAt\"\
+        : \"2026-10-08T12:00:00Z\",\n        \"channelId\": \"UC_demo_b\",\n     \
+        \   \"title\": \"ИИ для новичков: с чего начать\",\n        \"description\"\
+        : \"Описание ролика «ИИ для новичков: с чего начать»\",\n        \"channelTitle\"\
+        : \"ИИ с нуля\",\n        \"liveBroadcastContent\": \"none\",\n        \"\
+        publishTime\": \"2026-10-08T12:00:00Z\"\n      }\n    },\n    {\n      \"\
+        kind\": \"youtube#searchResult\",\n      \"etag\": \"demo\",\n      \"id\"\
+        : {\n        \"kind\": \"youtube#video\",\n        \"videoId\": \"demoVid_c01\"\
+        \n      },\n      \"snippet\": {\n        \"publishedAt\": \"2026-10-10T09:00:00Z\"\
+        ,\n        \"channelId\": \"UC_demo_c\",\n        \"title\": \"Первый ролик\
+        \ про ИИ\",\n        \"description\": \"Описание ролика «Первый ролик про\
+        \ ИИ»\",\n        \"channelTitle\": \"Мини-канал\",\n        \"liveBroadcastContent\"\
+        : \"none\",\n        \"publishTime\": \"2026-10-10T09:00:00Z\"\n      }\n\
+        \    }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=ChatGPT&type=video&order=viewCount&regionCode=RU&relevanceLanguage=ru&maxResults=25&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#searchListResponse\",\n  \"etag\": \"demo\"\
+        ,\n  \"regionCode\": \"RU\",\n  \"pageInfo\": {\n    \"totalResults\": 4,\n\
+        \    \"resultsPerPage\": 4\n  },\n  \"items\": [\n    {\n      \"kind\": \"\
+        youtube#searchResult\",\n      \"etag\": \"demo\",\n      \"id\": {\n    \
+        \    \"kind\": \"youtube#video\",\n        \"videoId\": \"demoVid_a01\"\n\
+        \      },\n      \"snippet\": {\n        \"publishedAt\": \"2026-10-12T10:00:00Z\"\
+        ,\n        \"channelId\": \"UC_demo_a\",\n        \"title\": \"Как я заменил\
+        \ ассистента нейросетью за вечер\",\n        \"description\": \"Описание ролика\
+        \ «Как я заменил ассистента нейросетью за вечер»\",\n        \"channelTitle\"\
+        : \"Нейро для всех\",\n        \"liveBroadcastContent\": \"none\",\n     \
+        \   \"publishTime\": \"2026-10-12T10:00:00Z\"\n      }\n    },\n    {\n  \
+        \    \"kind\": \"youtube#searchResult\",\n      \"etag\": \"demo\",\n    \
+        \  \"id\": {\n        \"kind\": \"youtube#video\",\n        \"videoId\": \"\
+        demoVid_d02\"\n      },\n      \"snippet\": {\n        \"publishedAt\": \"\
+        2026-10-19T15:00:00Z\",\n        \"channelId\": \"UC_demo_d\",\n        \"\
+        title\": \"Нейросети для работы: 10 сервисов\",\n        \"description\":\
+        \ \"Описание ролика «Нейросети для работы: 10 сервисов»\",\n        \"channelTitle\"\
+        : \"Промпт-лаб\",\n        \"liveBroadcastContent\": \"none\",\n        \"\
+        publishTime\": \"2026-10-19T15:00:00Z\"\n      }\n    },\n    {\n      \"\
+        kind\": \"youtube#searchResult\",\n      \"etag\": \"demo\",\n      \"id\"\
+        : {\n        \"kind\": \"youtube#video\",\n        \"videoId\": \"demoVid_b02\"\
+        \n      },\n      \"snippet\": {\n        \"publishedAt\": \"2026-10-15T12:00:00Z\"\
+        ,\n        \"channelId\": \"UC_demo_b\",\n        \"title\": \"Нейросети для\
+        \ работы без кода\",\n        \"description\": \"Описание ролика «Нейросети\
+        \ для работы без кода»\",\n        \"channelTitle\": \"ИИ с нуля\",\n    \
+        \    \"liveBroadcastContent\": \"none\",\n        \"publishTime\": \"2026-10-15T12:00:00Z\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#searchResult\",\n    \
+        \  \"etag\": \"demo\",\n      \"id\": {\n        \"kind\": \"youtube#video\"\
+        ,\n        \"videoId\": \"demoVid_a02\"\n      },\n      \"snippet\": {\n\
+        \        \"publishedAt\": \"2026-10-03T10:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_a\",\n        \"title\": \"ChatGPT для отчётов: 5 приёмов\",\n\
+        \        \"description\": \"Описание ролика «ChatGPT для отчётов: 5 приёмов»\"\
+        ,\n        \"channelTitle\": \"Нейро для всех\",\n        \"liveBroadcastContent\"\
+        : \"none\",\n        \"publishTime\": \"2026-10-03T10:00:00Z\"\n      }\n\
+        \    }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=%D0%BD%D0%B5%D0%B9%D1%80%D0%BE%D1%81%D0%B5%D1%82%D0%B8+%D0%B4%D0%BB%D1%8F+%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%8B&type=video&order=viewCount&regionCode=RU&relevanceLanguage=ru&maxResults=25&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#searchListResponse\",\n  \"etag\": \"demo\"\
+        ,\n  \"regionCode\": \"RU\",\n  \"pageInfo\": {\n    \"totalResults\": 3,\n\
+        \    \"resultsPerPage\": 3\n  },\n  \"items\": [\n    {\n      \"kind\": \"\
+        youtube#searchResult\",\n      \"etag\": \"demo\",\n      \"id\": {\n    \
+        \    \"kind\": \"youtube#video\",\n        \"videoId\": \"demoVid_d01\"\n\
+        \      },\n      \"snippet\": {\n        \"publishedAt\": \"2026-10-05T15:00:00Z\"\
+        ,\n        \"channelId\": \"UC_demo_d\",\n        \"title\": \"ChatGPT tutorial\
+        \ на русском: полный курс\",\n        \"description\": \"Описание ролика «ChatGPT\
+        \ tutorial на русском: полный курс»\",\n        \"channelTitle\": \"Промпт-лаб\"\
+        ,\n        \"liveBroadcastContent\": \"none\",\n        \"publishTime\": \"\
+        2026-10-05T15:00:00Z\"\n      }\n    },\n    {\n      \"kind\": \"youtube#searchResult\"\
+        ,\n      \"etag\": \"demo\",\n      \"id\": {\n        \"kind\": \"youtube#video\"\
+        ,\n        \"videoId\": \"demoVid_a02\"\n      },\n      \"snippet\": {\n\
+        \        \"publishedAt\": \"2026-10-03T10:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_a\",\n        \"title\": \"ChatGPT для отчётов: 5 приёмов\",\n\
+        \        \"description\": \"Описание ролика «ChatGPT для отчётов: 5 приёмов»\"\
+        ,\n        \"channelTitle\": \"Нейро для всех\",\n        \"liveBroadcastContent\"\
+        : \"none\",\n        \"publishTime\": \"2026-10-03T10:00:00Z\"\n      }\n\
+        \    },\n    {\n      \"kind\": \"youtube#searchResult\",\n      \"etag\"\
+        : \"demo\",\n      \"id\": {\n        \"kind\": \"youtube#video\",\n     \
+        \   \"videoId\": \"demoVid_c02\"\n      },\n      \"snippet\": {\n       \
+        \ \"publishedAt\": \"2026-10-18T09:00:00Z\",\n        \"channelId\": \"UC_demo_c\"\
+        ,\n        \"title\": \"Нейросеть читает мои заметки\",\n        \"description\"\
+        : \"Описание ролика «Нейросеть читает мои заметки»\",\n        \"channelTitle\"\
+        : \"Мини-канал\",\n        \"liveBroadcastContent\": \"none\",\n        \"\
+        publishTime\": \"2026-10-18T09:00:00Z\"\n      }\n    }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics%2CliveStreamingDetails&id=demoVid_a01%2CdemoVid_a02%2CdemoVid_b01%2CdemoVid_b02%2CdemoVid_c01%2CdemoVid_c02%2CdemoVid_d01%2CdemoVid_d02&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#videoListResponse\",\n  \"etag\": \"demo\"\
+        ,\n  \"pageInfo\": {\n    \"totalResults\": 8,\n    \"resultsPerPage\": 8\n\
+        \  },\n  \"items\": [\n    {\n      \"kind\": \"youtube#video\",\n      \"\
+        etag\": \"demo\",\n      \"id\": \"demoVid_a01\",\n      \"snippet\": {\n\
+        \        \"publishedAt\": \"2026-10-12T10:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_a\",\n        \"title\": \"Как я заменил ассистента нейросетью\
+        \ за вечер\",\n        \"description\": \"Описание ролика «Как я заменил ассистента\
+        \ нейросетью за вечер»\",\n        \"channelTitle\": \"Нейро для всех\",\n\
+        \        \"liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\"\
+        : {\n        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n\
+        \        \"definition\": \"hd\"\n      },\n      \"statistics\": {\n     \
+        \   \"viewCount\": \"90000\",\n        \"favoriteCount\": \"0\",\n       \
+        \ \"likeCount\": \"5400\",\n        \"commentCount\": \"610\"\n      }\n \
+        \   },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"demo\"\
+        ,\n      \"id\": \"demoVid_a02\",\n      \"snippet\": {\n        \"publishedAt\"\
+        : \"2026-10-03T10:00:00Z\",\n        \"channelId\": \"UC_demo_a\",\n     \
+        \   \"title\": \"ChatGPT для отчётов: 5 приёмов\",\n        \"description\"\
+        : \"Описание ролика «ChatGPT для отчётов: 5 приёмов»\",\n        \"channelTitle\"\
+        : \"Нейро для всех\",\n        \"liveBroadcastContent\": \"none\"\n      },\n\
+        \      \"contentDetails\": {\n        \"duration\": \"PT8M30S\",\n       \
+        \ \"dimension\": \"2d\",\n        \"definition\": \"hd\"\n      },\n     \
+        \ \"statistics\": {\n        \"viewCount\": \"6200\",\n        \"favoriteCount\"\
+        : \"0\",\n        \"likeCount\": \"210\",\n        \"commentCount\": \"40\"\
+        \n      }\n    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\"\
+        : \"demo\",\n      \"id\": \"demoVid_b01\",\n      \"snippet\": {\n      \
+        \  \"publishedAt\": \"2026-10-08T12:00:00Z\",\n        \"channelId\": \"UC_demo_b\"\
+        ,\n        \"title\": \"ИИ для новичков: с чего начать\",\n        \"description\"\
+        : \"Описание ролика «ИИ для новичков: с чего начать»\",\n        \"channelTitle\"\
+        : \"ИИ с нуля\",\n        \"liveBroadcastContent\": \"none\"\n      },\n \
+        \     \"contentDetails\": {\n        \"duration\": \"PT8M30S\",\n        \"\
+        dimension\": \"2d\",\n        \"definition\": \"hd\"\n      },\n      \"statistics\"\
+        : {\n        \"viewCount\": \"2500\",\n        \"favoriteCount\": \"0\",\n\
+        \        \"likeCount\": \"60\",\n        \"commentCount\": \"4\"\n      }\n\
+        \    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"demo\"\
+        ,\n      \"id\": \"demoVid_b02\",\n      \"snippet\": {\n        \"publishedAt\"\
+        : \"2026-10-15T12:00:00Z\",\n        \"channelId\": \"UC_demo_b\",\n     \
+        \   \"title\": \"Нейросети для работы без кода\",\n        \"description\"\
+        : \"Описание ролика «Нейросети для работы без кода»\",\n        \"channelTitle\"\
+        : \"ИИ с нуля\",\n        \"liveBroadcastContent\": \"none\"\n      },\n \
+        \     \"contentDetails\": {\n        \"duration\": \"PT8M30S\",\n        \"\
+        dimension\": \"2d\",\n        \"definition\": \"hd\"\n      },\n      \"statistics\"\
+        : {\n        \"viewCount\": \"1900\",\n        \"favoriteCount\": \"0\",\n\
+        \        \"likeCount\": \"41\",\n        \"commentCount\": \"3\"\n      }\n\
+        \    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"demo\"\
+        ,\n      \"id\": \"demoVid_c01\",\n      \"snippet\": {\n        \"publishedAt\"\
+        : \"2026-10-10T09:00:00Z\",\n        \"channelId\": \"UC_demo_c\",\n     \
+        \   \"title\": \"Первый ролик про ИИ\",\n        \"description\": \"Описание\
+        \ ролика «Первый ролик про ИИ»\",\n        \"channelTitle\": \"Мини-канал\"\
+        ,\n        \"liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\"\
+        : {\n        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n\
+        \        \"definition\": \"hd\"\n      },\n      \"statistics\": {\n     \
+        \   \"viewCount\": \"400\",\n        \"favoriteCount\": \"0\",\n        \"\
+        likeCount\": \"12\",\n        \"commentCount\": \"2\"\n      }\n    },\n \
+        \   {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"demo\",\n   \
+        \   \"id\": \"demoVid_c02\",\n      \"snippet\": {\n        \"publishedAt\"\
+        : \"2026-10-18T09:00:00Z\",\n        \"channelId\": \"UC_demo_c\",\n     \
+        \   \"title\": \"Нейросеть читает мои заметки\",\n        \"description\"\
+        : \"Описание ролика «Нейросеть читает мои заметки»\",\n        \"channelTitle\"\
+        : \"Мини-канал\",\n        \"liveBroadcastContent\": \"none\"\n      },\n\
+        \      \"contentDetails\": {\n        \"duration\": \"PT8M30S\",\n       \
+        \ \"dimension\": \"2d\",\n        \"definition\": \"hd\"\n      },\n     \
+        \ \"statistics\": {\n        \"viewCount\": \"900\",\n        \"favoriteCount\"\
+        : \"0\",\n        \"likeCount\": \"20\",\n        \"commentCount\": \"3\"\n\
+        \      }\n    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\"\
+        : \"demo\",\n      \"id\": \"demoVid_d01\",\n      \"snippet\": {\n      \
+        \  \"publishedAt\": \"2026-10-05T15:00:00Z\",\n        \"channelId\": \"UC_demo_d\"\
+        ,\n        \"title\": \"ChatGPT tutorial на русском: полный курс\",\n    \
+        \    \"description\": \"Описание ролика «ChatGPT tutorial на русском: полный\
+        \ курс»\",\n        \"channelTitle\": \"Промпт-лаб\",\n        \"liveBroadcastContent\"\
+        : \"none\"\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
+        \n      },\n      \"statistics\": {\n        \"viewCount\": \"70000\",\n \
+        \       \"favoriteCount\": \"0\",\n        \"likeCount\": \"2800\",\n    \
+        \    \"commentCount\": \"330\"\n      }\n    },\n    {\n      \"kind\": \"\
+        youtube#video\",\n      \"etag\": \"demo\",\n      \"id\": \"demoVid_d02\"\
+        ,\n      \"snippet\": {\n        \"publishedAt\": \"2026-10-19T15:00:00Z\"\
+        ,\n        \"channelId\": \"UC_demo_d\",\n        \"title\": \"Нейросети для\
+        \ работы: 10 сервисов\",\n        \"description\": \"Описание ролика «Нейросети\
+        \ для работы: 10 сервисов»\",\n        \"channelTitle\": \"Промпт-лаб\",\n\
+        \        \"liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\"\
+        : {\n        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n\
+        \        \"definition\": \"hd\"\n      },\n      \"statistics\": {\n     \
+        \   \"viewCount\": \"21000\",\n        \"favoriteCount\": \"0\",\n       \
+        \ \"likeCount\": \"800\",\n        \"commentCount\": \"95\"\n      }\n   \
+        \ }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2Cstatistics%2CcontentDetails&id=UC_demo_a%2CUC_demo_b%2CUC_demo_c%2CUC_demo_d&alt=json
+  response:
+    body:
+      string: "{\n  \"kind\": \"youtube#channelListResponse\",\n  \"etag\": \"demo\"\
+        ,\n  \"pageInfo\": {\n    \"totalResults\": 4,\n    \"resultsPerPage\": 4\n\
+        \  },\n  \"items\": [\n    {\n      \"kind\": \"youtube#channel\",\n     \
+        \ \"etag\": \"demo\",\n      \"id\": \"UC_demo_a\",\n      \"snippet\": {\n\
+        \        \"title\": \"Нейро для всех\"\n      },\n      \"contentDetails\"\
+        : {\n        \"relatedPlaylists\": {\n          \"uploads\": \"UU_demo_a\"\
+        \n        }\n      },\n      \"statistics\": {\n        \"viewCount\": \"\
+        1000000\",\n        \"videoCount\": \"6\",\n        \"hiddenSubscriberCount\"\
+        : false,\n        \"subscriberCount\": \"48000\"\n      }\n    },\n    {\n\
+        \      \"kind\": \"youtube#channel\",\n      \"etag\": \"demo\",\n      \"\
+        id\": \"UC_demo_b\",\n      \"snippet\": {\n        \"title\": \"ИИ с нуля\"\
+        \n      },\n      \"contentDetails\": {\n        \"relatedPlaylists\": {\n\
+        \          \"uploads\": \"UU_demo_b\"\n        }\n      },\n      \"statistics\"\
+        : {\n        \"viewCount\": \"1000000\",\n        \"videoCount\": \"6\",\n\
+        \        \"hiddenSubscriberCount\": false,\n        \"subscriberCount\": \"\
+        12000\"\n      }\n    },\n    {\n      \"kind\": \"youtube#channel\",\n  \
+        \    \"etag\": \"demo\",\n      \"id\": \"UC_demo_c\",\n      \"snippet\"\
+        : {\n        \"title\": \"Мини-канал\"\n      },\n      \"contentDetails\"\
+        : {\n        \"relatedPlaylists\": {\n          \"uploads\": \"UU_demo_c\"\
+        \n        }\n      },\n      \"statistics\": {\n        \"viewCount\": \"\
+        1000000\",\n        \"videoCount\": \"3\",\n        \"hiddenSubscriberCount\"\
+        : true\n      }\n    },\n    {\n      \"kind\": \"youtube#channel\",\n   \
+        \   \"etag\": \"demo\",\n      \"id\": \"UC_demo_d\",\n      \"snippet\":\
+        \ {\n        \"title\": \"Промпт-лаб\"\n      },\n      \"contentDetails\"\
+        : {\n        \"relatedPlaylists\": {\n          \"uploads\": \"UU_demo_d\"\
+        \n        }\n      },\n      \"statistics\": {\n        \"viewCount\": \"\
+        1000000\",\n        \"videoCount\": \"5\",\n        \"hiddenSubscriberCount\"\
+        : false,\n        \"subscriberCount\": \"150000\"\n      }\n    }\n  ]\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      accept:
+      - application/json
+    method: GET
+    uri: https://youtube.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=UU_demo_a&maxResults=20&alt=json
+  response:
+    body:
+      string: "{\n  \"error\": {\n    \"code\": 403,\n    \"message\": \"The request\
+        \ cannot be completed because you have exceeded your <a href=\\\"/youtube/v3/getting-started#quota\\\
+        \">quota</a>.\",\n    \"errors\": [\n      {\n        \"message\": \"The request\
+        \ cannot be completed because you have exceeded your <a href=\\\"/youtube/v3/getting-started#quota\\\
+        \">quota</a>.\",\n        \"domain\": \"youtube.quota\",\n        \"reason\"\
+        : \"quotaExceeded\"\n      }\n    ]\n  }\n}"
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+    status:
+      code: 403
+      message: Forbidden
+version: 1

@@ -14,5 +14,17 @@
   "key_rejected.yaml": {
     "recorded_at": "2026-10-27",
     "origin": "собрано вручную по формату официальных ответов YouTube Data API v3 (scripts/make_demo_cassettes.py); заменить настоящими записями"
+  },
+  "server_down.yaml": {
+    "recorded_at": "2026-10-27",
+    "origin": "собрано вручную по формату официальных ответов YouTube Data API v3 (scripts/make_demo_cassettes.py); заменить настоящими записями"
+  },
+  "quota_day1.yaml": {
+    "recorded_at": "2026-10-27",
+    "origin": "собрано вручную по формату официальных ответов YouTube Data API v3 (scripts/make_demo_cassettes.py); заменить настоящими записями"
+  },
+  "quota_day2.yaml": {
+    "recorded_at": "2026-10-27",
+    "origin": "собрано вручную по формату официальных ответов YouTube Data API v3 (scripts/make_demo_cassettes.py); заменить настоящими записями"
   }
 }

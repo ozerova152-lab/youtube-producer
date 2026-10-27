@@ -7,7 +7,7 @@ import typer
 
 from produce.core import collect as collecting
 from produce.core import quota, report, runs
-from produce.core.errors import KeyMissingError, ProduceError, RunError
+from produce.core.errors import KeyMissingError, ProduceError, QuotaExceededError, RunError
 from produce.core.settings import get_segment, list_segments, load_api_key, load_settings
 from produce.core.youtube import YouTubeApi
 
@@ -165,8 +165,13 @@ def _collect(channel: Path, segment_id: str | None, confirm: bool, env_file: Pat
 
     runs.set_awaiting(run, False)
     api = YouTubeApi(key, on_request=lambda cost: runs.record_usage(run, cost, 1, ledger))
-    summary = collecting.collect(run, plan, api, cache,
-                                 progress=lambda text: typer.echo(f"Собираю: {text}…"))
+    try:
+        summary = collecting.collect(run, plan, api, cache,
+                                     progress=lambda text: typer.echo(f"Собираю: {text}…"))
+    except QuotaExceededError:
+        # До завтра квота считается потраченной: повторный запуск сегодня не стучится зря.
+        quota.mark_exhausted(ledger)
+        raise
     runs.advance_stage(run, "собрано")
     typer.echo(
         f"Собрано: {summary.videos} видео, {summary.channels} "

@@ -96,8 +96,10 @@ def _en_world():
 class FakeHttp(httplib2.Http):
     """Отвечает как YouTube; все обращения складывает в `self.log`."""
 
-    def __init__(self, world, reject_key=False):
+    def __init__(self, world, reject_key=False, fail_from=None, fail=None):
+        """`fail_from` — номер запроса, с которого YouTube отвечает `fail=(код, ответ)`."""
         super().__init__()
+        self.fail_from, self.fail = fail_from, fail
         self.channels, self.videos, self.searches, self.extra = world
         self.reject_key = reject_key
         self.log = []
@@ -107,6 +109,8 @@ class FakeHttp(httplib2.Http):
         q = dict(parse_qsl(parsed.query))
         if self.reject_key:
             status, payload = 400, _key_error()
+        elif self.fail_from is not None and len(self.log) >= self.fail_from:
+            status, payload = self.fail
         else:
             status, payload = 200, self._route(parsed.path.rsplit("/", 1)[-1], q)
         content = json.dumps(payload, ensure_ascii=False, indent=2).encode()
@@ -116,7 +120,7 @@ class FakeHttp(httplib2.Http):
                         "method": method, "uri": f"{parsed.scheme}://{parsed.netloc}{parsed.path}?{clean}"},
             "response": {"body": {"string": content.decode()},
                          "headers": {"content-type": ["application/json; charset=UTF-8"]},
-                         "status": {"code": status, "message": "OK" if status == 200 else "Bad Request"}},
+                         "status": {"code": status, "message": _REASON.get(status, "Bad Request")}},
         })
         resp = httplib2.Response({"status": str(status), "content-type": "application/json; charset=UTF-8"})
         return resp, content
@@ -197,6 +201,24 @@ def _key_error():
                                    "metadata": {"service": "youtube.googleapis.com"}}]}}
 
 
+_REASON = {200: "OK", 400: "Bad Request", 403: "Forbidden", 503: "Service Unavailable"}
+
+
+def _quota_error():
+    msg = ("The request cannot be completed because you have exceeded your "
+           "<a href=\"/youtube/v3/getting-started#quota\">quota</a>.")
+    return {"error": {"code": 403, "message": msg,
+                      "errors": [{"message": msg, "domain": "youtube.quota",
+                                  "reason": "quotaExceeded"}]}}
+
+
+def _backend_error():
+    msg = "The service is currently unavailable."
+    return {"error": {"code": 503, "message": msg,
+                      "errors": [{"message": msg, "domain": "global", "reason": "backendError"}],
+                      "status": "UNAVAILABLE"}}
+
+
 def _write(name, interactions):
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / name).write_text(
@@ -241,12 +263,30 @@ def main():
     except Exception:  # noqa: BLE001 - отказ ключа здесь ожидаем
         pass
     _write("key_rejected.yaml", bad.log)
+    # Отказы: YouTube лежит (первый запрос и 3 повтора), квота кончилась после 5-го запроса.
+    # Пауза между повторами в скрипте не нужна.
+    from produce.core import youtube
+    youtube.pause = lambda seconds: None
+    down = FakeHttp(_ru_world(), fail_from=0, fail=(503, _backend_error()))
+    try:
+        _drive(down, "RU", "ru", ru_words, [])
+    except Exception:  # noqa: BLE001 - сбой здесь ожидаем
+        pass
+    _write("server_down.yaml", down.log)
+    stop_after = 5  # 3 поиска, ролики, каналы; дальше списки загрузок
+    day1 = FakeHttp(_ru_world(), fail_from=stop_after, fail=(403, _quota_error()))
+    try:
+        _drive(day1, "RU", "ru", ru_words, [])
+    except Exception:  # noqa: BLE001 - квота кончилась, как задумано
+        pass
+    _write("quota_day1.yaml", day1.log)
+    _write("quota_day2.yaml", ru.log[stop_after:])
     manifest = {
         name: {"recorded_at": RECORDED,
                "origin": "собрано вручную по формату официальных ответов YouTube Data API v3 "
                          "(scripts/make_demo_cassettes.py); заменить настоящими записями"}
         for name in ("collect_ru.yaml", "collect_ru_competitors.yaml", "collect_en.yaml",
-                     "key_rejected.yaml")
+                     "key_rejected.yaml", "server_down.yaml", "quota_day1.yaml", "quota_day2.yaml")
     }
     (OUT / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
                                        encoding="utf-8")

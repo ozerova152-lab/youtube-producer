@@ -24,6 +24,17 @@ def build_report(run: runs.Run) -> str:
         f"- Неполные данные: {s.incomplete} видео",
         "",
     ]
+    skipped = data.get("incomplete_data", [])
+    if skipped:
+        lines += [
+            "## Неполные данные",
+            "",
+            (f"Неполные данные: пропущено {len(skipped)} видео (недоступны, закрыты или без "
+             "статистики). В выводы они не входят."),
+            "",
+            "Пропущенные id: " + ", ".join(f"`{i}`" for i in skipped),
+            "",
+        ]
     return "\n".join(lines)
 
 
