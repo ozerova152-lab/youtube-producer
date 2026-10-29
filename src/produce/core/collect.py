@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from produce.core import runs
+from produce.core import quota, runs
 from produce.core.errors import ProduceError, QuotaExceededError, RunError
 from produce.core.files import read_json, write_json_atomic
 from produce.core.settings import my_channel_id
@@ -177,11 +177,7 @@ def collect(run: runs.Run, plan: Plan, api: YouTubeApi, cache: Cache,
     except QuotaExceededError:
         _mark_incomplete(run, cache)
         done = int(run.data["quota_spent"]) - spent_before
-        percent = min(99, round(100 * done / est.units)) if est.units else 0
-        raise QuotaExceededError(
-            f"Квота на сегодня закончилась. Собрано {percent}%, прогресс сохранён. "
-            "Продолжите завтра"
-        ) from None
+        raise QuotaExceededError(quota.quota_message(done, est.units)) from None
     except ProduceError:
         # Сбой сети или отказ ключа: то, что уже пропущено, в run.json не теряется.
         _mark_incomplete(run, cache)

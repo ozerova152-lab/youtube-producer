@@ -81,8 +81,3 @@ def fetch(run: runs.Run, api: YouTubeApi, ids: list[str], limit: int,
         run.data["no_comments"] = False
         write_json_atomic(run.path / "run.json", run.data)
     return have
-
-
-def quota_message(done: int, total: int) -> str:
-    percent = min(99, round(100 * done / total)) if total else 0
-    return f"Квота на сегодня закончилась. Собрано {percent}%, прогресс сохранён. Продолжите завтра"

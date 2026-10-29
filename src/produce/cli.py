@@ -369,7 +369,7 @@ def _comments(channel: Path, segment_id: str | None, confirm: bool, env_file: Pa
     except QuotaExceededError:
         quota.mark_exhausted(ledger)
         raise QuotaExceededError(
-            commenting.quota_message(int(run.data["quota_spent"]) - spent_before, units)
+            quota.quota_message(int(run.data["quota_spent"]) - spent_before, units)
         ) from None
     total = sum(len(stored.get(i, [])) for i in ids)
     typer.echo(f"Комментарии собраны: {len(ids)} {plural(len(ids), 'залёт', 'залёта', 'залётов')}, "

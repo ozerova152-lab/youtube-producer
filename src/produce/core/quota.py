@@ -54,3 +54,9 @@ def mark_exhausted(ledger: Path, day: date | None = None) -> None:
     left = remaining_today(ledger, day)
     if left:
         add_spent(ledger, left, day)
+
+
+def quota_message(done: int, total: int) -> str:
+    """Сообщение об остановке по квоте: доля сделанного; 100% не показываем, раз сбор прервался."""
+    percent = min(99, round(100 * done / total)) if total else 0
+    return f"Квота на сегодня закончилась. Собрано {percent}%, прогресс сохранён. Продолжите завтра"
