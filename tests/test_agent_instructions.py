@@ -72,6 +72,15 @@ def test_claude_code_denies_env_read():
     assert any(".env.*" in d for d in deny)
 
 
+def test_claude_code_denies_env_read_through_shell_and_settings_edit():
+    """Запрет `Read` обходится командой `cat .env`, а `settings.yaml` агент менять не должен."""
+    deny = json.loads((ROOT / ".claude" / "settings.json").read_text())["permissions"]["deny"]
+    for command in ("cat", "head", "tail", "less", "grep", "sed", "awk"):
+        assert any(d.startswith(f"Bash({command} ") and ".env" in d for d in deny), command
+    assert any(d.startswith("Edit(") and d.endswith("settings.yaml)") for d in deny)
+    assert any(d.startswith("Write(") and d.endswith("settings.yaml)") for d in deny)
+
+
 def test_playbooks_templates_markdown_and_claude_code_marks():
     for d in ("playbooks", "templates"):
         files = [p for p in (ROOT / d).rglob("*") if p.is_file()]
