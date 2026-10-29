@@ -174,6 +174,24 @@ def test_markup_has_no_hardcoded_colors_or_inline_styles():
     assert "style=" not in html
 
 
+SITE_TEXT_SUFFIXES = {".html", ".css", ".js", ".md", ".txt", ".svg", ".json"}
+# Ключ Google API: «AIza» и 35 символов; присвоение YOUTUBE_API_KEY с непустым значением.
+KEY_PATTERNS = (r"AIza[0-9A-Za-z_\-]{35}", r"YOUTUBE_API_KEY\s*[=:]\s*[\"']?[^\s\"'<]+")
+
+
+def test_site_files_have_no_api_keys():
+    """Слой 1 и поток 6: на странице-витрине нет ключей (страница открыта всему интернету)."""
+    files = [p for p in SITE.rglob("*") if p.is_file() and p.suffix in SITE_TEXT_SUFFIXES]
+    assert (SITE / "index.html") in files
+    found = [
+        f"{path.relative_to(ROOT)}: {pattern}"
+        for path in files
+        for pattern in KEY_PATTERNS
+        if re.search(pattern, path.read_text(encoding="utf-8", errors="ignore"))
+    ]
+    assert not found, found
+
+
 def test_example_block_comes_from_demo_data(browser):
     """T15: пример результата взят из examples/demo, а не условный."""
     page = open_page(browser)
