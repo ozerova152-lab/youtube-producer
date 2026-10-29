@@ -10,7 +10,7 @@ YouTube Data API v3; обмен записывается в формат pytest-
 """
 
 import json
-from datetime import date
+from datetime import UTC, date
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlparse
 
@@ -230,11 +230,11 @@ def _write(name, interactions):
 
 def _drive(http, region, language, keywords, competitors, my_channel=MY_CHANNEL):
     """Те же вызовы, что делает сбор, чтобы запросы в кассете совпали с ним."""
-    from datetime import datetime, timedelta, timezone
+    import tempfile
+    from datetime import datetime, timedelta
 
     from produce.core.collect import Cache, Plan, collect
     from produce.core.runs import Run
-    import tempfile
 
     with tempfile.TemporaryDirectory() as tmp:
         cache_dir = Path(tmp) / "cache"
@@ -242,7 +242,7 @@ def _drive(http, region, language, keywords, competitors, my_channel=MY_CHANNEL)
         run = Run(Path(tmp), {"quota_spent": 0, "requests_count": 0, "incomplete_data": []})
         api = YouTubeApi("fake-key-for-recording", http=http)
         plan = Plan("x", region, language, keywords, competitors, my_channel)
-        moment = datetime(2026, 10, 27, tzinfo=timezone.utc)
+        moment = datetime(2026, 10, 27, tzinfo=UTC)
         assert moment - timedelta(days=30) < moment
         collect(run, plan, api, Cache(cache_dir), moment=moment)
 
