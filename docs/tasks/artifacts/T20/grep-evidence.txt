@@ -1,0 +1,9 @@
+README.md:18:Кратко: в [Google Cloud Console](https://console.cloud.google.com/) создайте проект, включите **YouTube Data API v3**, создайте ключ API и ограничьте его (только YouTube Data API v3; «Application restrictions» оставьте None). Кнопку «Start free» не нажимайте.
+README.md:27:cp .env.example .env
+README.md:55:Посмотреть всё на тестовых данных, ничего не тратя: `cp -r examples/demo data/demo`, затем «запусти месяц» на канале `data/demo`. Сбросить: `make reset`.
+docs/api-key-guide.md:10:- **Кнопку «Start free» / «Активировать бесплатно» не нажимайте.** Она предлагает пробный платный период Google Cloud и просит карту. Для нашего ключа она не нужна: достаточно войти в консоль и пользоваться бесплатной квотой API.
+docs/api-key-guide.md:12:- **«Application restrictions» оставьте в положении «None».** Если поставить «IP addresses», ключ перестанет работать, потому что у домашнего интернета IP-адрес меняется. «Websites» и приложения Android/iOS тоже не подходят: скрипт запускается у вас на компьютере.
+docs/api-key-guide.md:18:2. Если появится окно с условиями использования, согласитесь. Предложение попробовать платный период («Start free» / «Активировать бесплатно») пропустите.
+docs/api-key-guide.md:41:2. Блок «Application restrictions» («Ограничения для приложений»): оставьте **None** («Нет»).
+docs/api-key-guide.md:62:! cp /путь/к/youtube-producer/.env.example /путь/к/youtube-producer/.env
+docs/api-key-guide.md:96:- Сообщение про ограничения: проверьте шаг 4. «Application restrictions» должны быть None, в «API restrictions» должна быть отмечена YouTube Data API v3.

@@ -3,7 +3,7 @@ id: T20
 type: docs
 origin: adhoc
 phase: ""
-status: todo
+status: done
 blocked_by: []
 traces_to: "01-functional-requirements.md#публикация-на-github (README: как получить ключ YouTube)"
 spec_sync: ok
@@ -14,7 +14,7 @@ acceptance:
   - "Дано инструкция про `.env`; когда смотрю команды; тогда создание файла показано командой `cp` с полными путями, а команды с `!` объяснены как «запустить в этом же окне Claude Code»; сказано, что ключ в чат не вставляют, и после `cp` стоит проверка, что файл создан"
   - "Дано инструкция; когда ищу про пороги; тогда есть подсказка: если залётов слишком много, поднимите `views_multiplier` в `settings.yaml` (например, с 3 до 7), файл правит человек, а не агент; после правки команды `virals` и `report` пересчитываются без траты квоты"
   - "Дано обновлённая документация; когда запускаю `make check`; тогда он зелёный, а существующие тексты README про ключ (разделы 1 и 2) не противоречат новой инструкции"
-verify_attempts: 0
+verify_attempts: 1
 review: human
 ---
 
@@ -36,3 +36,14 @@ review: human
 ## Журнал
 
 - 2026-10-29T00:00Z [claude] Задача заведена по просьбе человека. Тип `docs` указан человеком (в `task-format.md` перечислены setup / feature / fix). Не запускалась.
+- 2026-10-29T00:00Z [claude] Старт /run-task: статус in_progress.
+- 2026-10-29T00:00Z [implementer] Написан `docs/api-key-guide.md` (шаги 1-5: проект, включить API, ключ, ограничения, `.env` через `cp` с полными путями и проверкой `ls -l`, объяснение `!`, ключ не в чат; подводные камни; подсказка про `views_multiplier` 3 -> 7 с пересчётом `virals`/`report` без квоты). README разделы 1 и 2 сокращены со ссылкой на документ, без противоречий. Добавлен `tests/test_api_key_guide.py` (ключевые фразы, ссылка, нет ключей). `make check`: зелёный. Сверка названий: английские названия (Credentials, Create credentials, API key, API restrictions, Restrict key, Application restrictions, Library, Enable, Save) сверены с docs.cloud.google.com и developers.google.com; русские названия и пункт «None» и «Start free» по документации сверить НЕ удалось, это отмечено в тексте инструкции. Вживую консоль не открывалась.
+- 2026-10-29T00:00Z [task-verifier] Круг 1. Тесты: `tests/test_api_key_guide_verify.py` (+ существующий `tests/test_api_key_guide.py`), 19 passed; `make check` зелёный (1064 passed, 1 xfailed). Вывод: `docs/tasks/artifacts/T20/pytest.txt`, `make-check.txt`, `grep-evidence.txt`.
+  - Критерий 1 (шаги проект, Enable API, ключ, ограничения, .env, по порядку, ссылка из README, ссылки не битые): доказан (test_steps_present_in_order, test_readme_links_to_existing_guide_and_all_relative_links_resolve).
+  - Критерий 2 (карта не нужна; Start free не нажимать и нигде не как действие; Restrict key + только YouTube Data API v3; Application restrictions = None с причиной про IP): доказан; враждебно проверено, что в README и guide ни одна строка со Start free не звучит как призыв нажать (grep-evidence.txt).
+  - Критерий 3 (cp с полными путями, ls -l после cp без печати содержимого, объяснение `!`, ключ не в чат и не в команду с `!`, нет AIza..., YOUTUBE_API_KEY только `ваш_ключ`): доказан.
+  - Критерий 4 (views_multiplier с 3 до 7, правит человек, virals/report без квоты): доказан; "по умолчанию 3" сверено с `virals.DEFAULTS`, команды есть в cli.py, в разделе нет `--confirm` и `collect`.
+  - Критерий 5 (make check зелёный; README разделы 1 и 2 не противоречат): доказан.
+  - Замечания, не провал: (а) в README разд. 2 остаётся `cp .env.example .env` с относительными путями (критерий требует полные пути в инструкции, там они есть; README даёт краткую форму); (б) русские названия кнопок Google Cloud и пункт None/Start free не сверены с документацией, исполнитель честно отметил это в тексте; настоящую консоль не открывали (вне автотестов).
+  - Вердикт: УСПЕХ, готово к приёмке человеком.
+- 2026-10-29T00:00Z [claude] Принято человеком. Статус done.
