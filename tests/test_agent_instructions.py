@@ -1,5 +1,6 @@
 """T01: проверки файлов инструкций агента (критерии приёмки по спеке, не по коду)."""
 
+import fnmatch
 import json
 import re
 from pathlib import Path
@@ -79,6 +80,29 @@ def test_claude_code_denies_env_read_through_shell_and_settings_edit():
         assert any(d.startswith(f"Bash({command} ") and ".env" in d for d in deny), command
     assert any(d.startswith("Edit(") and d.endswith("settings.yaml)") for d in deny)
     assert any(d.startswith("Write(") and d.endswith("settings.yaml)") for d in deny)
+
+
+def _shell_blocked(command, deny):
+    """Модель правил Claude Code: шаблон `Bash(...)` сравнивается с командой целиком, `*` — любой текст."""
+    return any(
+        fnmatch.fnmatchcase(command, d[len("Bash("):-1]) for d in deny if d.startswith("Bash(")
+    )
+
+
+def test_env_shell_deny_blocks_reading_env_but_not_os_environ():
+    deny = json.loads((ROOT / ".claude" / "settings.json").read_text())["permissions"]["deny"]
+    for command in (
+        "cat .env", "cat ./.env", "cat data/mine/.env", "head -n 2 .env", "grep KEY .env",
+        "grep KEY .env | head", "tail -n 1 .env.local", "sed -n 1p .env.example",
+        "awk '{print}' .env", "less .env",
+    ):
+        assert _shell_blocked(command, deny), command
+    for command in (
+        "grep -rn os.environ src", "grep -nE 'getenv|os.environ' scripts/make_demo_cassettes.py",
+        "grep -n environ src/produce/cli.py", "cat README.md",
+        "sed -n 1,5p src/produce/core/settings.py",
+    ):
+        assert not _shell_blocked(command, deny), command
 
 
 def test_playbooks_templates_markdown_and_claude_code_marks():
