@@ -1,0 +1,13 @@
+# Раз в неделю Dependabot предлагает обновления зависимостей Python и действий GitHub Actions
+# (действия в workflow закреплены по хешу, обновляются только его предложениями).
+# Начнёт работать, когда файл окажется на GitHub; сам по себе ничего не включает.
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
