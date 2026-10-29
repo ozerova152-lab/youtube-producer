@@ -1,7 +1,7 @@
 VENV := .venv
 BIN := $(VENV)/bin
 
-.PHONY: setup check reset secrets cassettes
+.PHONY: setup check reset secrets cassettes audit
 
 setup:
 	python3 -m venv $(VENV)
@@ -21,6 +21,10 @@ secrets:
 
 cassettes:
 	$(BIN)/python -m produce.core.cassettes examples/demo/cassettes
+
+# Известные уязвимости в установленных пакетах. Ходит в сеть, поэтому отдельно от `make check`.
+audit:
+	$(BIN)/pip-audit --skip-editable --progress-spinner off
 
 reset:
 	rm -rf data/demo

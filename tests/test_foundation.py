@@ -167,3 +167,18 @@ def test_make_setup_upgrades_pip_before_installing_dependencies():
     upgrade = next(i for i, s in enumerate(steps) if "pip install -U pip" in s)
     install = next(i for i, s in enumerate(steps) if "pip install -e" in s)
     assert upgrade < install
+
+
+def test_make_audit_runs_pip_audit_and_is_not_part_of_check():
+    """Аудит ходит в сеть и со временем краснеет сам: `make check` остаётся без него."""
+    audit = subprocess.run(
+        ["make", "-n", "audit"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout
+    assert "pip-audit" in audit
+    check = subprocess.run(
+        ["make", "-n", "check"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout
+    assert "pip-audit" not in check
+    pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    dev = pyproject.split("[project.optional-dependencies]")[1].split("]")[0]
+    assert "pip-audit" in dev
