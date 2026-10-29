@@ -182,3 +182,12 @@ def test_make_audit_runs_pip_audit_and_is_not_part_of_check():
     pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     dev = pyproject.split("[project.optional-dependencies]")[1].split("]")[0]
     assert "pip-audit" in dev
+
+
+def test_license_file_and_pyproject_field_say_mit():
+    license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")
+    assert license_text.startswith("MIT License")
+    assert "Copyright (c) 2026 Ольга Щербань (YTMOlga)" in license_text
+    pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert 'license = "MIT"' in pyproject
+    assert 'license-files = ["LICENSE"]' in pyproject

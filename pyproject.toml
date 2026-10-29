@@ -3,6 +3,8 @@ name = "produce"
 version = "0.1.0"
 description = "AI-продюсер YouTube-канала: залётные видео, стратегия, план и брифы"
 requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
 dependencies = [
   "typer>=0.12",
   "pyyaml>=6.0",
@@ -22,7 +24,7 @@ dev = [
 produce = "produce.cli:app"
 
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
