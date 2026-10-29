@@ -157,3 +157,13 @@ def test_make_reset_removes_demo_data_keeps_examples(tmp_path):
     assert not (tmp_path / "data" / "demo").exists()
     assert (tmp_path / "data" / "mine").exists()
     assert (tmp_path / "examples" / "demo").exists()
+
+
+def test_make_setup_upgrades_pip_before_installing_dependencies():
+    """Свежий pip нужен каждому, кто клонирует проект: пакетам его даёт старый Python."""
+    steps = subprocess.run(
+        ["make", "-n", "setup"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout.splitlines()
+    upgrade = next(i for i, s in enumerate(steps) if "pip install -U pip" in s)
+    install = next(i for i, s in enumerate(steps) if "pip install -e" in s)
+    assert upgrade < install

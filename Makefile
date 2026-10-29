@@ -5,6 +5,7 @@ BIN := $(VENV)/bin
 
 setup:
 	python3 -m venv $(VENV)
+	$(BIN)/pip install -U pip
 	$(BIN)/pip install -e ".[dev]"
 	$(BIN)/playwright install chromium
 
