@@ -22,6 +22,7 @@ from produce.core.settings import (
     load_settings,
     my_channel_id,
 )
+from produce.core.text import plural
 from produce.core.youtube import YouTubeApi
 
 app = typer.Typer(add_completion=False, help="AI-продюсер YouTube-канала")
@@ -114,14 +115,6 @@ def _num(n: int) -> str:
     return f"{n:,}".replace(",", " ")
 
 
-def _plural(n: int, one: str, few: str, many: str) -> str:
-    if n % 10 == 1 and n % 100 != 11:
-        return one
-    if 2 <= n % 10 <= 4 and not 12 <= n % 100 <= 14:
-        return few
-    return many
-
-
 @app.command()
 def collect(
     ctx: typer.Context,
@@ -175,8 +168,8 @@ def _collect(channel: Path, segment_id: str | None, confirm: bool, env_file: Pat
         runs.set_awaiting(run, True)
         typer.echo(
             f"Расход: ~{_num(est.total)} из {_num(quota.DAILY_LIMIT)} единиц "
-            f"({est.searches} {_plural(est.searches, 'поиск', 'поиска', 'поисков')}, "
-            f"{est.requests} {_plural(est.requests, 'запрос', 'запроса', 'запросов')}; "
+            f"({est.searches} {plural(est.searches, 'поиск', 'поиска', 'поисков')}, "
+            f"{est.requests} {plural(est.requests, 'запрос', 'запроса', 'запросов')}; "
             f"в сумму входит до {est.comment_units} на комментарии залётов). "
             "На сегодня хватает. Запускаем сбор?"
         )
@@ -195,7 +188,7 @@ def _collect(channel: Path, segment_id: str | None, confirm: bool, env_file: Pat
     runs.advance_stage(run, "собрано")
     typer.echo(
         f"Собрано: {summary.videos} видео, {summary.channels} "
-        f"{_plural(summary.channels, 'канал', 'канала', 'каналов')}. "
+        f"{plural(summary.channels, 'канал', 'канала', 'каналов')}. "
         f"Расход: {_num(summary.quota_spent)} ед. Обращений: {summary.requests}. "
         f"Неполные данные: {summary.incomplete} видео"
     )
@@ -234,7 +227,7 @@ def _import(channel: Path, file: Path, segment_id: str | None) -> None:
     result = importing.import_file(run, file, minimum, mine)
     typer.echo(
         f"Загружено: {len(result.videos)} видео, {len(result.channels)} "
-        f"{_plural(len(result.channels), 'канал', 'канала', 'каналов')}. Обращений к YouTube: 0"
+        f"{plural(len(result.channels), 'канал', 'канала', 'каналов')}. Обращений к YouTube: 0"
     )
     if result.skipped_channels:
         typer.echo(f"Каналов с менее чем {minimum} роликами: {len(result.skipped_channels)}, "
@@ -362,7 +355,7 @@ def _comments(channel: Path, segment_id: str | None, confirm: bool, env_file: Pa
         )
     if not confirm:
         runs.set_awaiting(run, True)
-        typer.echo(f"Комментарии {len(todo)} {_plural(len(todo), 'залёта', 'залётов', 'залётов')}: "
+        typer.echo(f"Комментарии {len(todo)} {plural(len(todo), 'залёта', 'залётов', 'залётов')}: "
                    f"~{_num(units)} ед. Докачать?")
         typer.echo("Жду вашего «да».")
         return
@@ -379,7 +372,7 @@ def _comments(channel: Path, segment_id: str | None, confirm: bool, env_file: Pa
             commenting.quota_message(int(run.data["quota_spent"]) - spent_before, units)
         ) from None
     total = sum(len(stored.get(i, [])) for i in ids)
-    typer.echo(f"Комментарии собраны: {len(ids)} {_plural(len(ids), 'залёт', 'залёта', 'залётов')}, "
+    typer.echo(f"Комментарии собраны: {len(ids)} {plural(len(ids), 'залёт', 'залёта', 'залётов')}, "
                f"{total} комментариев. Расход: {_num(int(run.data['quota_spent']) - spent_before)} ед.")
 
 
@@ -510,7 +503,7 @@ def check_files(
         if not problems and not skip_analysis:
             count = len(commenting.viral_ids(run))
             runs.advance_stage(run, "разбор готов")
-            typer.echo(f"Проверено: разбор по {count} {_plural(count, 'залёту', 'залётам', 'залётам')}, "
+            typer.echo(f"Проверено: разбор по {count} {plural(count, 'залёту', 'залётам', 'залётам')}, "
                        "ошибок нет")
         if niche_written and not problems:
             plan = collecting.make_plan(settings, seg)
@@ -520,7 +513,7 @@ def check_files(
             if not problems:
                 runs.advance_stage(run, "ниша готова")
                 found = len(niching.candidate_channels(niching.repeating_channels(virals), known))
-                typer.echo(f"Проверено: ниша по {len(virals)} {_plural(len(virals), 'залёту', 'залётам', 'залётам')}, "
+                typer.echo(f"Проверено: ниша по {len(virals)} {plural(len(virals), 'залёту', 'залётам', 'залётам')}, "
                            f"кандидатов в конкуренты: {found}, ошибок нет")
     except ProduceError as err:
         raise _fail(err) from err

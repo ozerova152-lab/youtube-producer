@@ -17,6 +17,7 @@ from produce.core import runs, strategy
 from produce.core.errors import RunError
 from produce.core.files import write_text_atomic
 from produce.core.niche import _fields, _read, _split
+from produce.core.text import plural
 
 REJECTED = "отклонён"
 LATER = "позже"
@@ -161,8 +162,7 @@ def summary(channel: Path, segment: str, current: runs.Run | None) -> str:
     if not info.runs_count:
         return MSG_NO_RUNS
     n = len(info.rejected)
-    word = "тема" if n % 10 == 1 and n % 100 != 11 else (
-        "темы" if 2 <= n % 10 <= 4 and not 12 <= n % 100 <= 14 else "тем")
+    word = plural(n, "тема", "темы", "тем")
     return (f"Отклонено в прошлых запусках: {n} {word}. Брифов «{LATER}»: {len(info.later)}. "
             "Вернуть?")
 
