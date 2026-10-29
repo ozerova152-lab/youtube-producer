@@ -22,6 +22,7 @@ COST_SEARCH = 100
 COST_LIST = 1
 SEARCH_PAGE_SIZE = 25
 BATCH = 50  # предел id в одном запросе videos/channels
+MAX_COMMENTS_PER_REQUEST = 100  # предел YouTube на maxResults у commentThreads
 
 _KEY_REASONS = {
     "keyInvalid", "API_KEY_INVALID", "ipRefererBlocked", "accessNotConfigured",
@@ -193,7 +194,7 @@ class YouTubeApi:
         """
         req = self._svc.commentThreads().list(
             part="snippet", videoId=video_id, order="relevance",
-            maxResults=max(1, min(limit, 100)), textFormat="plainText",
+            maxResults=max(1, min(limit, MAX_COMMENTS_PER_REQUEST)), textFormat="plainText",
         )
         found = []
         for item in self._run(req, COST_LIST).get("items", []):

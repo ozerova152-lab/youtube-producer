@@ -22,6 +22,7 @@ DEFAULTS = {
     "min_channel_videos": 5,
 }
 NEAREST = 5
+SECONDS_PER_DAY = 86400
 LOW_DATA = "мало данных"
 
 
@@ -87,7 +88,7 @@ def _record(video: dict, norm: float, sample: int, th: Thresholds, moment: datet
     likes_r = _ratio(video.get("likes"), views)
     comments_r = _ratio(video.get("comments"), views)
     published = _published(video)
-    days = max((moment - published).total_seconds() / 86400, 1.0) if published else 1.0
+    days = max((moment - published).total_seconds() / SECONDS_PER_DAY, 1.0) if published else 1.0
     times = views / norm if norm > 0 else None
     # Доли порога в долях единицы: ближайшие к порогу — те, у кого слабейшее условие сильнее.
     parts = [

@@ -49,6 +49,7 @@ POST_SECTIONS = {
 POST_FORMATS = ("опрос", "картинка")
 SHORT_MIN_SECONDS, SHORT_MAX_SECONDS = 30, 60
 MIN_STRUCTURE_LINES = 3
+MIN_SCRIPT_SHARE = 0.5  # какая доля букв поля должна быть на алфавите языка брифа
 EDIT_MARK = "монтаж"
 TITLE_LIMIT = 100  # длина названия на YouTube
 # Поля, текст которых должен быть на языке брифа (названия полей остаются русскими).
@@ -90,7 +91,7 @@ def _language_problems(where: str, language: str, fields: dict[str, str],
     problems = []
     for name in names:
         value = fields.get(name, "")
-        if value and not _placeholders_in(value) and _script_ratio(value.lower(), pattern) < 0.5:
+        if value and not _placeholders_in(value) and _script_ratio(value.lower(), pattern) < MIN_SCRIPT_SHARE:
             problems.append(f"{where}: поле «{name}» не на языке брифа «{language}» "
                             f"(ожидается текст {script})")
     return problems

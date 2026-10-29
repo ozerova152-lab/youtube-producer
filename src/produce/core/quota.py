@@ -11,6 +11,7 @@ from zoneinfo import ZoneInfo
 from produce.core.files import read_json, write_json_atomic
 
 DAILY_LIMIT = 10_000
+MAX_SHOWN_PERCENT = 99  # сбор остановлен, значит сделано не всё: «100%» человека бы запутало
 # YouTube обнуляет квоту в полночь по тихоокеанскому времени.
 _QUOTA_TZ = ZoneInfo("America/Los_Angeles")
 
@@ -58,5 +59,5 @@ def mark_exhausted(ledger: Path, day: date | None = None) -> None:
 
 def quota_message(done: int, total: int) -> str:
     """Сообщение об остановке по квоте: доля сделанного; 100% не показываем, раз сбор прервался."""
-    percent = min(99, round(100 * done / total)) if total else 0
+    percent = min(MAX_SHOWN_PERCENT, round(100 * done / total)) if total else 0
     return f"Квота на сегодня закончилась. Собрано {percent}%, прогресс сохранён. Продолжите завтра"
