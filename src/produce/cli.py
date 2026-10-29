@@ -25,7 +25,12 @@ from produce.core.settings import (
 from produce.core.text import plural
 from produce.core.youtube import YouTubeApi
 
-app = typer.Typer(add_completion=False, help="AI-продюсер YouTube-канала")
+# Локальные переменные в трейсбэке не показываем: в них бывает ключ YouTube.
+app = typer.Typer(
+    add_completion=False,
+    help="AI-продюсер YouTube-канала",
+    pretty_exceptions_show_locals=False,
+)
 
 
 def _fail(err: ProduceError) -> typer.Exit:
