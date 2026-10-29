@@ -355,7 +355,7 @@ def _comments(channel: Path, segment_id: str | None, confirm: bool, env_file: Pa
         )
     if not confirm:
         runs.set_awaiting(run, True)
-        typer.echo(f"Комментарии {len(todo)} {plural(len(todo), 'залёта', 'залётов', 'залётов')}: "
+        typer.echo(f"Комментарии {len(todo)} {plural(len(todo), 'залёт', 'залёта', 'залётов')}: "
                    f"~{_num(units)} ед. Докачать?")
         typer.echo("Жду вашего «да».")
         return

@@ -18,6 +18,7 @@ from produce import cli
 from produce.cli import app
 from produce.core import youtube
 from produce.core.files import read_json
+from produce.core.text import plural
 from produce.core.youtube import YouTubeApi
 
 CANARY = "CANARY-KEY-do-not-leak-9f3a17"
@@ -103,12 +104,21 @@ def test_estimate_without_confirm_makes_no_requests(channel, env_file, fake_api)
     http = fake_api([ok()])
     res = invoke(channel, "comments", "--env-file", str(env_file))
     assert res.exit_code == 0, res.output
-    assert "Комментарии 2 залётов: ~2 ед. Докачать?" in res.output
+    assert "Комментарии 2 залёта: ~2 ед. Докачать?" in res.output
     assert "Жду вашего «да»." in res.output
     assert http.uris == [] and not (run / "cache" / "comments.json").exists()
     data = read_json(run / "run.json")
     assert data["requests_count"] == 0 and data["quota_spent"] == 0
     assert data["awaiting_confirmation"] is True
+
+
+@pytest.mark.parametrize("n, word", [
+    (1, "залёт"), (2, "залёта"), (3, "залёта"), (4, "залёта"), (5, "залётов"),
+    (8, "залётов"), (11, "залётов"), (12, "залётов"), (21, "залёт"),
+])
+def test_estimate_wording_forms(n, word):
+    # те же формы, что в строке расхода `produce comments`
+    assert plural(n, "залёт", "залёта", "залётов") == word
 
 
 def test_confirm_downloads_only_virals_then_repeat_costs_nothing(channel, env_file, fake_api):
