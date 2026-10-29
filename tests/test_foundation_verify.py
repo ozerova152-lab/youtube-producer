@@ -124,7 +124,8 @@ def test_v2_has_copy_of_cache_and_v1_byte_identical(channel):
     (v1.path / "virals.json").write_text("[]", encoding="utf-8")
     runs.set_stage(v1, "план готов")
     snapshot = tree(v1.path)
-    res = produce(channel, "start", "--segment", "ru", "--brief-lang", "ru", "--month", "2026-11")
+    res = produce(channel, "start", "--segment", "ru", "--brief-lang", "ru", "--month", "2026-11",
+                  "--new-version")
     assert res.returncode == 0, res.stdout
     v2 = channel / "runs" / "2026-11_ru_v2"
     assert tree(v1.path) == snapshot
@@ -141,12 +142,13 @@ def test_v2_has_copy_of_cache_and_v1_byte_identical(channel):
 def test_v3_follows_finished_v2_and_v2_unfinished_resumes(channel):
     v1 = runs.start_run(channel, "2026-11", "ru", "ru").run
     runs.set_stage(v1, "план готов")
-    v2 = runs.start_run(channel, "2026-11", "ru", "ru").run
+    v2 = runs.start_run(channel, "2026-11", "ru", "ru", force_new_version=True).run
     again = runs.start_run(channel, "2026-11", "ru", "ru")
     assert again.action == "resume" and again.run.path == v2.path
     assert not (channel / "runs" / "2026-11_ru_v3").exists()
     runs.set_stage(v2, "план готов")
-    assert runs.start_run(channel, "2026-11", "ru", "ru").run.path.name == "2026-11_ru_v3"
+    third = runs.start_run(channel, "2026-11", "ru", "ru", force_new_version=True)
+    assert third.run.path.name == "2026-11_ru_v3"
 
 
 def test_other_month_and_segment_do_not_trigger_v2(channel):

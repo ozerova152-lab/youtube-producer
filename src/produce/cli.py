@@ -85,16 +85,22 @@ def start(
         previous = runs.list_runs(ctx.obj, month, segment)
         if not previous:
             typer.echo(f"За {month} для сегмента {segment} ещё нет запуска. Создаю…")
-        elif previous[-1].finished or new_version:
+        elif new_version:
             typer.echo(
                 f"В этом месяце уже есть v{previous[-1].data['version']}: "
-                "создам новую версию, кэш скопирую, квота не тратится"
+                "создаю новую версию, кэш копирую, квота не тратится"
             )
         result = runs.start_run(ctx.obj, month, segment, brief_lang, new_version)
     except ProduceError as err:
         raise _fail(err) from err
     data = result.run.data
-    if result.action == "resume":
+    if result.action == "ask_new_version":
+        v = data["version"]
+        typer.echo(
+            f"В этом месяце уже есть v{v}, план готов. Создать новую версию v{v + 1}? "
+            "Кэш скопируется, квота не тратится. Напишите «да», и я создам"
+        )
+    elif result.action == "resume":
         typer.echo(
             f"Запуск {data['month']}, {data['segment']}, v{data['version']}. "
             f"Этап: {data['stage']}. Продолжить?"

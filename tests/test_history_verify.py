@@ -287,7 +287,7 @@ def test_c3_v2_new_run_sees_v1_but_v1_stays_intact(channel):
     d["stage"] = "план готов"
     json_path.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
     before = tree_hash(channel / "runs")
-    res = invoke(channel, "start", "--brief-lang", "ru")
+    res = invoke(channel, "start", "--brief-lang", "ru", "--new-version")
     assert res.exit_code == 0 and (channel / "runs" / "2026-10_ru_v2").is_dir()
     assert "Отклонено в прошлых запусках: 1 тема" in res.output
     assert tree_hash(channel / "runs", skip=[channel / "runs" / "2026-10_ru_v2"]) == before
@@ -369,8 +369,8 @@ def test_c5_new_version_flag_is_only_way_while_unfinished(channel):
 def test_c5_v1_finished_creates_v2_only(channel):
     _twelve(channel)
     make_run(channel, "2026-10_ru_v1")
-    res = invoke(channel, "start", "--brief-lang", "ru")
-    assert "В этом месяце уже есть v1: создам новую версию" in res.output
+    res = invoke(channel, "start", "--brief-lang", "ru", "--new-version")
+    assert "В этом месяце уже есть v1: создаю новую версию" in res.output
     names = sorted(p.name for p in (channel / "runs").iterdir() if "2026-10_ru" in p.name)
     assert names == ["2026-10_ru_v1", "2026-10_ru_v2"]
 

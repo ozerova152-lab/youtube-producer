@@ -51,7 +51,7 @@ def test_v2_copies_cache_after_plan_ready_and_keeps_v1(channel):
     v1 = runs.start_run(channel, "2026-11", "ru", "ru").run
     (v1.path / "cache" / "videos.json").write_text('{"a": 1}', encoding="utf-8")
     runs.set_stage(v1, "план готов")
-    result = runs.start_run(channel, "2026-11", "ru", "ru")
+    result = runs.start_run(channel, "2026-11", "ru", "ru", force_new_version=True)
     assert result.action == "new_version"
     assert result.run.path.name == "2026-11_ru_v2"
     assert (result.run.path / "cache" / "videos.json").read_text(encoding="utf-8") == '{"a": 1}'

@@ -1,12 +1,12 @@
 ---
 id: T17
 type: fix
-status: todo
+status: done
 origin: adhoc
 phase: ""
 blocked_by: []
-traces_to: "—"
-spec_sync: pending
+traces_to: "04-user-flows.md#поток-5-новый-месяц · 01-functional-requirements.md#история-запусков"
+spec_sync: ok
 summary: "start на запуске «план готов» сначала спрашивает человека и не создаёт v2 сам"
 acceptance:
   - "Дано запуск 2026-10_ru_v1 на этапе «план готов»; когда выполняю `produce start --segment ru --brief-lang ru` без `--new-version`; тогда новая папка в `runs/` не создаётся, `run.json` и кэш v1 не меняются, команда печатает вопрос из потока 5 и завершается с кодом 0"
@@ -15,7 +15,7 @@ acceptance:
   - "Дано в `runs/` 12 запусков, последний v2 на «план готов»; когда выполняю `start` без флага; тогда вопрос называет v2 как текущую версию, на диск ничего не пишется"
   - "Дано запусков в месяце ещё нет; когда выполняю `start`; тогда создаётся v1 как раньше"
   - "Дано сценарии `playbooks/00-month.md` и `playbooks/07-history.md`; когда агент получает от `start` вопрос про v2; тогда в сценарии написано: спросить человека и запускать `--new-version` только после его слова в этом разговоре"
-verify_attempts: 0
+verify_attempts: 1
 review: human
 ---
 
@@ -53,3 +53,16 @@ review: human
 ## Журнал
 
 - 2026-10-29T00:00Z [claude] Задача заведена по просьбе человека после test-audit (пробел 3).
+- 2026-10-29T00:00Z [run-task] Старт: статус in_progress, запущен implementer.
+- 2026-10-29T00:00Z [implementer] Сделано: поток 5 (шаг 1) и строка экрана «Старт нового запуска» в `04-user-flows.md`; `runs.start_run` на «план готов» без `force_new_version` возвращает `ask_new_version` и ничего не пишет; `cli.py` печатает вопрос (номера от последней версии: v2 -> «v3»), код 0; с `--new-version` v2 как раньше. Сценарии `playbooks/00-month.md`, `07-history.md`: спросить человека, `--new-version` только после его «да» в этом разговоре. Формулировки в `docs/spec/01`, `02`, `03` уточнены. Новые тесты: `tests/test_start_asks_new_version.py` (все 6 критериев + ядро + сценарии). `make check`: gitleaks, ruff, pytest зелёные (975 passed, 1 xfailed).
+- 2026-10-29T00:00Z [implementer] Правки старых тестов (осознанно, по задаче): `test_foundation.py::test_v2_copies_cache_after_plan_ready_and_keeps_v1` (force_new_version=True); `test_foundation_verify.py::test_v2_has_copy_of_cache_and_v1_byte_identical` (--new-version), `::test_v3_follows_finished_v2_and_v2_unfinished_resumes` (force_new_version=True для v2 и v3); `test_history.py::test_v2_checks_against_v1_of_same_month_and_ignores_newer` (force_new_version=True), `::test_twelve_runs_new_v2_only_after_plan_ready` (--new-version, проверка старого текста «создам новую версию» убрана); `test_history_verify.py::test_c3_v2_new_run_sees_v1_but_v1_stays_intact` (--new-version), `::test_c5_v1_finished_creates_v2_only` (--new-version, текст «создаю новую версию»). Проверки не ослаблены. Замечание: при `--new-version` CLI по-прежнему печатает строку «В этом месяце уже есть vN: создаю новую версию, кэш копирую, квота не тратится» (в потоке её нет; можно убрать отдельным решением).
+- 2026-10-29T00:00Z [task-verifier] Круг 1. Тесты: `tests/test_start_asks_new_version_verify.py` (10) + тесты исполнителя; `pytest -q` целиком: 985 passed, 1 xfailed. Живой прогон CLI на копии демо-канала: `docs/tasks/artifacts/T17/cli-run.txt`.
+  - К1 (без флага на «план готов»: вопрос, код 0, диск без изменений): доказан — снимок sha256 всего каталога до/после совпал, run.json v1 побайтно тот же, в живом прогоне «DISK UNCHANGED», exit=0.
+  - К2 (`--new-version`): доказан — v2 создан, кэш скопирован, quota_spent 0 (при 777 в v1), v1 цела.
+  - К3 (незавершённый запуск): доказан — «Запуск …, vN. Этап: …. Продолжить?», v2 нет, диск не менялся; также v1 готов + v2 незавершён -> продолжается v2.
+  - К4 (12 запусков, последний v2 готов): доказан — вопрос про v3 «уже есть v2», диск не менялся.
+  - К5 (запусков нет): доказан — создаётся v1; с `--new-version` без запусков тоже v1, не v2. Другой месяц и другой сегмент не влияют.
+  - К6 (сценарии): доказан — `00-month.md` и `07-history.md` содержат вопрос, «остановиться», «только после слова «да» в этом разговоре», «без слова флаг не ставить».
+  - Замечание (не провал): при `--new-version` CLI печатает «В этом месяце уже есть v1: создаю новую версию…» — этой строки нет в потоке 5; зафиксировано исполнителем.
+  - Вердикт: УСПЕХ.
+- 2026-10-29T00:00Z [run-task] Приёмка: принято человеком (review: human). Спека догнана (потоки, слои 1–3), spec_sync: ok. Строка «создаю новую версию…» после «да» внесена в поток 5 по просьбе человека.

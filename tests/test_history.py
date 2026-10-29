@@ -173,7 +173,7 @@ def test_v2_checks_against_v1_of_same_month_and_ignores_newer(channel):
     # Текущий запуск себя не считает, более новый месяц в историю не входит.
     assert history.past_briefs(channel, "ru", run) == []
     runs.set_stage(run, "план готов")
-    v2 = runs.start_run(channel, "2026-10", "ru", "ru").run
+    v2 = runs.start_run(channel, "2026-10", "ru", "ru", force_new_version=True).run
     assert v2.path.name == "2026-10_ru_v2"
     assert [b.title for b in history.past_briefs(channel, "ru", v2)] == [OLD_TITLE]
 
@@ -298,9 +298,8 @@ def test_twelve_runs_new_v2_only_after_plan_ready(channel):
         make_run(channel, f"{month}_ru_v1")
         make_run(channel, f"{month}_en_v1")
     make_run(channel, "2026-10_ru_v1")
-    res = invoke(channel, "start", "--brief-lang", "ru")
+    res = invoke(channel, "start", "--brief-lang", "ru", "--new-version")
     assert res.exit_code == 0, res.output
-    assert "В этом месяце уже есть v1: создам новую версию" in res.output
     assert (channel / "runs" / "2026-10_ru_v2").is_dir()
     assert "Прошлых запусков нет" not in res.output and "Брифов «позже»: 0" in res.output
     # v1 цела

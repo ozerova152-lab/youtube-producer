@@ -45,7 +45,7 @@ class Run:
 @dataclass
 class StartResult:
     run: Run
-    action: str  # "created" | "new_version" | "resume"
+    action: str  # "created" | "new_version" | "resume" | "ask_new_version"
 
 
 def check_stage(stage: str) -> str:
@@ -124,15 +124,16 @@ def start_run(channel_dir: Path, month: str, segment: str, brief_lang: str,
               force_new_version: bool = False) -> StartResult:
     """Находит или создаёт запуск месяца и сегмента.
 
-    v2 создаётся только после этапа «план готов» или по прямой просьбе
-    (`force_new_version`); иначе возвращается незавершённый запуск с его этапом.
+    Новая версия создаётся только по прямой просьбе (`force_new_version`). На запуске
+    «план готов» без неё ничего не пишется и возвращается "ask_new_version": вопрос
+    человеку задаёт интерфейс. Незавершённый запуск возвращается с его этапом.
     """
     existing = list_runs(channel_dir, month, segment)
     if not existing:
         return StartResult(_create(channel_dir, month, segment, brief_lang, 1, None), "created")
     last = existing[-1]
-    if not last.finished and not force_new_version:
-        return StartResult(last, "resume")
+    if not force_new_version:
+        return StartResult(last, "ask_new_version" if last.finished else "resume")
     new = _create(channel_dir, month, segment, brief_lang, last.data["version"] + 1, last)
     return StartResult(new, "new_version")
 
