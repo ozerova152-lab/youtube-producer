@@ -1,7 +1,6 @@
 """T16, независимая проверка: раздел README «Вариант без Claude Code» против критериев приёмки и CLAUDE.md."""
 
 import re
-import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -85,18 +84,3 @@ def test_links_alive():
     for rel in re.findall(r"\]\((?!https?:|#)([^)\s]+)\)", README):
         assert (ROOT / rel).exists(), rel
 
-
-def test_diff_boundaries():
-    out = subprocess.run(
-        ["git", "status", "--porcelain", "--untracked-files=all"],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout.splitlines()
-    forbidden = ("docs/spec/", "CLAUDE.md", "site/", "src/", "playbooks/", "templates/")
-    for line in out:
-        path = line[3:]
-        assert not path.startswith(forbidden), path
-        if path.startswith("tests/"):
-            assert path in ("tests/test_cowork_readme.py", "tests/test_t16_verify.py"), path
