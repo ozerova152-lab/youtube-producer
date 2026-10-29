@@ -1,7 +1,7 @@
 ---
 id: T19
 type: setup
-status: todo
+status: done
 origin: adhoc
 phase: ""
 blocked_by: []
@@ -16,7 +16,7 @@ acceptance:
   - "Дано файл workflow; когда смотрю версии действий; тогда используются только официальные действия GitHub (`actions/configure-pages`, `actions/upload-pages-artifact`, `actions/deploy-pages`) в версиях, сверенных с их страницами на момент выполнения, а не взятых по памяти"
   - "Дано workflow; когда два пуша идут подряд; тогда стоит `concurrency` для группы Pages без отмены уже идущей публикации"
   - "Дано инструкция в `docs/dev/setup.md`; когда читаю раздел про публикацию витрины; тогда там сказано: workflow начнёт работать только после того, как репозиторий станет публичным и в Settings → Pages выбран источник «GitHub Actions»"
-verify_attempts: 0
+verify_attempts: 1
 review: human
 ---
 
@@ -49,3 +49,15 @@ workflow GitHub Actions, который публикует именно `site/`.
 ## Журнал
 
 - 2026-10-29T00:00Z [claude] Задача заведена по просьбе человека после `/plan-deploy`. Файл workflow не создавался.
+- 2026-10-29T00:00Z [claude] Старт /run-task: статус in_progress.
+- 2026-10-29T00:00Z [implementer] Создан `.github/workflows/pages.yml`, тест `tests/test_pages_workflow.py` (7 проверок, PyYAML, без сети), раздел «Публикация витрины» в `docs/dev/setup.md`. Версии сверены на страницах релизов и через `gh api` (только чтение): configure-pages v6.0.0, upload-pages-artifact v5.0.0, deploy-pages v5.0.1, actions/checkout v7.0.1 (checkout добавлен сверх списка критерия: без него в раннере нет `site/`; тоже официальный). Решение: пин по полному хешу коммита с тегом в комментарии — тег можно переписать, хеш нет, а секретов в workflow нет, так что цепочка поставки остаётся единственным риском. Отмечено: `make check` зелёный, 1028 passed, 1 xfailed (xfail не из этой задачи). Живой запуск не проверялся (нужен публичный репозиторий и Pages = GitHub Actions); ничего не пушилось, Pages не включался.
+- 2026-10-29T00:00Z [task-verifier] Круг 1, УСПЕХ. Тесты: `tests/test_pages_workflow_acceptance.py` (16 проверок, независимо от тестов исполнителя, включая 5 мутаций испорченного файла); вместе с тестами исполнителя 23 passed, `make check` зелёный: 1044 passed, 1 xfailed (xfail не из T19). Доказательства: artifacts/T19/pytest-pages.txt, make-check-tail.txt, pages.yml.snapshot. Живой запуск на GitHub не проверялся (по условию задачи, это шаг человека).
+  1. `.github/workflows/pages.yml` есть, YAML разбирается, pytest входит в `make check`, pyyaml в зависимостях: доказан.
+  2. Триггеры: только push в `[main]` с paths `site/**` и сам файл, и `workflow_dispatch`; pull_request*, workflow_run, schedule, ссылок на head_ref/форк нет: доказан.
+  3. Права: уровень workflow `{contents: read}`; в задаче `contents: read, pages: write, id-token: write`; других write нет: доказан.
+  4. Публикуется `path: site` (папка существует), `secrets.` нет, curl/wget и `run:` отсутствуют: доказан.
+  5. Только `actions/*`, пин по 40-символьному хешу с комментарием версии. Хеши сверены независимо через `git ls-remote` (только чтение): checkout v7.0.1, configure-pages v6.0.0, upload-pages-artifact v5.0.0, deploy-pages v5.0.1 совпадают с тегами: доказан.
+  6. `concurrency: {group: pages, cancel-in-progress: false}`: доказан.
+  7. Раздел «Публикация витрины (GitHub Pages)» в `docs/dev/setup.md` говорит про публичный репозиторий и источник «GitHub Actions» в Settings → Pages: доказан.
+  Замечание (не провал): `actions/checkout` добавлен сверх списка критерия, он официальный и нужен для наличия `site/`; критерий «только официальные действия» не нарушен. Статус задачи не менял: приёмка человеком (review: human).
+- 2026-10-29T00:00Z [claude] Принято человеком. Статус done.
