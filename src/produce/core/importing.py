@@ -18,7 +18,6 @@ from produce.core.files import write_json_atomic
 MIN_CHANNEL_VIDEOS = 5
 
 VIDEO_REQUIRED = ["id", "title", "channel_id", "published_at", "views"]
-VIDEO_OPTIONAL = ["description", "channel_title", "duration_seconds", "is_live", "likes", "comments"]
 CSV_CHANNEL_COLUMNS = ["channel_subscribers"]
 CHANNEL_REQUIRED = ["id", "title", "subscribers"]
 COMMENT_REQUIRED = ["video_id", "text"]
