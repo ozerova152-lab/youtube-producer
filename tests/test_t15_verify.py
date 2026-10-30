@@ -140,7 +140,7 @@ def test_readme_mentions(needle):
 
 
 def test_readme_codex_honest_note_and_no_tutorials():
-    codex = _section(README, "Codex")
+    codex = next(l for l in README.splitlines() if l.startswith("- **Codex"))
     assert "лишь на базовом уровне" in codex
     assert "ссылку на репозиторий" in codex and "AGENTS.md" in codex
     assert "Отдельной поддержки Codex нет" in codex

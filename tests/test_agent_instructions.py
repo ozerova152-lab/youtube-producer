@@ -196,11 +196,13 @@ def test_month_skills_point_to_month_playbook():
     assert "продолжи месяц" in _skill("continue-month")
 
 
-def test_readme_security_precedes_cowork_and_codex_and_states_env_limit():
+def test_readme_states_env_limit_next_to_agent_hints_and_in_security_section():
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    # предупреждение стоит прямо рядом с подсказками по агентам, а полный раздел безопасности идёт в конце
+    hints = readme[readme.index("### Подсказки по агентам"):readme.index("### Ключ YouTube Data API")]
+    assert "только в Claude Code" in hints and "лишь на инструкции в `AGENTS.md`" in hints
     sec = readme.index("\n## Безопасность")
-    assert sec < readme.index("\n## Claude Cowork") and sec < readme.index("\n## Codex")
-    block = readme[sec:readme.index("\n## ", sec + 5)]
+    block = readme[sec:readme.index("\n## ", sec + 5) if "\n## " in readme[sec + 5:] else len(readme)]
     assert ".claude/settings.json" in block and "только в Claude Code" in block
     assert "автоподтверждение" in block and "не вставляйте ключ в чат" in block
     assert "Адрес репозитория: `https://github.com/ozerova152-lab/youtube-producer` (заглушка до публикации" in readme

@@ -1,4 +1,4 @@
-"""T16/T21: README, раздел «Claude Cowork (если нет Claude Code)»: честные пометки и живые ссылки."""
+"""T16/T21: README, подсказка про Claude Cowork в разделе «Подсказки по агентам»: честные пометки и живые ссылки."""
 
 import re
 from pathlib import Path
@@ -7,58 +7,56 @@ ROOT = Path(__file__).parent.parent
 README = (ROOT / "README.md").read_text(encoding="utf-8")
 
 
-def _section(text, title):
-    m = re.search(rf"^## {re.escape(title)}\n(.*?)(?=^## |\Z)", text, re.DOTALL | re.MULTILINE)
-    assert m, f"нет раздела {title}"
+def _block(text, start, stop):
+    m = re.search(rf"^{re.escape(start)}[^\n]*\n(.*?)(?={stop}|\Z)", text, re.DOTALL | re.MULTILINE)
+    assert m, f"нет блока {start}"
     return m.group(1)
 
 
-SECTION = _section(README, "Claude Cowork (если нет Claude Code)")
+AGENTS_HINTS = _block(README, "### Подсказки по агентам", r"^### |^## ")
+# подсказка про Cowork — один пункт списка: от «- **Claude Cowork» до следующего пункта или абзаца
+COWORK = re.search(r"^- \*\*Claude Cowork[^\n]*", AGENTS_HINTS, re.MULTILINE).group(0)
+INSTALL = _block(README, "## Установка и запуск", r"^## ")
 
 
-def _list_after(marker):
-    m = re.search(rf"\*\*{marker}:\*\*\n\n((?:- .*\n?)+)", SECTION)
-    assert m, f"нет списка {marker}"
-    return m.group(1)
+def test_cowork_hint_is_short_and_marked_unchecked():
+    assert COWORK.startswith("- **Claude Cowork — не проверено.**")
+    assert len(COWORK) < 900  # коротка подсказка, а не отдельная инструкция
 
 
-def test_section_steps():
-    for needle in ["Download ZIP", "Распакуйте", "Claude Cowork", ".env.example", "`.env`",
-                   "docs/import-format.md", "импорт"]:
-        assert needle in SECTION, needle
+def test_exact_agent_phrase_in_install_section():
+    assert "«Прочитай AGENTS.md и запусти месяц»" in INSTALL
+    assert "«Прочитай AGENTS.md и продолжи месяц»" in INSTALL
 
 
-def test_exact_agent_phrase():
-    assert "«Прочитай AGENTS.md и запусти месяц»" in SECTION
+def test_unchecked_points_named():
+    assert "запуск именно в Cowork" in COWORK
+    assert "запускать команды скрипта" in COWORK
+    assert "`AGENTS.md`" in COWORK and "читает ли он" in COWORK
+    assert "Настоящий сбор по ключу проверен в Claude Code, в Cowork не проверен" in COWORK
 
 
-def test_checked_and_unchecked_lists():
-    checked = _list_after("Проверено")
-    unchecked = _list_after("Не проверено")
-    assert "демо-данных" in checked and "записанных ответах YouTube" in checked
-    assert "команды скрипта" in checked and "тесты проекта" in checked
-    assert "запуск именно в Claude Cowork" in unchecked
-    assert "запускать команды скрипта" in unchecked
-    assert "`AGENTS.md`" in unchecked
-    assert "настоящий сбор по ключу" in unchecked
+def test_checked_agent_is_claude_code_only():
+    assert "- **Claude Code — проверен.**" in AGENTS_HINTS
+    assert "демо-данных" in AGENTS_HINTS and "записанных ответах YouTube" in AGENTS_HINTS
 
 
 def test_key_paragraph():
-    assert "не вставляйте его в чат" in SECTION
-    assert "только в Claude Code" in SECTION
-    assert "лишь на инструкции в `AGENTS.md`" in SECTION
-    assert "проверьте сами" in SECTION
+    assert "не вставляйте ключ в чат" in AGENTS_HINTS
+    assert "только в Claude Code" in AGENTS_HINTS
+    assert "лишь на инструкции в `AGENTS.md`" in AGENTS_HINTS
 
 
 def test_pauses_and_bans_repeated():
-    assert "ничего не публикует" in SECTION
-    assert "`--confirm`" in SECTION and "только после вашего слова" in SECTION
-    assert "стратегию утверждаете вы" in SECTION
+    security = _block(README, "## Безопасность", r"^## ")
+    assert "ничего не публикует" in security
+    assert "`--confirm`" in security and "только после вашего слова" in security
+    assert "стратегию утверждаете вы" in security
 
 
 def test_links_alive_and_no_keys():
-    for rel in re.findall(r"\]\((?!https?:|#)([^)\s]+)\)", SECTION):
+    for rel in re.findall(r"\]\((?!https?:|#)([^)\s]+)\)", README):
         assert (ROOT / rel).exists(), rel
     assert (ROOT / ".env.example").is_file()
     assert not re.search(r"AIza[0-9A-Za-z_\-]{35}|sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{30,}", README)
-    assert "YOUTUBE_API_KEY=" not in SECTION
+    assert "YOUTUBE_API_KEY=" not in AGENTS_HINTS

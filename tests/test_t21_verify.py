@@ -67,31 +67,43 @@ def test_claude_imports_agents_and_has_no_duplicate_sentences():
 
 # --- 3-4, 7-8: README -------------------------------------------------------------------------
 
-def test_quickstart_three_steps_and_key_later():
-    qs = _section(README, "Быстрый старт")
+def test_install_three_steps_and_key_later():
+    qs = _section(README, "Установка и запуск")
     assert len(re.findall(r"^\d\. ", qs, re.MULTILINE)) == 3
-    assert "make setup" in qs and "запусти месяц" in qs
+    assert "make setup" in qs and "Прочитай AGENTS.md и запусти месяц" in qs
     assert "позже" in qs and "демо" in qs
-    # быстрый старт на первом экране: до любого другого `## `
-    assert README.index("## Быстрый старт") < README.index("## Безопасность")
+
+
+def test_first_screens_are_agent_neutral_and_sections_in_requested_order():
+    # до раздела установки ни одного упоминания конкретных агентов
+    head = README[:README.index("## Установка и запуск")]
+    for name in ("Claude Code", "Cowork", "Codex", "CLAUDE.md"):
+        assert name not in head, name
+    order = ["## Что это и что вы получите", "## Как это работает", "## Что внутри",
+             "## Установка и запуск", "## Примеры запросов", "## Для чего проект не подходит",
+             "## Лицензия", "## Безопасность"]
+    pos = [README.index(h) for h in order]
+    assert pos == sorted(pos), pos
 
 
 def test_three_paths_have_phrases_and_marks():
-    cc = _section(README, "Claude Code")
-    cw = _section(README, "Claude Cowork")
-    cx = _section(README, "Codex")
+    install = _section(README, "Установка и запуск")
+    cc = next(l for l in install.splitlines() if l.startswith("- **Claude Code"))
+    cw = next(l for l in install.splitlines() if l.startswith("- **Claude Cowork"))
+    cx = next(l for l in install.splitlines() if l.startswith("- **Codex"))
     assert "запусти месяц" in cc and "продолжи месяц" in cc and "проверен" in cc.lower()
-    for s in (cw, cx):
-        assert "Прочитай AGENTS.md и запусти месяц" in s and "Прочитай AGENTS.md и продолжи месяц" in s
-    assert "Не проверено" in cw
+    # общая фраза для любого агента стоит в основном пути, подсказки её не повторяют
+    assert "Прочитай AGENTS.md и запусти месяц" in install and "Прочитай AGENTS.md и продолжи месяц" in install
+    assert "не проверено" in cw.lower()
     assert "не сверяли" in cx.lower() or "не проверял" in cx.lower() or "лишь на базовом" in cx
     # Cowork и Codex не названы «проверенными полностью»
     assert "проверен полностью" not in cw.lower() and "проверен полностью" not in cx.lower()
 
 
-def test_security_before_cowork_codex_and_honest():
-    sec_i = README.index("\n## Безопасность")
-    assert sec_i < README.index("\n## Claude Cowork") and sec_i < README.index("\n## Codex")
+def test_security_warning_next_to_hints_and_in_final_section():
+    install = _section(README, "Установка и запуск")
+    assert "только в Claude Code" in install and "не вставляйте ключ в чат" in install
+    assert "автоподтверждение" in install
     sec = _section(README, "Безопасность")
     for p in ("только в Claude Code", ".claude/settings.json", "автоподтверждение", "не вставляйте ключ в чат"):
         assert p in sec, p

@@ -1,4 +1,4 @@
-"""T16, независимая проверка: раздел README «Claude Cowork (если нет Claude Code)» против критериев приёмки и AGENTS.md (T21)."""
+"""T16, независимая проверка: подсказка про Claude Cowork в README против критериев приёмки и AGENTS.md (T21)."""
 
 import re
 from pathlib import Path
@@ -6,27 +6,25 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 README = (ROOT / "README.md").read_text(encoding="utf-8")
 CLAUDE = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-m = re.search(r"^## Claude Cowork \(если нет Claude Code\)\n(.*?)(?=^## |\Z)", README, re.DOTALL | re.MULTILINE)
+m = re.search(r"^- \*\*Claude Cowork[^\n]*", README, re.MULTILINE)
 assert m
-SEC = m.group(1)
+SEC = m.group(0)  # подсказка про Cowork: один пункт списка в «Подсказки по агентам»
+INSTALL = re.search(r"^## Установка и запуск\n(.*?)(?=^## |\Z)", README, re.DOTALL | re.MULTILINE).group(1)
+SECURITY = re.search(r"^## Безопасность\n(.*?)(?=^## |\Z)", README, re.DOTALL | re.MULTILINE).group(1)
 
 
-def test_section_between_codex_and_inside_and_single():
-    assert README.count("## Claude Cowork (если нет Claude Code)") == 1
+def test_cowork_hint_single_and_marked():
+    assert len(re.findall(r"^- \*\*Claude Cowork", README, re.MULTILINE)) == 1
+    assert SEC.startswith("- **Claude Cowork — не проверено.**")
 
 
 def test_steps_in_order():
-    order = [
-        "Download ZIP",
-        "Распакуйте",
-        "Откройте распакованную папку в Claude Cowork",
-        "Прочитай AGENTS.md и запусти месяц",
-        ".env.example",
-        "docs/import-format.md",
-    ]
-    pos = [SEC.find(s) for s in order]
+    # путь целиком: скачать, открыть папку, сказать фразу; ключ и импорт дальше по README
+    order = ["Download ZIP", "Откройте папку", "Прочитай AGENTS.md и запусти месяц"]
+    pos = [INSTALL.find(x) for x in order]
     assert all(p >= 0 for p in pos), pos
     assert pos == sorted(pos)
+    assert README.find(".env.example") > 0 and README.find("docs/import-format.md") > 0
 
 
 def test_no_unmarked_claims_about_cowork():
@@ -53,18 +51,18 @@ def test_no_invented_ui_names():
         assert bad.lower() not in SEC.lower(), bad
 
 
-def test_unchecked_is_not_in_checked():
-    checked = SEC.split("**Проверено:**")[1].split("**Не проверено:**")[0]
-    assert "Cowork" not in checked
+def test_cowork_not_claimed_as_checked():
+    assert "проверен." not in SEC.split("Не проверено")[0].replace("не проверено.", "")
+    assert "не проверен" in SEC
 
 
 def test_consistent_with_claude_md_section_a():
-    assert "Ничего не публиковать" in CLAUDE and "ничего не публикует" in SEC
+    assert "Ничего не публиковать" in CLAUDE and "ничего не публикует" in SECURITY
     assert (
         re.search(r"`--confirm`.*только после слова человека", CLAUDE)
-        and "только после вашего слова" in SEC
+        and "только после вашего слова" in SECURITY
     )
-    assert "«утверждена»" in CLAUDE and "утверждаете вы" in SEC and "strategy.md" in SEC
+    assert "«утверждена»" in CLAUDE and "утверждаете вы" in SECURITY and "strategy.md" in SECURITY
     assert "Не читать `.env`" in CLAUDE
     assert "Read(./.env)" in (ROOT / ".claude/settings.json").read_text()
 
