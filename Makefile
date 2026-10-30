@@ -1,7 +1,7 @@
 VENV := .venv
 BIN := $(VENV)/bin
 
-.PHONY: setup setup-dev check reset secrets cassettes audit
+.PHONY: setup setup-dev add-key check reset secrets cassettes audit
 
 # Для пользователя: только то, что нужно для запуска `produce`. Браузер Chromium (около 120 МБ)
 # нужен лишь для проверки страницы-витрины, поэтому здесь его нет.
@@ -14,6 +14,10 @@ setup:
 setup-dev: setup
 	$(BIN)/pip install -e ".[dev]"
 	$(BIN)/playwright install chromium
+
+# Ключ YouTube без редактора: спрашивает в терминале (ввод скрыт) и пишет в `.env` с правами только для владельца.
+add-key:
+	$(BIN)/produce add-key
 
 check: secrets cassettes
 	$(BIN)/ruff check src tests

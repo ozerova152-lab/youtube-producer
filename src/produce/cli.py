@@ -1,5 +1,7 @@
 """Тонкий интерфейс: разбирает аргументы, вызывает ядро, печатает по-русски."""
 
+import getpass
+import sys
 from pathlib import Path
 from typing import Annotated
 
@@ -21,6 +23,8 @@ from produce.core.settings import (
     load_api_key,
     load_settings,
     my_channel_id,
+    read_env_key,
+    save_api_key,
 )
 from produce.core.text import plural
 from produce.core.youtube import YouTubeApi
@@ -52,6 +56,51 @@ def main(
         raise _fail(err) from err
     segments = ", ".join(str(s["id"]) for s in list_segments(settings))
     typer.echo(f"Канал: {settings['channel']['name']}. Сегменты: {segments}")
+
+
+def _stdin_is_tty() -> bool:
+    """Отдельной функцией, чтобы автотесты её подменяли."""
+    return sys.stdin.isatty()
+
+
+@app.command(name="add-key")
+def add_key(
+    env_file: Annotated[Path, typer.Option(help="Куда записать ключ YouTube")] = Path(".env"),
+) -> None:
+    """Спросить ключ YouTube со скрытым вводом и записать в `.env` (права только для владельца)."""
+    if not _stdin_is_tty():
+        # Без терминала ввод был бы виден агенту и попал бы в разговор.
+        typer.echo(
+            "Ключ вводят в обычном терминале: откройте окно терминала в папке проекта "
+            "и выполните `make add-key`. Ключ не записан"
+        )
+        raise typer.Exit(code=1)
+    if read_env_key(env_file) is not None and not typer.confirm(
+        f"Ключ уже записан в {env_file}. Заменить?", default=False
+    ):
+        typer.echo("Ключ не изменён")
+        return
+    try:
+        first = getpass.getpass("Вставьте ключ YouTube (при вводе ничего не видно, это нормально): ")
+        second = getpass.getpass("Повторите ключ: ")
+    except (KeyboardInterrupt, EOFError):
+        typer.echo("Ввод отменён, ключ не записан")
+        raise typer.Exit(code=1) from None
+    if first != second:
+        typer.echo("Два ввода не совпали, ключ не записан. Запустите команду ещё раз")
+        raise typer.Exit(code=1)
+    try:
+        save_api_key(first, env_file)
+    except ProduceError as err:
+        raise _fail(err) from err
+    except OSError:
+        # Текст системной ошибки не печатаем: в нём бывает путь, а при сбое лучше не рисковать значением.
+        typer.echo(f"Не удалось записать {env_file}. Ключ не записан")
+        raise typer.Exit(code=1) from None
+    typer.echo(
+        f"Ключ записан в {env_file}. Права: только для владельца. "
+        "Значение не показывается и нигде, кроме этого файла, не сохраняется"
+    )
 
 
 @app.command()
@@ -148,7 +197,7 @@ def _collect(channel: Path, segment_id: str | None, confirm: bool, env_file: Pat
     if key is None:
         raise KeyMissingError(
             "Ключа YouTube нет. Можно (1) получить бесплатный ключ: шаги в README, "
-            "и положить его в файл `.env` строкой YOUTUBE_API_KEY=ваш_ключ, "
+            "и записать его командой `make add-key`, "
             "или (2) загрузить видео из файла CSV/JSON. Что выбираете?"
         )
 
@@ -346,7 +395,7 @@ def _comments(channel: Path, segment_id: str | None, confirm: bool, env_file: Pa
             return
         raise KeyMissingError(
             "Ключа YouTube нет. Можно (1) получить бесплатный ключ: шаги в README, "
-            "и положить его в файл `.env` строкой YOUTUBE_API_KEY=ваш_ключ, "
+            "и записать его командой `make add-key`, "
             "или (2) загрузить видео из файла CSV/JSON. Что выбираете?"
         )
 

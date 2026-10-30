@@ -6,6 +6,7 @@ from pathlib import Path
 import yaml
 
 from produce.core.errors import ProduceError
+from produce.core.files import write_text_atomic
 
 KEY_NAME = "YOUTUBE_API_KEY"
 
@@ -57,17 +58,45 @@ def my_channel_id(settings: dict) -> str | None:
     return text or None
 
 
+def read_env_key(env_path: Path = Path(".env")) -> str | None:
+    """Ключ только из файла `.env` (без переменной окружения). Значение наружу не печатается."""
+    if not env_path.is_file():
+        return None
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        name, sep, raw = line.partition("=")
+        if sep and name.strip() == KEY_NAME:
+            return raw.strip().strip("'\"") or None
+    return None
+
+
 def load_api_key(env_path: Path = Path(".env")) -> str | None:
     """Ключ YouTube: из переменной окружения или из `.env`. None, если ключа нет.
 
     Значение наружу не печатается и в логи не пишется; вызывающий код проверяет
     только «есть или нет».
     """
-    value = os.environ.get(KEY_NAME, "").strip()
-    if not value and env_path.is_file():
-        for line in env_path.read_text(encoding="utf-8").splitlines():
-            name, sep, raw = line.partition("=")
-            if sep and name.strip() == KEY_NAME:
-                value = raw.strip().strip("'\"")
-                break
-    return value or None
+    return os.environ.get(KEY_NAME, "").strip() or read_env_key(env_path)
+
+
+def save_api_key(value: str, env_path: Path = Path(".env")) -> bool:
+    """Записывает ключ в `.env` с правами только для владельца; True, если заменён прежний.
+
+    Остальные строки файла не трогаются. Значение не попадает ни в сообщения об ошибках,
+    ни в логи: ошибка называет только причину.
+    """
+    key = value.strip()
+    if not key or any(ch.isspace() or ch in "'\"" for ch in key):
+        raise ProduceError("Ключ пустой или в нём есть пробелы или кавычки. Ключ не записан")
+    lines = env_path.read_text(encoding="utf-8").splitlines() if env_path.is_file() else []
+    replaced = False
+    for n, line in enumerate(lines):
+        name, sep, _ = line.partition("=")
+        if sep and name.strip() == KEY_NAME:
+            lines[n] = f"{KEY_NAME}={key}"
+            replaced = True
+            break
+    if not replaced:
+        lines.append(f"{KEY_NAME}={key}")
+    write_text_atomic(env_path, "\n".join(lines) + "\n")
+    env_path.chmod(0o600)  # временный файл и так закрыт для других; здесь страховка для уже существовавшего
+    return replaced
