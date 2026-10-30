@@ -24,11 +24,23 @@ def _norm(s):
     return re.sub(r"\s+", " ", s).strip()
 
 
+def _git_show(commit, path):
+    """Файл из коммита. Нет git или нет самого коммита (скачанный ZIP, поверхностный клон): тест пропускается."""
+    try:
+        subprocess.run(["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=ROOT,
+                       capture_output=True, check=True)
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        pytest.skip(f"нет истории git с коммитом {commit} (скачанный ZIP или поверхностный клон): "
+                    "сравнить с прежним состоянием нельзя")
+    return subprocess.run(["git", "show", f"{commit}:{path}"], cwd=ROOT,
+                          capture_output=True, text=True, check=True).stdout
+
+
 # --- 1-2: AGENTS.md / CLAUDE.md ---------------------------------------------------------------
 
 def test_agents_has_all_old_claude_rules():
     # c90108e — коммит T21; его родитель хранит прежний CLAUDE.md до разделения на два файла
-    old = subprocess.run(["git", "show", "c90108e~1:CLAUDE.md"], cwd=ROOT, capture_output=True, text=True, check=True).stdout
+    old = _git_show("c90108e~1", "CLAUDE.md")
     # каждая строка-правило старого CLAUDE.md, кроме Claude-специфичной, есть в AGENTS.md
     lines = [l.strip() for l in old.splitlines() if l.strip().startswith(("- ", "| `"))]
     missing = [l for l in lines if l not in AGENTS and "Мини-скиллы" not in l and "settings.json" not in l
@@ -86,7 +98,7 @@ def test_security_before_cowork_codex_and_honest():
 
 
 def test_placeholder_address_line_untouched():
-    before = subprocess.run(["git", "show", "HEAD:README.md"], cwd=ROOT, capture_output=True, text=True, check=True).stdout
+    before = _git_show("c90108e~1", "README.md")
     line = next(l for l in before.splitlines() if l.startswith("Адрес репозитория"))
     assert line in README.splitlines()
 
