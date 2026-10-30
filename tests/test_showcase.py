@@ -80,9 +80,15 @@ def test_visitor_reads_blocks_and_reaches_github(browser):
     assert page.get_by_role("heading", name="В Claude Code").is_visible()
     assert page.get_by_role("heading", name="В Claude Cowork").is_visible()
     assert page.get_by_role("heading", name="В Codex").is_visible()
-    assert page.get_by_text("Запуск в Claude Code проверен.").is_visible()
-    assert page.get_by_text("Запуск в Claude Cowork мы не проверяли.").is_visible()
-    assert page.get_by_text("Запуск в Codex мы не проверяли.").is_visible()
+    assert page.get_by_text(
+        "Основной путь — Claude Code. В других агентах (Cowork, Codex) используйте тот же AGENTS.md; "
+        "если что-то не заработало, напишите в Issues."
+    ).is_visible()
+    assert page.get_by_role("link", name="Issues").get_attribute("href") == (
+        "https://github.com/ozerova152-lab/youtube-producer/issues")
+    # про агентов на странице нет ни «не проверяли», ни «проверен»
+    run_text = page.locator("#how-to-run").inner_text()
+    assert "не проверя" not in run_text and "проверен" not in run_text.lower()
     assert page.get_by_text("лишь на базовом уровне", exact=False).count() == 0
     assert page.get_by_text("Нет ключа YouTube? Можно загрузить видео из файла.").is_visible()
     assert page.get_by_text("Пример на демо-данных, не реальный канал.").is_visible()

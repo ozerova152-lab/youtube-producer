@@ -19,18 +19,18 @@ COWORK = re.search(r"^- \*\*Claude Cowork[^\n]*", AGENTS_HINTS, re.MULTILINE).gr
 INSTALL = _block(README, "## Установка и запуск", r"^## ")
 
 
-def test_cowork_hint_is_short_and_marked_unchecked():
+def test_cowork_hint_is_short_and_makes_no_checked_claim():
     assert COWORK.startswith("- **Claude Cowork.**")
-    assert COWORK.endswith("Запуск в Claude Cowork мы не проверяли.")
-    assert len(COWORK) < 300  # короткая подсказка, а не отдельная инструкция
+    assert len(COWORK) < 200  # короткая подсказка, а не отдельная инструкция
+    # про Cowork не утверждается ни «проверено», ни «работает»
+    assert not re.search(r"проверен|проверено|работает|умеет", COWORK, re.IGNORECASE)
 
 
 def test_three_hints_are_equal_in_length_and_form():
     hints = [l for l in AGENTS_HINTS.splitlines() if l.startswith("- **")]
     assert [h.split("**")[1] for h in hints] == ["Claude Code.", "Claude Cowork.", "Codex."]
     sizes = [len(h) for h in hints]
-    assert max(sizes) - min(sizes) < 90, sizes
-    assert all(h.rstrip().endswith(("проверен.", "не проверяли.")) for h in hints)
+    assert max(sizes) - min(sizes) < 60, sizes
 
 
 def test_exact_agent_phrase_in_install_section():
@@ -38,19 +38,22 @@ def test_exact_agent_phrase_in_install_section():
     assert "«Прочитай AGENTS.md и продолжи месяц»" in INSTALL
 
 
-def test_unchecked_points_named_in_limitations():
-    # подробности, что именно не проверено в Cowork и Codex, живут в разделе ограничений
+NEUTRAL = ("Основной путь — Claude Code. В других агентах (Cowork, Codex) используйте тот же `AGENTS.md`; "
+           "если что-то не заработало, напишите в [Issues](https://github.com/ozerova152-lab/youtube-producer/issues).")
+
+
+def test_neutral_line_under_hints_and_limits_do_not_claim_checks():
+    assert NEUTRAL in AGENTS_HINTS
     limits = _block(README, "## Для чего проект не подходит и ограничения", r"^## ")
-    assert "Запуск проверен только в Claude Code" in limits
-    assert "В Cowork и Codex мы его не проверяли" in limits
-    assert "чтение `AGENTS.md`" in limits and "запуск команд скрипта" in limits
-    assert "Настоящий сбор по ключу проверен в Claude Code" in limits
+    assert "Основной путь — Claude Code." in limits
+    assert "используется тот же `AGENTS.md`" in limits
+    assert not re.search(r"не проверя|не проверен|проверен", limits)
 
 
-def test_checked_agent_is_claude_code_only():
-    assert "Запуск в Claude Code проверен." in AGENTS_HINTS
-    assert "Запуск в Codex мы не проверяли." in AGENTS_HINTS
-    assert "лишь на базовом уровне" not in README
+def test_no_checked_or_unchecked_claims_about_agents_anywhere():
+    # ни «не проверяли», ни «проверен лишь…», ни «проверен» про агентов в README нет
+    assert not re.search(r"не проверя|не проверен|не сверяли|лишь на базовом", README)
+    assert not re.search(r"(Cowork|Codex)[^.\n]{0,40}проверен", README)
 
 
 def test_key_paragraph():

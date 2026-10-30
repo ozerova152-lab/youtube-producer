@@ -15,7 +15,7 @@ SECURITY = re.search(r"^## Безопасность\n(.*?)(?=^## |\Z)", README, 
 
 def test_cowork_hint_single_and_marked():
     assert len(re.findall(r"^- \*\*Claude Cowork", README, re.MULTILINE)) == 1
-    assert SEC.startswith("- **Claude Cowork.**") and SEC.endswith("Запуск в Claude Cowork мы не проверяли.")
+    assert SEC.startswith("- **Claude Cowork.**")
 
 
 def test_steps_in_order():
@@ -52,8 +52,9 @@ def test_no_invented_ui_names():
 
 
 def test_cowork_not_claimed_as_checked():
-    assert "проверен." not in SEC.replace("не проверяли.", "")
-    assert "не проверяли" in SEC
+    # нейтральная формулировка: ни «проверено», ни «не проверяли», только основной путь и Issues
+    assert not re.search(r"проверен|проверено|не проверя", SEC, re.IGNORECASE)
+    assert "Основной путь — Claude Code." in README and "напишите в [Issues]" in README
 
 
 def test_consistent_with_claude_md_section_a():
