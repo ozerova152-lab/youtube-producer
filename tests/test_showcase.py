@@ -64,11 +64,26 @@ def test_visitor_reads_blocks_and_reaches_github(browser):
     assert headings == ["Как это работает", "Как запустить", "Пример результата"]
     assert page.locator("#how-it-works .steps li").count() == 5
     assert page.get_by_text("Решает и публикует всегда человек.", exact=True).is_visible()
+    # три общих шага над подсказками, без «клонируйте» в основных шагах
+    steps = page.locator("#how-to-run > ol > li")
+    assert steps.count() == 3
+    assert "Скачайте проект" in steps.nth(0).inner_text() and "make setup" in steps.nth(0).inner_text()
+    assert "Откройте папку проекта в вашем агенте" in steps.nth(1).inner_text()
+    assert "Прочитай AGENTS.md и запусти месяц" in steps.nth(2).inner_text()
+    assert "Клонируйте" not in page.locator("#how-to-run").inner_text()
+    assert page.get_by_text("WSL: это Linux внутри Windows", exact=False).is_visible()
+    # три подсказки одинаковой структуры и примерно одной длины, без главного агента
+    cards = page.locator("#how-to-run .grid article")
+    assert cards.count() == 3
+    lengths = [len(cards.nth(i).inner_text()) for i in range(3)]
+    assert max(lengths) - min(lengths) < 40, lengths
     assert page.get_by_role("heading", name="В Claude Code").is_visible()
     assert page.get_by_role("heading", name="В Claude Cowork").is_visible()
-    assert page.get_by_text("Запуск в Claude Cowork мы не проверяли.").is_visible()
     assert page.get_by_role("heading", name="В Codex").is_visible()
-    assert page.get_by_text("Codex проверен лишь на базовом уровне.").is_visible()
+    assert page.get_by_text("Запуск в Claude Code проверен.").is_visible()
+    assert page.get_by_text("Запуск в Claude Cowork мы не проверяли.").is_visible()
+    assert page.get_by_text("Запуск в Codex мы не проверяли.").is_visible()
+    assert page.get_by_text("лишь на базовом уровне", exact=False).count() == 0
     assert page.get_by_text("Нет ключа YouTube? Можно загрузить видео из файла.").is_visible()
     assert page.get_by_text("Пример на демо-данных, не реальный канал.").is_visible()
     assert page.get_by_text(

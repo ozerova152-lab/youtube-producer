@@ -141,9 +141,8 @@ def test_readme_mentions(needle):
 
 def test_readme_codex_honest_note_and_no_tutorials():
     codex = next(l for l in README.splitlines() if l.startswith("- **Codex"))
-    assert "лишь на базовом уровне" in codex
-    assert "ссылку на репозиторий" in codex and "AGENTS.md" in codex
-    assert "Отдельной поддержки Codex нет" in codex
+    assert "Запуск в Codex мы не проверяли" in codex
+    assert "лишь на базовом уровне" not in README
     assert len(README.splitlines()) < 260  # не учебник (T21: лимит поднят вместе с быстрым стартом и разделом ошибок)
     assert "```mermaid" not in README and "![" not in README
 

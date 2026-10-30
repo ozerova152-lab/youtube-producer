@@ -20,8 +20,17 @@ INSTALL = _block(README, "## Установка и запуск", r"^## ")
 
 
 def test_cowork_hint_is_short_and_marked_unchecked():
-    assert COWORK.startswith("- **Claude Cowork — не проверено.**")
-    assert len(COWORK) < 900  # коротка подсказка, а не отдельная инструкция
+    assert COWORK.startswith("- **Claude Cowork.**")
+    assert COWORK.endswith("Запуск в Claude Cowork мы не проверяли.")
+    assert len(COWORK) < 300  # короткая подсказка, а не отдельная инструкция
+
+
+def test_three_hints_are_equal_in_length_and_form():
+    hints = [l for l in AGENTS_HINTS.splitlines() if l.startswith("- **")]
+    assert [h.split("**")[1] for h in hints] == ["Claude Code.", "Claude Cowork.", "Codex."]
+    sizes = [len(h) for h in hints]
+    assert max(sizes) - min(sizes) < 90, sizes
+    assert all(h.rstrip().endswith(("проверен.", "не проверяли.")) for h in hints)
 
 
 def test_exact_agent_phrase_in_install_section():
@@ -29,16 +38,19 @@ def test_exact_agent_phrase_in_install_section():
     assert "«Прочитай AGENTS.md и продолжи месяц»" in INSTALL
 
 
-def test_unchecked_points_named():
-    assert "запуск именно в Cowork" in COWORK
-    assert "запускать команды скрипта" in COWORK
-    assert "`AGENTS.md`" in COWORK and "читает ли он" in COWORK
-    assert "Настоящий сбор по ключу проверен в Claude Code, в Cowork не проверен" in COWORK
+def test_unchecked_points_named_in_limitations():
+    # подробности, что именно не проверено в Cowork и Codex, живут в разделе ограничений
+    limits = _block(README, "## Для чего проект не подходит и ограничения", r"^## ")
+    assert "Запуск проверен только в Claude Code" in limits
+    assert "В Cowork и Codex мы его не проверяли" in limits
+    assert "чтение `AGENTS.md`" in limits and "запуск команд скрипта" in limits
+    assert "Настоящий сбор по ключу проверен в Claude Code" in limits
 
 
 def test_checked_agent_is_claude_code_only():
-    assert "- **Claude Code — проверен.**" in AGENTS_HINTS
-    assert "демо-данных" in AGENTS_HINTS and "записанных ответах YouTube" in AGENTS_HINTS
+    assert "Запуск в Claude Code проверен." in AGENTS_HINTS
+    assert "Запуск в Codex мы не проверяли." in AGENTS_HINTS
+    assert "лишь на базовом уровне" not in README
 
 
 def test_key_paragraph():

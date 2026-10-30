@@ -91,11 +91,11 @@ def test_three_paths_have_phrases_and_marks():
     cc = next(l for l in install.splitlines() if l.startswith("- **Claude Code"))
     cw = next(l for l in install.splitlines() if l.startswith("- **Claude Cowork"))
     cx = next(l for l in install.splitlines() if l.startswith("- **Codex"))
-    assert "запусти месяц" in cc and "продолжи месяц" in cc and "проверен" in cc.lower()
+    assert "claude" in cc and "проверен" in cc.lower()
     # общая фраза для любого агента стоит в основном пути, подсказки её не повторяют
     assert "Прочитай AGENTS.md и запусти месяц" in install and "Прочитай AGENTS.md и продолжи месяц" in install
-    assert "не проверено" in cw.lower()
-    assert "не сверяли" in cx.lower() or "не проверял" in cx.lower() or "лишь на базовом" in cx
+    assert "не проверяли" in cw.lower() and "не проверяли" in cx.lower()
+    assert "Запуск в Codex мы не проверяли" in cx
     # Cowork и Codex не названы «проверенными полностью»
     assert "проверен полностью" not in cw.lower() and "проверен полностью" not in cx.lower()
 
