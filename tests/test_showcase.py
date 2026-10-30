@@ -81,14 +81,18 @@ def test_visitor_reads_blocks_and_reaches_github(browser):
     assert page.get_by_role("heading", name="В Claude Cowork").is_visible()
     assert page.get_by_role("heading", name="В Codex").is_visible()
     assert page.get_by_text(
-        "Основной путь — Claude Code. В других агентах (Cowork, Codex) используйте тот же AGENTS.md; "
-        "если что-то не заработало, напишите в Issues."
+        "Основной путь — Claude Code. В Codex проверены установка, сбор данных и поиск залётных роликов "
+        "на реальном канале (30.10.2026). Cowork мы не проверяли: используйте тот же AGENTS.md и пишите в Issues."
     ).is_visible()
     assert page.get_by_role("link", name="Issues").get_attribute("href") == (
         "https://github.com/ozerova152-lab/youtube-producer/issues")
-    # про агентов на странице нет ни «не проверяли», ни «проверен»
+    # про агентов сказано ровно то, что проверено: Codex одной точной фразой, Cowork «не проверяли»
     run_text = page.locator("#how-to-run").inner_text()
-    assert "не проверя" not in run_text and "проверен" not in run_text.lower()
+    codex_fact = ("В Codex проверены установка, сбор данных и поиск залётных роликов "
+                  "на реальном канале (30.10.2026)")
+    assert run_text.count(codex_fact) == 1
+    assert "проверен" not in run_text.replace(codex_fact, "").lower()
+    assert run_text.count("Cowork мы не проверяли") == 1
     assert page.get_by_text("лишь на базовом уровне", exact=False).count() == 0
     assert page.get_by_text("Нет ключа YouTube? Можно загрузить видео из файла.").is_visible()
     assert page.get_by_text("Пример на демо-данных, не реальный канал.").is_visible()

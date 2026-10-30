@@ -74,6 +74,15 @@ def test_troubleshooting_row_for_project_on_windows_disk():
     assert "/mnt/c" in row and "домашнюю папку Ubuntu" in row
 
 
-def test_agents_md_rule_for_projects_on_windows_disk():
+def test_agents_md_advises_but_does_not_forbid_windows_disk():
     assert "~/youtube-producer" in AGENTS and "/mnt/" in AGENTS
-    assert "`make setup` не запускай" in AGENTS
+    assert "тоже работает через WSL" in AGENTS and "надёжнее" in AGENTS
+    assert "решает человек" in AGENTS
+    assert "`make setup` не запускай" not in AGENTS  # запрета больше нет, только предупреждение
+
+
+def test_readme_says_windows_disk_works_but_home_folder_is_more_reliable():
+    b = _wsl_block()
+    assert "Совет для Windows: надёжнее держать проект в домашней папке Ubuntu" in b
+    assert "тоже работает через WSL" in b
+    assert "остановитесь" not in b

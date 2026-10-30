@@ -38,22 +38,36 @@ def test_exact_agent_phrase_in_install_section():
     assert "«Прочитай AGENTS.md и продолжи месяц»" in INSTALL
 
 
-NEUTRAL = ("Основной путь — Claude Code. В других агентах (Cowork, Codex) используйте тот же `AGENTS.md`; "
-           "если что-то не заработало, напишите в [Issues](https://github.com/ozerova152-lab/youtube-producer/issues).")
+# Единственное разрешённое утверждение «проверено» про другой агент (слова человека, 2026-10-30).
+CODEX_FACT = ("В Codex проверены установка, сбор данных и поиск залётных роликов "
+              "на реальном канале (30.10.2026)")
+STATUS = (f"**Основной путь — Claude Code.** {CODEX_FACT}. Cowork мы не проверяли: используйте тот же `AGENTS.md` "
+          "и пишите в [Issues](https://github.com/ozerova152-lab/youtube-producer/issues).")
 
 
-def test_neutral_line_under_hints_and_limits_do_not_claim_checks():
-    assert NEUTRAL in AGENTS_HINTS
+def _without_codex_fact(text):
+    return text.replace(CODEX_FACT, "")
+
+
+def test_status_line_under_hints_and_limits_say_exactly_what_was_checked():
+    assert STATUS in AGENTS_HINTS
     limits = _block(README, "## Для чего проект не подходит и ограничения", r"^## ")
     assert "Основной путь — Claude Code." in limits
+    assert CODEX_FACT in limits and "Cowork мы не проверяли" in limits
     assert "используется тот же `AGENTS.md`" in limits
-    assert not re.search(r"не проверя|не проверен|проверен", limits)
+    # кроме точной фразы про Codex, слова «проверен…» в ограничениях быть не должно
+    assert not re.search(r"проверен", _without_codex_fact(limits))
 
 
-def test_no_checked_or_unchecked_claims_about_agents_anywhere():
-    # ни «не проверяли», ни «проверен лишь…», ни «проверен» про агентов в README нет
-    assert not re.search(r"не проверя|не проверен|не сверяли|лишь на базовом", README)
-    assert not re.search(r"(Cowork|Codex)[^.\n]{0,40}проверен", README)
+def test_no_claims_about_agents_beyond_the_two_allowed_sentences():
+    assert README.count(CODEX_FACT) == 2  # строка под подсказками и раздел ограничений, больше нигде
+    rest = _without_codex_fact(README)
+    # про Cowork ничего «проверенного», про Codex ничего сверх точной фразы выше
+    assert not re.search(r"(Cowork|Codex)[^.\n]{0,40}проверен", rest)
+    assert not re.search(r"не сверяли|лишь на базовом|проверен лишь|проверен полностью", rest)
+    # про Cowork сказано прямо, что не проверяли; про Codex «не проверяли» нет
+    assert README.count("Cowork мы не проверяли") == 2
+    assert not re.search(r"Codex[^.\n]{0,40}не проверя", README)
 
 
 def test_key_paragraph():

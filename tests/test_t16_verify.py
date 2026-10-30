@@ -52,9 +52,10 @@ def test_no_invented_ui_names():
 
 
 def test_cowork_not_claimed_as_checked():
-    # нейтральная формулировка: ни «проверено», ни «не проверяли», только основной путь и Issues
+    # в самой подсказке про Cowork статуса нет; статус одной строкой под подсказками: Cowork не проверяли
     assert not re.search(r"проверен|проверено|не проверя", SEC, re.IGNORECASE)
-    assert "Основной путь — Claude Code." in README and "напишите в [Issues]" in README
+    assert "Основной путь — Claude Code." in README
+    assert "Cowork мы не проверяли: используйте тот же `AGENTS.md` и пишите в [Issues]" in README
 
 
 def test_consistent_with_claude_md_section_a():
