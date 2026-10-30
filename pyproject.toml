@@ -16,7 +16,7 @@ dev = [
   "pip-audit>=2.10",
   "pytest>=9.1.1",
   "pytest-recording>=0.13",
-  "playwright>=1.64",
+  "playwright>=1.64.1",
   "ruff>=0.6",
 ]
 
