@@ -39,31 +39,36 @@ def test_exact_agent_phrase_in_install_section():
 
 
 # Единственное разрешённое утверждение «проверено» про другой агент (слова человека, 2026-10-30).
-CODEX_FACT = ("В Codex проверены установка, сбор данных и поиск залётных роликов "
-              "на реальном канале (30.10.2026)")
-STATUS = (f"**Основной путь — Claude Code.** {CODEX_FACT}. Cowork мы не проверяли: используйте тот же `AGENTS.md` "
+CODEX_FACT = "Codex проверен на реальном канале (30.10.2026) от установки до брифов"
+CODEX_STEPS = "установка, ключ, сбор данных, залёты, ниша и кандидаты, стратегия, брифы"
+CLAUDE_FACT = "Основной путь — Claude Code, проверен полностью"
+STATUS = (f"**{CLAUDE_FACT}.** {CODEX_FACT}: {CODEX_STEPS}. Cowork мы не проверяли: используйте тот же `AGENTS.md` "
           "и пишите в [Issues](https://github.com/ozerova152-lab/youtube-producer/issues).")
 
 
-def _without_codex_fact(text):
-    return text.replace(CODEX_FACT, "")
+def _without_allowed(text):
+    """Убирает ровно три разрешённые формулировки «проверен»: Claude Code и Codex (дословно)."""
+    return text.replace(CLAUDE_FACT, "").replace(CODEX_FACT, "")
 
 
 def test_status_line_under_hints_and_limits_say_exactly_what_was_checked():
     assert STATUS in AGENTS_HINTS
     limits = _block(README, "## Для чего проект не подходит и ограничения", r"^## ")
-    assert "Основной путь — Claude Code." in limits
+    assert CLAUDE_FACT in limits
     assert CODEX_FACT in limits and "Cowork мы не проверяли" in limits
     assert "используется тот же `AGENTS.md`" in limits
-    # кроме точной фразы про Codex, слова «проверен…» в ограничениях быть не должно
-    assert not re.search(r"проверен", _without_codex_fact(limits))
+    # кроме двух дословных фраз (Claude Code, Codex), слова «проверен…» в ограничениях быть не должно
+    assert not re.search(r"проверен", _without_allowed(limits))
 
 
-def test_no_claims_about_agents_beyond_the_two_allowed_sentences():
+def test_no_claims_about_agents_beyond_the_allowed_sentences():
     assert README.count(CODEX_FACT) == 2  # строка под подсказками и раздел ограничений, больше нигде
-    rest = _without_codex_fact(README)
+    assert README.count(CLAUDE_FACT) == 2
+    assert README.count(CODEX_STEPS) == 1  # полный перечень этапов Codex только в строке под подсказками
+    rest = _without_allowed(README)
     # про Cowork ничего «проверенного», про Codex ничего сверх точной фразы выше
     assert not re.search(r"(Cowork|Codex)[^.\n]{0,40}проверен", rest)
+    assert not re.search(r"Claude Code[^.\n]{0,40}проверен", rest)
     assert not re.search(r"не сверяли|лишь на базовом|проверен лишь|проверен полностью", rest)
     # про Cowork сказано прямо, что не проверяли; про Codex «не проверяли» нет
     assert README.count("Cowork мы не проверяли") == 2

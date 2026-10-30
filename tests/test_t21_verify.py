@@ -94,7 +94,7 @@ def test_three_paths_have_phrases_and_marks():
     assert "claude" in cc
     # общая фраза для любого агента стоит в основном пути, подсказки её не повторяют
     assert "Прочитай AGENTS.md и запусти месяц" in install and "Прочитай AGENTS.md и продолжи месяц" in install
-    assert "Основной путь — Claude Code." in install and "тот же `AGENTS.md`" in install
+    assert "Основной путь — Claude Code, проверен полностью." in install and "тот же `AGENTS.md`" in install
     assert not re.search(r"не проверя|не проверен|проверено", cw + cx)
     # Cowork и Codex не названы «проверенными полностью»
     assert "проверен полностью" not in cw.lower() and "проверен полностью" not in cx.lower()
