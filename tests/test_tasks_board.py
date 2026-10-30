@@ -51,3 +51,18 @@ def test_t22_is_parked_for_a_human_and_not_picked_up_automatically():
     board = (TASKS / "board.md").read_text(encoding="utf-8")
     nh = board.split("## ⚠ Нужен человек")[1].split("\n## ")[0]
     assert "**T22**" in nh and "позже" in nh.lower()
+
+
+def test_t23_is_ready_and_traces_to_the_spec():
+    path, meta = _tasks()["T23"]
+    assert meta["status"] == "todo" and meta["blocked_by"] == [] and meta["spec_sync"] == "ok"
+    board = (TASKS / "board.md").read_text(encoding="utf-8")
+    ready = board.split("## Готовы к работе")[1].split("\n## ")[0]
+    assert "**T23**" in ready
+    text = path.read_text(encoding="utf-8")
+    order = ["залётные ролики", "разбор", "ниша", "конкуренты", "стратегия", "брифы и сценарии", "план"]
+    line = next(l for l in text.splitlines() if "строго в порядке" in l)
+    pos = [line.find(x) for x in order]
+    assert all(p >= 0 for p in pos) and pos == sorted(pos), pos
+    assert "00-overview.md" in text and "started_on" in text and "collected_on" in text
+    assert "в работу не взята" in text  # статус честно todo, код не писался
