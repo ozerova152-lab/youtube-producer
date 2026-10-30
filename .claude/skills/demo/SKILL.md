@@ -6,7 +6,7 @@ description: "Посмотреть проект на тестовых данны
 > Только Claude Code. Необязательный бонус: те же шаги описаны в README, раздел «Демо без ключа».
 
 1. Проверь, есть ли `data/demo` (`test -d data/demo`). Если есть, **не затирай**: спроси человека, оставить как есть, продолжить на ней или сбросить через `make reset`. Без его слова ничего не удаляй и не перезаписывай.
-2. Нет: `cp -r examples/demo data/demo`.
+2. Нет: `mkdir -p data`, затем `cp -r examples/demo data/demo`.
 3. Выполни по очереди и после каждой команды объясни вывод простыми словами:
    - `.venv/bin/produce --channel data/demo segments` (какие сегменты);
    - `.venv/bin/produce --channel data/demo start --segment ru --brief-lang ru`;
