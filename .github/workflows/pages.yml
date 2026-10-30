@@ -20,6 +20,8 @@ concurrency:
 
 jobs:
   deploy:
+    # Пока репозиторий приватный, бесплатные Pages недоступны: задача пропускается (серый значок), а не падает.
+    if: github.event.repository.private == false
     runs-on: ubuntu-latest
     environment:
       name: github-pages

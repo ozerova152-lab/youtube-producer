@@ -68,3 +68,9 @@ def test_concurrency_does_not_cancel_running_publish():
     c = _load()["concurrency"]
     assert c["group"] == "pages"
     assert c["cancel-in-progress"] is False
+
+
+def test_deploy_skipped_while_repository_is_private():
+    # пока репозиторий приватный, Pages недоступны: задача пропускается, а не падает красным
+    (job,) = _load()["jobs"].values()
+    assert job["if"] == "github.event.repository.private == false"
