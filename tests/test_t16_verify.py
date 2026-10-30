@@ -1,18 +1,18 @@
-"""T16, независимая проверка: раздел README «Вариант без Claude Code» против критериев приёмки и CLAUDE.md."""
+"""T16, независимая проверка: раздел README «Claude Cowork (если нет Claude Code)» против критериев приёмки и AGENTS.md (T21)."""
 
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 README = (ROOT / "README.md").read_text(encoding="utf-8")
-CLAUDE = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
-m = re.search(r"^## Вариант без Claude Code\n(.*?)(?=^## |\Z)", README, re.DOTALL | re.MULTILINE)
+CLAUDE = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+m = re.search(r"^## Claude Cowork \(если нет Claude Code\)\n(.*?)(?=^## |\Z)", README, re.DOTALL | re.MULTILINE)
 assert m
 SEC = m.group(1)
 
 
 def test_section_between_codex_and_inside_and_single():
-    assert README.count("## Вариант без Claude Code") == 1
+    assert README.count("## Claude Cowork (если нет Claude Code)") == 1
 
 
 def test_steps_in_order():
@@ -20,7 +20,7 @@ def test_steps_in_order():
         "Download ZIP",
         "Распакуйте",
         "Откройте распакованную папку в Claude Cowork",
-        "Прочитай CLAUDE.md и запусти месяц",
+        "Прочитай AGENTS.md и запусти месяц",
         ".env.example",
         "docs/import-format.md",
     ]
@@ -76,7 +76,7 @@ def test_agent_never_told_to_paste_key():
 
 
 def test_readme_size_and_no_secrets():
-    assert len(README.splitlines()) < 120
+    assert len(README.splitlines()) < 260  # T21: README стал длиннее (быстрый старт, ошибки, глоссарий)
     assert not re.search(r"AIza[0-9A-Za-z_\-]{35}|sk-[A-Za-z0-9]{10,}|ghp_[A-Za-z0-9]{20,}", README)
 
 

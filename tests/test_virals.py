@@ -154,7 +154,7 @@ def test_no_data_gives_human_error(channel):
 def test_playbooks_cover_flow():
     collect = (ROOT / "playbooks" / "01-collect.md").read_text(encoding="utf-8")
     virals = (ROOT / "playbooks" / "02-virals.md").read_text(encoding="utf-8")
-    claude = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    claude = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
     assert "playbooks/01-collect.md" in claude and "playbooks/02-virals.md" in claude
     assert "produce --channel <канал> collect" in collect.replace(".venv/bin/", "")
     assert "import <файл>" in collect and "сам не ставит" in collect

@@ -345,7 +345,8 @@ def test_make_reset_idempotent_and_leaves_other_data(tmp_path):
 def test_make_setup_recipe_creates_venv_and_installs_project():
     dry = _run(["make", "-n", "setup"], cwd=ROOT, capture_output=True, text=True)
     assert dry.returncode == 0
-    assert "venv .venv" in dry.stdout and 'pip install -e ".[dev]"' in dry.stdout
+    assert "venv .venv" in dry.stdout and "pip install -e ." in dry.stdout
+    assert 'pip install -e ".[dev]"' not in dry.stdout  # T21: у пользователя только то, что нужно для запуска
 
 
 # --- Критерий 7: общий дневной учёт ----------------------------------------------------------

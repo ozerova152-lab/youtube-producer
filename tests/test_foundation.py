@@ -169,6 +169,23 @@ def test_make_setup_upgrades_pip_before_installing_dependencies():
     assert upgrade < install
 
 
+def test_make_setup_for_user_does_not_download_chromium():
+    """T21: новичок по быстрому старту не качает браузер (около 120 МБ нужен только проверке витрины)."""
+    steps = subprocess.run(
+        ["make", "-n", "setup"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout
+    assert "playwright" not in steps and "chromium" not in steps.lower()
+
+
+def test_make_setup_dev_adds_dev_extras_and_chromium():
+    """T21: полный набор разработчика остался: dev-зависимости и Chromium для `make check`."""
+    steps = subprocess.run(
+        ["make", "-n", "setup-dev"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout
+    assert 'pip install -e ".[dev]"' in steps
+    assert "playwright install chromium" in steps
+
+
 def test_make_audit_runs_pip_audit_and_is_not_part_of_check():
     """Аудит ходит в сеть и со временем краснеет сам: `make check` остаётся без него."""
     audit = subprocess.run(

@@ -439,7 +439,7 @@ def test_virals_playbook_structure():
 
 
 def test_claude_md_links_both_playbooks():
-    claude = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    claude = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
     assert "`playbooks/01-collect.md`" in claude and "`playbooks/02-virals.md`" in claude
     assert "--confirm" in claude and "только после слова человека" in claude
     assert (ROOT / "playbooks" / "01-collect.md").exists()

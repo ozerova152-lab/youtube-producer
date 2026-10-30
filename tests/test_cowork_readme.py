@@ -1,4 +1,4 @@
-"""T16: README, раздел «Вариант без Claude Code» (Claude Cowork): честные пометки и живые ссылки."""
+"""T16/T21: README, раздел «Claude Cowork (если нет Claude Code)»: честные пометки и живые ссылки."""
 
 import re
 from pathlib import Path
@@ -13,7 +13,7 @@ def _section(text, title):
     return m.group(1)
 
 
-SECTION = _section(README, "Вариант без Claude Code")
+SECTION = _section(README, "Claude Cowork (если нет Claude Code)")
 
 
 def _list_after(marker):
@@ -29,7 +29,7 @@ def test_section_steps():
 
 
 def test_exact_agent_phrase():
-    assert "«Прочитай CLAUDE.md и запусти месяц»" in SECTION
+    assert "«Прочитай AGENTS.md и запусти месяц»" in SECTION
 
 
 def test_checked_and_unchecked_lists():
@@ -39,14 +39,14 @@ def test_checked_and_unchecked_lists():
     assert "команды скрипта" in checked and "тесты проекта" in checked
     assert "запуск именно в Claude Cowork" in unchecked
     assert "запускать команды скрипта" in unchecked
-    assert "`CLAUDE.md`" in unchecked
+    assert "`AGENTS.md`" in unchecked
     assert "настоящий сбор по ключу" in unchecked
 
 
 def test_key_paragraph():
     assert "не вставляйте его в чат" in SECTION
     assert "только в Claude Code" in SECTION
-    assert "лишь на инструкции в `CLAUDE.md`" in SECTION
+    assert "лишь на инструкции в `AGENTS.md`" in SECTION
     assert "проверьте сами" in SECTION
 
 

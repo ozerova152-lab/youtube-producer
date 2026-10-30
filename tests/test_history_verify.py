@@ -480,5 +480,5 @@ def test_playbook_does_not_tell_agent_to_set_status_or_edit_old_runs():
 
 def test_playbook_registered_in_readme_and_referenced():
     assert "07-history" in (ROOT / "playbooks" / "README.md").read_text(encoding="utf-8")
-    assert "07-history" in (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    assert "07-history" in (ROOT / "AGENTS.md").read_text(encoding="utf-8")
     assert "07-history" in (ROOT / "playbooks" / "06-briefs-plan.md").read_text(encoding="utf-8")

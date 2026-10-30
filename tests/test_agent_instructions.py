@@ -1,4 +1,7 @@
-"""T01: проверки файлов инструкций агента (критерии приёмки по спеке, не по коду)."""
+"""T01/T21: проверки файлов инструкций агента (критерии приёмки по спеке, не по коду).
+
+T21: общие правила лежат в `AGENTS.md`, `CLAUDE.md` только подключает их и держит Claude-специфичное.
+"""
 
 import fnmatch
 import json
@@ -34,17 +37,29 @@ def _grep(pattern, flags=re.IGNORECASE):
     return [str(rel) for rel, p in _repo_files() if rx.search(_text(p)) or rx.search(rel.name)]
 
 
-CLAUDE = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+AGENTS = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+CLAUDE_MD = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
 
 
-def test_no_agents_md_file_or_links():
-    names = [p.name.lower() for p in ROOT.rglob("*") if ".venv" not in p.parts and ".git" not in p.parts]
-    assert "agents.md" not in names
-    assert _grep(r"AGENTS\.md|AGENTS md") == []
-    assert (ROOT / "CLAUDE.md").is_file()
+def _paragraphs(text):
+    return {p.strip() for p in re.split(r"\n\s*\n", text) if len(p.strip()) >= 40}
 
 
-def test_claude_md_required_content():
+def test_agents_md_is_shared_file_and_claude_md_imports_it():
+    """T21 (раньше тут требовалось, чтобы AGENTS.md не было): теперь он основа, CLAUDE.md его подключает."""
+    assert (ROOT / "AGENTS.md").is_file() and (ROOT / "CLAUDE.md").is_file()
+    assert CLAUDE_MD.splitlines()[0].strip() == "@AGENTS.md"
+    # CLAUDE.md не повторяет текст правил: ни один абзац не встречается в обоих файлах
+    assert _paragraphs(CLAUDE_MD) & _paragraphs(AGENTS) == set()
+    # Claude-специфичное лежит в CLAUDE.md, а не в общем файле
+    assert "Только Claude Code" in CLAUDE_MD and ".claude/settings.json" in CLAUDE_MD
+    for skill in ("/start-month", "/continue-month", "/demo", "/setup-check"):
+        assert f"`{skill}`" in CLAUDE_MD, skill
+        assert f"`{skill}`" not in AGENTS, skill
+
+
+def test_agents_md_required_content():
+    CLAUDE = AGENTS
     low = CLAUDE.lower()
     # цель
     assert "## цель" in low
@@ -112,7 +127,9 @@ def test_playbooks_templates_markdown_and_claude_code_marks():
     for s in ("check", "reset"):
         assert "Только Claude Code" in (ROOT / ".claude/skills" / s / "SKILL.md").read_text()
     assert "Только Claude Code" in (ROOT / "playbooks/README.md").read_text()
-    assert "make check" in CLAUDE and "make reset" in CLAUDE
+    assert "make check" in AGENTS and "make reset" in AGENTS
+    for s in ("start-month", "continue-month", "demo", "setup-check"):
+        assert "Только Claude Code" in (ROOT / ".claude/skills" / s / "SKILL.md").read_text(encoding="utf-8"), s
 
 
 def test_no_claude_api_leftovers():
@@ -125,9 +142,9 @@ def test_no_claude_api_leftovers():
     assert "anthropic" not in (ROOT / "pyproject.toml").read_text().lower()
 
 
-def test_claude_md_links_match_playbooks_exactly():
-    """T15: CLAUDE.md ссылается на каждый существующий сценарий и ни на один несуществующий."""
-    linked = set(re.findall(r"playbooks/([\w.-]+\.md)", CLAUDE))
+def test_agents_md_links_match_playbooks_exactly():
+    """T15: AGENTS.md ссылается на каждый существующий сценарий и ни на один несуществующий."""
+    linked = set(re.findall(r"playbooks/([\w.-]+\.md)", AGENTS))
     existing = {p.name for p in (ROOT / "playbooks").glob("*.md") if p.name != "README.md"}
     assert linked == existing, (linked ^ existing)
 
@@ -150,3 +167,40 @@ def test_month_playbook_has_order_pauses_and_bans():
                    "Ничего не публиковать", "Не читать `.env`", "`--confirm` ставится только после слова человека",
                    "07-history"]:
         assert phrase.lower() in text.lower(), phrase
+
+
+def _skill(name):
+    return (ROOT / ".claude" / "skills" / name / "SKILL.md").read_text(encoding="utf-8")
+
+
+def test_setup_check_never_reads_env_content():
+    """T21: /setup-check узнаёт только факт наличия `.env`, содержимое не читает и не печатает."""
+    text = _skill("setup-check")
+    assert "test -f .env" in text
+    for bad in (r"cat\s+\S*\.env", r"grep\s+\S*\s*\S*\.env", r"head\s+\S*\.env", r"source\s+\S*\.env",
+                r"Read\(", r"YOUTUBE_API_KEY="):
+        assert not re.search(bad, text), bad
+    assert "содержимое" in text and "не читай" in text
+
+
+def test_demo_skill_does_not_overwrite_existing_demo():
+    text = _skill("demo")
+    assert "test -d data/demo" in text and "не затирай" in text
+    assert "cp -r examples/demo data/demo" in text
+    assert "rm -rf" not in text
+
+
+def test_month_skills_point_to_month_playbook():
+    assert "playbooks/00-month.md" in _skill("start-month")
+    assert "playbooks/00-month.md" in _skill("continue-month")
+    assert "продолжи месяц" in _skill("continue-month")
+
+
+def test_readme_security_precedes_cowork_and_codex_and_states_env_limit():
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    sec = readme.index("\n## Безопасность")
+    assert sec < readme.index("\n## Claude Cowork") and sec < readme.index("\n## Codex")
+    block = readme[sec:readme.index("\n## ", sec + 5)]
+    assert ".claude/settings.json" in block and "только в Claude Code" in block
+    assert "автоподтверждение" in block and "не вставляйте ключ в чат" in block
+    assert "Адрес репозитория: `https://github.com/ozerova152-lab/youtube-producer` (заглушка до публикации" in readme

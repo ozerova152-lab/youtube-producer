@@ -17,7 +17,7 @@ from produce.core.runs import STAGES
 ROOT = Path(__file__).resolve().parent.parent
 MONTH = (ROOT / "playbooks/00-month.md").read_text(encoding="utf-8")
 README = (ROOT / "README.md").read_text(encoding="utf-8")
-CLAUDE = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+CLAUDE = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 SITE = (ROOT / "site/index.html").read_text(encoding="utf-8")
 
 
@@ -132,7 +132,7 @@ def test_missing_playbook_reference_would_be_detected(tmp_path):
 
 @pytest.mark.parametrize("needle", [
     "Google Cloud", "YouTube Data API v3", ".env", "cp .env.example .env", "Claude Code",
-    "запусти месяц", "оценк", "импорт", "docs/import-format.md", "Codex", "CLAUDE.md",
+    "запусти месяц", "оценк", "импорт", "docs/import-format.md", "Codex", "AGENTS.md",
     "WSL", "make setup", "Без ключа",
 ])
 def test_readme_mentions(needle):
@@ -140,11 +140,11 @@ def test_readme_mentions(needle):
 
 
 def test_readme_codex_honest_note_and_no_tutorials():
-    codex = _section(README, "В Codex")
+    codex = _section(README, "Codex")
     assert "лишь на базовом уровне" in codex
-    assert "ссылку на репозиторий" in codex and "CLAUDE.md" in codex
+    assert "ссылку на репозиторий" in codex and "AGENTS.md" in codex
     assert "Отдельной поддержки Codex нет" in codex
-    assert len(README.splitlines()) < 120  # не учебник
+    assert len(README.splitlines()) < 260  # не учебник (T21: лимит поднят вместе с быстрым стартом и разделом ошибок)
     assert "```mermaid" not in README and "![" not in README
 
 
