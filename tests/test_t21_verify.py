@@ -27,7 +27,8 @@ def _norm(s):
 # --- 1-2: AGENTS.md / CLAUDE.md ---------------------------------------------------------------
 
 def test_agents_has_all_old_claude_rules():
-    old = subprocess.run(["git", "show", "HEAD:CLAUDE.md"], cwd=ROOT, capture_output=True, text=True, check=True).stdout
+    # c90108e — коммит T21; его родитель хранит прежний CLAUDE.md до разделения на два файла
+    old = subprocess.run(["git", "show", "c90108e~1:CLAUDE.md"], cwd=ROOT, capture_output=True, text=True, check=True).stdout
     # каждая строка-правило старого CLAUDE.md, кроме Claude-специфичной, есть в AGENTS.md
     lines = [l.strip() for l in old.splitlines() if l.strip().startswith(("- ", "| `"))]
     missing = [l for l in lines if l not in AGENTS and "Мини-скиллы" not in l and "settings.json" not in l

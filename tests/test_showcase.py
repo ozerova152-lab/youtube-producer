@@ -65,6 +65,8 @@ def test_visitor_reads_blocks_and_reaches_github(browser):
     assert page.locator("#how-it-works .steps li").count() == 5
     assert page.get_by_text("Решает и публикует всегда человек.", exact=True).is_visible()
     assert page.get_by_role("heading", name="В Claude Code").is_visible()
+    assert page.get_by_role("heading", name="В Claude Cowork").is_visible()
+    assert page.get_by_text("Запуск в Claude Cowork мы не проверяли.").is_visible()
     assert page.get_by_role("heading", name="В Codex").is_visible()
     assert page.get_by_text("Codex проверен лишь на базовом уровне.").is_visible()
     assert page.get_by_text("Нет ключа YouTube? Можно загрузить видео из файла.").is_visible()
