@@ -109,10 +109,11 @@ def test_security_warning_next_to_hints_and_in_final_section():
         assert p in sec, p
 
 
-def test_placeholder_address_line_untouched():
-    before = _git_show("c90108e~1", "README.md")
-    line = next(l for l in before.splitlines() if l.startswith("Адрес репозитория"))
-    assert line in README.splitlines()
+def test_address_lines_are_real_after_publication():
+    # T21 охранял строку-заглушку; после публикации (2026-10-30) пометка снята намеренно
+    assert "заглушка" not in README.lower()
+    assert "Адрес репозитория: `https://github.com/ozerova152-lab/youtube-producer`." in README.splitlines()[4]
+    assert "<https://ozerova152-lab.github.io/youtube-producer/>" in README
 
 
 def test_demo_section_commands_and_expected_result():

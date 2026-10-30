@@ -205,4 +205,5 @@ def test_readme_states_env_limit_next_to_agent_hints_and_in_security_section():
     block = readme[sec:readme.index("\n## ", sec + 5) if "\n## " in readme[sec + 5:] else len(readme)]
     assert ".claude/settings.json" in block and "только в Claude Code" in block
     assert "автоподтверждение" in block and "не вставляйте ключ в чат" in block
-    assert "Адрес репозитория: `https://github.com/ozerova152-lab/youtube-producer` (заглушка до публикации" in readme
+    assert "Адрес репозитория: `https://github.com/ozerova152-lab/youtube-producer`." in readme
+    assert "заглушка до публикации" not in readme
