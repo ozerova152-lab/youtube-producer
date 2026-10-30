@@ -5,8 +5,8 @@ status: done
 origin: adhoc
 phase: ""
 blocked_by: []
-traces_to: —
-spec_sync: pending
+traces_to: "01-functional-requirements.md#инструкция-агента-и-сценарии · 01-functional-requirements.md#публикация-на-github"
+spec_sync: ok
 summary: "README: раздел «Вариант без Claude Code» для запуска в Claude Cowork, с честной пометкой «проверено / не проверено»"
 acceptance:
   - "Дано README; когда читаю раздел «Вариант без Claude Code»; тогда в нём по шагам: скачать ZIP на странице репозитория на GitHub (Code → Download ZIP), распаковать, открыть папку в Claude Cowork, что написать агенту (дословная фраза, например «Прочитай CLAUDE.md и запусти месяц»), куда положить ключ YouTube (локальный `.env`) и как идти без ключа (импорт из файла, ссылка на `docs/import-format.md`)"
@@ -41,3 +41,4 @@ review: human
   6. Дифф: изменены только README.md, docs/tasks/*, tests/test_cowork_readme.py, tests/test_t16_verify.py; spec/CLAUDE.md/site/src не тронуты: доказан.
   Замечание (не провал): реальный запуск в Cowork не проверялся и не может быть проверен автоматически; ручная приёмка человеком остаётся.
 - 2026-10-27 [run-task] Приёмка человеком: принято, спеку пока не трогать (`spec_sync: pending` остаётся: способ для Cowork можно донести в слой 1, «Публикация на GitHub», с согласия человека). Автопроверки зелёные (gitleaks, ruff, 967 тестов, 1 xfail). Не проверено: запуск в самом Claude Cowork. Открыто: README 108 строк из 120 допустимых тестом T15; витрина (site/) про Cowork молчит.
+- 2026-10-30T00:00Z [claude] Долг по спеке закрыт: после T21 слой 1 (строки об инструкции агента и публикации на GitHub) описывает пути для Claude Code, Cowork и Codex. `spec_sync: pending` заменён на `ok`, `traces_to` заполнен.
