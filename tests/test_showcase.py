@@ -72,6 +72,14 @@ def test_visitor_reads_blocks_and_reaches_github(browser):
     assert "Прочитай AGENTS.md и запусти месяц" in steps.nth(2).inner_text()
     assert "Клонируйте" not in page.locator("#how-to-run").inner_text()
     assert page.get_by_text("WSL: это Linux внутри Windows", exact=False).is_visible()
+    # блок для новичка с Windows: время, фраза для агента, «Если застряли»
+    wsl = page.locator("#windows-wsl")
+    text = wsl.inner_text()
+    assert "один разовый шаг, около 20–30 минут" in text
+    assert ("Я на Windows и ничего не понимаю в терминале. Помоги поставить WSL и дойти до запуска проекта, "
+            "объясняй каждый шаг") in text
+    assert "Если застряли" in text and "Пароль при вводе не показывается" in text
+    assert "включить в BIOS" in text and "имя@компьютер" in text
     # три подсказки одинаковой структуры и примерно одной длины, без главного агента
     cards = page.locator("#how-to-run .grid article")
     assert cards.count() == 3

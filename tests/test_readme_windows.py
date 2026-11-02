@@ -86,3 +86,20 @@ def test_readme_says_windows_disk_works_but_home_folder_is_more_reliable():
     assert "Совет для Windows: надёжнее держать проект в домашней папке Ubuntu" in b
     assert "тоже работает через WSL" in b
     assert "остановитесь" not in b
+
+
+def test_wsl_block_is_honest_about_time_and_has_agent_phrase():
+    b = _wsl_block()
+    assert "один разовый шаг, около 20–30 минут" in b
+    assert ("«Я на Windows и ничего не понимаю в терминале. Помоги поставить WSL и дойти до запуска проекта, "
+            "объясняй каждый шаг»") in b
+
+
+def test_wsl_block_has_if_stuck_list():
+    b = _wsl_block()
+    stuck = b[b.index("Если застряли"):]
+    assert "Пароль при вводе не показывается" in stuck
+    assert "wsl --install" in stuck and "виртуализаци" in stuck and "BIOS" in stuck
+    assert "имя@компьютер" in stuck and "PowerShell" in stuck
+    # список стоит до «Дальше все шаги…» и не вытесняет советов про домашнюю папку
+    assert b.index("Если застряли") < b.index("Дальше все шаги ниже")
