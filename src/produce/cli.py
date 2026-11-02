@@ -136,7 +136,7 @@ def start(
             )
         if brief_lang not in {seg_lang, "ru"}:
             raise RunError(f"Язык брифа «{brief_lang}» не подходит: можно {seg_lang} или ru")
-        month = month or runs.current_month()
+        month = month or runs.current_month(collecting.now().date())
         previous = runs.list_runs(ctx.obj, month, segment)
         if not previous:
             typer.echo(f"За {month} для сегмента {segment} ещё нет запуска. Создаю…")

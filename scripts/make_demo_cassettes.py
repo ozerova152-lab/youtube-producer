@@ -9,6 +9,7 @@ YouTube Data API v3; обмен записывается в формат pytest-
 Запуск: `.venv/bin/python scripts/make_demo_cassettes.py`
 """
 
+import contextlib
 import json
 from datetime import UTC, date
 from pathlib import Path
@@ -260,27 +261,21 @@ def main():
     _drive(en, "US", "en", ["AI tools", "ChatGPT tutorial", "AI for beginners"], [])
     _write("collect_en.yaml", en.log)
     bad = FakeHttp(_ru_world(), reject_key=True)
-    try:
+    with contextlib.suppress(Exception):  # отказ ключа здесь ожидаем
         _drive(bad, "RU", "ru", ["нейросеть", "ChatGPT", "нейросети для работы"], [])
-    except Exception:  # noqa: BLE001 - отказ ключа здесь ожидаем
-        pass
     _write("key_rejected.yaml", bad.log)
     # Отказы: YouTube лежит (первый запрос и 3 повтора), квота кончилась после 5-го запроса.
     # Пауза между повторами в скрипте не нужна.
     from produce.core import youtube
     youtube.pause = lambda seconds: None
     down = FakeHttp(_ru_world(), fail_from=0, fail=(503, _backend_error()))
-    try:
+    with contextlib.suppress(Exception):  # сбой здесь ожидаем
         _drive(down, "RU", "ru", ru_words, [])
-    except Exception:  # noqa: BLE001 - сбой здесь ожидаем
-        pass
     _write("server_down.yaml", down.log)
     stop_after = 5  # 3 поиска, ролики, каналы; дальше списки загрузок
     day1 = FakeHttp(_ru_world(), fail_from=stop_after, fail=(403, _quota_error()))
-    try:
+    with contextlib.suppress(Exception):  # квота кончилась, как задумано
         _drive(day1, "RU", "ru", ru_words, [])
-    except Exception:  # noqa: BLE001 - квота кончилась, как задумано
-        pass
     _write("quota_day1.yaml", day1.log)
     _write("quota_day2.yaml", ru.log[stop_after:])
     manifest = {
