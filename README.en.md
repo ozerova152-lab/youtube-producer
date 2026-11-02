@@ -1,3 +1,5 @@
+![YouTube Producer](assets/cover-producer.jpg)
+
 # AI Producer for a YouTube Channel
 
 [Русская версия](README.md) · English
