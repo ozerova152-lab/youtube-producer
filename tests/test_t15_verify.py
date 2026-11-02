@@ -145,7 +145,9 @@ def test_readme_codex_honest_note_and_no_tutorials():
     assert "лишь на базовом уровне" not in README
     assert "Cowork мы не проверяли: используйте тот же `AGENTS.md` и пишите в [Issues]" in README
     assert len(README.splitlines()) < 260  # не учебник (T21: лимит поднят вместе с быстрым стартом и разделом ошибок)
-    assert "```mermaid" not in README and "![" not in README
+    assert "```mermaid" not in README
+    # картинка допустима только одна: обложка в шапке (assets/cover-producer.jpg)
+    assert re.findall(r"!\[[^\]]*\]\([^)]*\)", README) == ["![YouTube Producer](assets/cover-producer.jpg)"]
 
 
 def test_readme_has_no_realistic_key():

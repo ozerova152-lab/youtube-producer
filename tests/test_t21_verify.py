@@ -112,7 +112,7 @@ def test_security_warning_next_to_hints_and_in_final_section():
 def test_address_lines_are_real_after_publication():
     # T21 охранял строку-заглушку; после публикации (2026-10-30) пометка снята намеренно
     assert "заглушка" not in README.lower()
-    assert "Адрес репозитория: `https://github.com/ozerova152-lab/youtube-producer`." in README.splitlines()[4]
+    assert "Адрес репозитория: `https://github.com/ozerova152-lab/youtube-producer`." in README  # по тексту, а не по номеру строки: шапка README может расти
     assert "<https://ozerova152-lab.github.io/youtube-producer/>" in README
 
 
