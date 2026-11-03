@@ -1,0 +1,28 @@
+Загружено: 11 видео, 2 канала. Обращений к YouTube: 0
+Каналов с менее чем 5 роликами: 1, они пропущены
+--- нет covers.md
+`covers.md`: файла нет в /tmp/claude-1000/-home-matebook-vibecoding-projects-youtube-producer/df1f1f26-ebb1-4a00-aae2-0a0bb2efc127/scratchpad/tmp.msxAgSCvk5/ch/runs/2026-10_ru_v1. Агент ещё не записал разбор обложек
+exit=1
+--- good
+Проверено: разбор обложек по 2 залётам, ошибок нет
+exit=0
+--- fake id
+`covers.md`, залёт 2 «Нейросеть для отчётов: быстрый разбор»: видео `чужой` не залёт, в `virals.json` его нет
+`covers.md`: нет разбора для залёта `demo_v07`
+exit=1
+--- norm
+`covers.md`, залёт 1 «Как использовать нейросеть: выпуск 1»: в поле «К норме канала» 50, а в `virals.json` 12.68
+exit=1
+--- skip
+Проверено: разбор обложек пропущен (нет данных), ошибок нет
+exit=0
+--- template
+`covers.md`, вверху файла: основа разбора «<обложки по ссылкам | обложки из папки thumbs | нет данных>» не распознана. Допустимо: обложки по ссылкам, обложки из папки thumbs, нет данных
+`covers.md`, вверху файла: поле «Запуск» не заполнено (остался шаблонный текст)
+exit=1
+--- git check-ignore
+.gitignore:7:data/	data/c/runs/r/thumbs/x.jpg
+.gitignore:7:data/	data/c/runs/r/thumbs/x.jpeg
+.gitignore:7:data/	data/c/runs/r/thumbs/x.png
+.gitignore:7:data/	data/c/runs/r/thumbs/x.webp
+net-grep exit=1 (1 = нет сетевых вызовов)

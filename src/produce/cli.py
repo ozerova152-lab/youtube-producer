@@ -11,6 +11,7 @@ from produce.core import analysis as analyzing
 from produce.core import briefs as briefing
 from produce.core import collect as collecting
 from produce.core import comments as commenting
+from produce.core import covers as covering
 from produce.core import history, importing, quota, report, runs
 from produce.core import niche as niching
 from produce.core import plan as planning
@@ -485,11 +486,23 @@ def _later(channel: Path, segment_id: str | None, picks: list[int], everything: 
     typer.echo(f"Возвращено брифов: {len(done)}")
 
 
-CHECK_STEPS = ("strategy", "briefs", "plan")
+CHECK_STEPS = ("covers", "strategy", "briefs", "plan")
 
 
 def _check_step(channel: Path, run: runs.Run, step: str, settings: dict) -> list[str]:
-    """Проверка шага стратегии, брифов или плана; печатает успех, возвращает проблемы."""
+    """Проверка шага обложек, стратегии, брифов или плана; печатает успех, возвращает проблемы."""
+    if step == "covers":
+        # Необязательный шаг 3б: этап в run.json не двигается, признак — сам covers.md.
+        mode, problems = covering.check(run)
+        if problems:
+            return problems
+        if mode == covering.MODE_NONE:
+            typer.echo("Проверено: разбор обложек пропущен (нет данных), ошибок нет")
+        else:
+            count = len(commenting.viral_ids(run))
+            typer.echo(f"Проверено: разбор обложек по {count} {plural(count, 'залёту', 'залётам', 'залётам')}, "
+                       "ошибок нет")
+        return []
     if step == "strategy":
         status, problems = strategizing.check(run)
         # Повтор отклонённой темы называется вместе с остальными ошибками файла.
@@ -531,7 +544,7 @@ def _check_step(channel: Path, run: runs.Run, step: str, settings: dict) -> list
 @app.command(name="check-files")
 def check_files(
     ctx: typer.Context,
-    step: Annotated[str | None, typer.Option(help="strategy, briefs или plan; без флага: разбор, ниша и кандидаты")] = None,
+    step: Annotated[str | None, typer.Option(help="covers, strategy, briefs или plan; без флага: разбор, ниша и кандидаты")] = None,
     segment: Annotated[str | None, typer.Option(help="Сегмент; если он один, берётся он")] = None,
 ) -> None:
     """Проверить структуру файлов агента по шаблонам (смысл проверяет человек)."""

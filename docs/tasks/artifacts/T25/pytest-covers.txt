@@ -1,0 +1,11 @@
+============================= test session starts ==============================
+platform linux -- Python 3.14.4, pytest-9.1.1, pluggy-1.7.0
+rootdir: /home/matebook/vibecoding-projects/youtube-producer
+configfile: pyproject.toml
+plugins: platformdirs-4.14.0, recording-0.14.0
+collected 35 items
+
+tests/test_covers.py .................                                   [ 48%]
+tests/test_covers_hostile.py ..................                          [100%]
+
+============================== 35 passed in 1.35s ==============================

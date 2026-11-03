@@ -4,4 +4,4 @@
 
 Порядок шагов описан в `AGENTS.md`. Главный сценарий — `00-month` («запусти месяц» и «продолжи месяц»): он связывает остальные сценарии `01-collect` … `07-history` и паузы между ними.
 
-Сценарии: `00-month`, `01-collect`, `02-virals`, `03-analysis`, `04-niche`, `05-strategy`, `06-briefs-plan`, `07-history`.
+Сценарии: `00-month`, `01-collect`, `02-virals`, `03-analysis`, `03b-covers` (необязательный), `04-niche`, `05-strategy`, `06-briefs-plan`, `07-history`.
