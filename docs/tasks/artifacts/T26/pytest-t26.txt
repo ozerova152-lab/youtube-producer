@@ -1,0 +1,46 @@
+============================= test session starts ==============================
+platform linux -- Python 3.14.4, pytest-9.1.1, pluggy-1.7.0 -- /home/matebook/vibecoding-projects/youtube-producer/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/matebook/vibecoding-projects/youtube-producer
+configfile: pyproject.toml
+plugins: platformdirs-4.14.0, recording-0.14.0
+collecting ... collected 36 items
+
+tests/test_briefs_cover_basis_verify.py::test_all_three_kinds_with_valid_basis_green PASSED [  2%]
+tests/test_briefs_cover_basis_verify.py::test_bad_basis_red_names_file_and_id_long_and_short[DEMO_V01] PASSED [  5%]
+tests/test_briefs_cover_basis_verify.py::test_bad_basis_red_names_file_and_id_long_and_short[demo_v01 demo_v07] PASSED [  8%]
+tests/test_briefs_cover_basis_verify.py::test_bad_basis_red_names_file_and_id_long_and_short[demo_v01, demo_v07] PASSED [ 11%]
+tests/test_briefs_cover_basis_verify.py::test_bad_basis_red_names_file_and_id_long_and_short[../x] PASSED [ 13%]
+tests/test_briefs_cover_basis_verify.py::test_bad_basis_red_names_file_and_id_long_and_short[../../covers.md] PASSED [ 16%]
+tests/test_briefs_cover_basis_verify.py::test_bad_basis_red_names_file_and_id_long_and_short[2026-09_ru_v1/demo_v01] PASSED [ 19%]
+tests/test_briefs_cover_basis_verify.py::test_bad_basis_red_names_file_and_id_long_and_short[demo_v99] PASSED [ 22%]
+tests/test_briefs_cover_basis_verify.py::test_bad_basis_red_names_file_and_id_long_and_short[demo_v] PASSED [ 25%]
+tests/test_briefs_cover_basis_verify.py::test_bad_basis_red_names_file_and_id_long_and_short[<id>] PASSED [ 27%]
+tests/test_briefs_cover_basis_verify.py::test_bad_basis_red_names_file_and_id_long_and_short[<id \u0437\u0430\u043b\u0451\u0442\u0430 \u0438\u0437 covers.md>] PASSED [ 30%]
+tests/test_briefs_cover_basis_verify.py::test_empty_basis_value_is_red_or_ignored_never_crash[] PASSED [ 33%]
+tests/test_briefs_cover_basis_verify.py::test_empty_basis_value_is_red_or_ignored_never_crash[   ] PASSED [ 36%]
+tests/test_briefs_cover_basis_verify.py::test_empty_basis_value_is_red_or_ignored_never_crash[\t] PASSED [ 38%]
+tests/test_briefs_cover_basis_verify.py::test_id_in_idea_but_not_in_basis_is_red PASSED [ 41%]
+tests/test_briefs_cover_basis_verify.py::test_basis_from_other_run_id_red PASSED [ 44%]
+tests/test_briefs_cover_basis_verify.py::test_covers_none_mode_any_basis_red[demo_v01] PASSED [ 47%]
+tests/test_briefs_cover_basis_verify.py::test_covers_none_mode_any_basis_red[anything] PASSED [ 50%]
+tests/test_briefs_cover_basis_verify.py::test_covers_none_mode_any_basis_red[<tpl>] PASSED [ 52%]
+tests/test_briefs_cover_basis_verify.py::test_no_covers_no_basis_green_and_with_basis_green PASSED [ 55%]
+tests/test_briefs_cover_basis_verify.py::test_post_with_basis_line_does_not_break PASSED [ 58%]
+tests/test_briefs_cover_basis_verify.py::test_idea_cover_empty_or_template_red_with_covers_and_basis[] PASSED [ 61%]
+tests/test_briefs_cover_basis_verify.py::test_idea_cover_empty_or_template_red_with_covers_and_basis[   ] PASSED [ 63%]
+tests/test_briefs_cover_basis_verify.py::test_idea_cover_empty_or_template_red_with_covers_and_basis[<\u0447\u0442\u043e \u043d\u0430 \u043a\u0430\u0440\u0442\u0438\u043d\u043a\u0435 \u0438 \u043a\u0430\u043a\u0430\u044f \u043d\u0430\u0434\u043f\u0438\u0441\u044c>] PASSED [ 66%]
+tests/test_briefs_cover_basis_verify.py::test_idea_cover_empty_red_without_covers PASSED [ 69%]
+tests/test_briefs_cover_basis_verify.py::test_later_copies_basis_verbatim_and_new_run_checks_it PASSED [ 72%]
+tests/test_briefs_cover_basis_verify.py::test_templates_playbook_and_spec_texts PASSED [ 75%]
+tests/test_briefs_cover_basis.py::test_valid_basis_is_green PASSED       [ 77%]
+tests/test_briefs_cover_basis.py::test_unknown_basis_names_file_and_id PASSED [ 80%]
+tests/test_briefs_cover_basis.py::test_basis_with_covers_none_mode_is_red PASSED [ 83%]
+tests/test_briefs_cover_basis.py::test_placeholder_basis_is_red PASSED   [ 86%]
+tests/test_briefs_cover_basis.py::test_no_covers_file_basis_not_required_and_not_checked PASSED [ 88%]
+tests/test_briefs_cover_basis.py::test_covers_without_basis_line_stays_green PASSED [ 91%]
+tests/test_briefs_cover_basis.py::test_idea_cover_stays_required PASSED  [ 94%]
+tests/test_briefs_cover_basis.py::test_history_reads_brief_with_basis_like_without PASSED [ 97%]
+tests/test_briefs_cover_basis.py::test_templates_and_playbook_describe_basis PASSED [100%]
+
+============================== 36 passed in 1.16s ==============================

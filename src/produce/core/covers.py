@@ -43,6 +43,27 @@ def has_images(run: runs.Run) -> bool:
         p.is_file() and p.suffix.lower() in IMAGE_SUFFIXES for p in folder.iterdir())
 
 
+def analyzed_ids(run: runs.Run) -> set[str] | None:
+    """id залётов, разобранных в блоках `covers.md`; None, если файла нет или он не читается.
+
+    Нужен брифам: «Опора обложки» ссылается на залёт из этого списка. Полноту файла
+    проверяет `check`, здесь только читаются поля «Видео».
+    """
+    path = run.path / FILE
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeDecodeError):
+        return None
+    starts = [i for i, line in enumerate(lines) if _SECTION.match(line)]
+    found: set[str] = set()
+    for n, start in enumerate(starts):
+        end = starts[n + 1] if n + 1 < len(starts) else len(lines)
+        vid = (_fields(lines[start + 1: end]).get("Видео") or "").strip().strip("`")
+        if vid:
+            found.add(vid)
+    return found
+
+
 def check(run: runs.Run) -> tuple[str | None, list[str]]:
     """Основа разбора и список проблем (пустой — файл в порядке). Каждая называет файл и место."""
     path = run.path / FILE

@@ -9,7 +9,7 @@
 
 import re
 
-from produce.core import runs
+from produce.core import covers, runs
 from produce.core import strategy as strategizing
 from produce.core.errors import FileFormatError
 from produce.core.files import read_json
@@ -34,6 +34,7 @@ LONG_SECTIONS = {
                  "Хэштеги", "Теги", "Идея обложки"],
     "Главные эмоции": ["Эмоции"],
 }
+COVER_BASIS = "Опора обложки"  # необязательное поле упаковки (T26); в обязательные списки не входит
 PACKAGING = ["Название 1", "Название 2", "Описание триггерное", "Описание SEO",
              "Хэштеги", "Теги", "Идея обложки"]
 SHORT_SECTIONS = {
@@ -148,9 +149,28 @@ def _required_fields(where: str, sections: dict[str, list[str]], spec: dict[str,
     return fields, [re.sub(r"^``, : ", f"{where}: ", p) for p in problems]
 
 
-def _check_packaging(where: str, fields: dict[str, str]) -> list[str]:
-    """Упаковка длинного видео и Shorts: длина названий, хэштеги с «#»."""
-    problems = []
+def _check_cover_basis(where: str, fields: dict[str, str], cover_ids: set[str] | None) -> list[str]:
+    """Необязательная «Опора обложки»: id должен быть среди залётов, разобранных в `covers.md`.
+
+    Нет `covers.md` (None) или строки в брифе — проверка молчит: старые брифы и запуски без
+    шага обложек не ломаются. Смысл опоры скрипт не оценивает.
+    """
+    if COVER_BASIS not in fields:
+        return []
+    value = fields[COVER_BASIS].strip("` ")
+    if _placeholders_in(value) or not value:
+        return [(f"{where}: поле «{COVER_BASIS}» не заполнено (остался шаблонный текст); "
+                 f"если нет `{covers.FILE}`, удалите строку")]
+    if cover_ids is not None and value not in cover_ids:
+        return [(f"{where}: «{COVER_BASIS}» `{value}` не найдена среди залётов `{covers.FILE}`. "
+                 f"Укажите id из `{covers.FILE}` или удалите строку")]
+    return []
+
+
+def _check_packaging(where: str, fields: dict[str, str], cover_ids: set[str] | None = None
+                     ) -> list[str]:
+    """Упаковка длинного видео и Shorts: длина названий, хэштеги с «#», опора обложки."""
+    problems = _check_cover_basis(where, fields, cover_ids)
     for name in ("Название 1", "Название 2", "Название 3"):
         if len(fields.get(name, "")) > TITLE_LIMIT:
             problems.append(f"{where}: «{name}» длиннее {TITLE_LIMIT} знаков")
@@ -197,10 +217,10 @@ def _scenario_lines(where: str, sections: dict[str, list[str]], title: str
 
 
 def _check_long(where: str, sections: dict[str, list[str]], run_language: str,
-                virals: dict[str, dict]) -> list[str]:
+                virals: dict[str, dict], cover_ids: set[str] | None = None) -> list[str]:
     fields, problems = _required_fields(where, sections, LONG_SECTIONS)
     _, structure_problems = _scenario_lines(where, sections, "Структура")
-    problems += structure_problems + _check_packaging(where, fields)
+    problems += structure_problems + _check_packaging(where, fields, cover_ids)
     length = fields.get("Длина", "")
     if length and not _placeholders_in(length) and not re.search(r"\d", length):
         problems.append(f"{where}: в поле «Длина» нужно число, а там «{length}»")
@@ -209,7 +229,7 @@ def _check_long(where: str, sections: dict[str, list[str]], run_language: str,
 
 
 def _check_short(where: str, sections: dict[str, list[str]], run_language: str,
-                 virals: dict[str, dict]) -> list[str]:
+                 virals: dict[str, dict], cover_ids: set[str] | None = None) -> list[str]:
     """Shorts: хук, идея, сценарий на 30–60 секунд с пометками монтажа, упаковка, образцы, эмоции."""
     fields, problems = _required_fields(where, sections, SHORT_SECTIONS)
     items, scenario_problems = _scenario_lines(where, sections, "Сценарий")
@@ -222,13 +242,13 @@ def _check_short(where: str, sections: dict[str, list[str]], run_language: str,
         elif not SHORT_MIN_SECONDS <= max(ends) <= SHORT_MAX_SECONDS:
             problems.append(f"{where}: сценарий идёт {max(ends)} с, нужно "
                             f"{SHORT_MIN_SECONDS}–{SHORT_MAX_SECONDS} с (по концу последней строки)")
-    problems += _check_packaging(where, fields)
+    problems += _check_packaging(where, fields, cover_ids)
     problems += _check_base_and_samples(where, sections, fields, virals)
     return problems + _language_problems(where, run_language, fields, SHORT_LANG_FIELDS)
 
 
 def _check_post(where: str, sections: dict[str, list[str]], run_language: str,
-                virals: dict[str, dict]) -> list[str]:
+                virals: dict[str, dict], cover_ids: set[str] | None = None) -> list[str]:
     """Пост в Сообщество: готовый текст «как есть», опрос или картинка, образцы, эмоции."""
     fields, problems = _required_fields(where, sections, POST_SECTIONS)
     text = [line for line in sections.get("Готовый текст", []) if line.strip()
@@ -257,8 +277,8 @@ def _placeholders_in(text: str) -> bool:
     return bool(re.search(r"<[^>]+>", text))
 
 
-def check_file(run: runs.Run, path_name: str, virals: dict[str, dict], decision_open: bool
-               ) -> tuple[Brief | None, list[str]]:
+def check_file(run: runs.Run, path_name: str, virals: dict[str, dict], decision_open: bool,
+               cover_ids: set[str] | None = None) -> tuple[Brief | None, list[str]]:
     """Проблемы одного брифа и его шапка (None, если шапка не читается)."""
     rel = f"{BRIEFS_DIR}/{path_name}"
     path = run.path / BRIEFS_DIR / path_name
@@ -309,7 +329,7 @@ def check_file(run: runs.Run, path_name: str, virals: dict[str, dict], decision_
     if kind and kind not in KINDS:
         problems.append(f"{where}, шапка: вид «{kind}» не распознан. Допустимо: {', '.join(KINDS)}")
     elif kind in CHECKERS:
-        problems += CHECKERS[kind](where, dict(blocks), run_language, virals)
+        problems += CHECKERS[kind](where, dict(blocks), run_language, virals, cover_ids)
     return Brief(file_number, title, kind, status, path_name), problems
 
 
@@ -343,13 +363,14 @@ def check(run: runs.Run, match_strategy: bool = True) -> tuple[list[Brief], list
     except FileFormatError as err:
         return [], [str(err)]
     decision_open = runs.STAGES.index(run.stage) < runs.STAGES.index(STAGE_DECISION)
+    cover_ids = covers.analyzed_ids(run)  # None, если covers.md нет: опору тогда не сверяем
     found: list[Brief] = []
     problems: list[str] = []
     for name in names:
         if not _FILE.match(name):
             problems.append(f"`{BRIEFS_DIR}/{name}`: имя файла должно быть вида 01.md")
             continue
-        brief, file_problems = check_file(run, name, virals, decision_open)
+        brief, file_problems = check_file(run, name, virals, decision_open, cover_ids)
         problems += file_problems
         if brief:
             found.append(brief)
