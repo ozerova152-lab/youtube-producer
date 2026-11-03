@@ -88,26 +88,24 @@ def test_visitor_reads_blocks_and_reaches_github(browser):
     assert page.get_by_role("heading", name="В Claude Code").is_visible()
     assert page.get_by_role("heading", name="В Claude Cowork").is_visible()
     assert page.get_by_role("heading", name="В Codex").is_visible()
-    assert page.get_by_text(
-        "Основной путь — Claude Code, проверен полностью. Codex проверен на реальном канале (30.10.2026) "
-        "от установки до брифов: установка, ключ, сбор данных, залёты, ниша и кандидаты, стратегия, брифы. "
-        "Cowork мы не проверяли: используйте тот же AGENTS.md и пишите в Issues."
-    ).is_visible()
+    status = page.locator("#status")
+    assert status.is_visible()
+    assert status.inner_text() == (
+        "Полностью проверен в Claude Code и Codex. Рассчитан и на другие агенты: те же инструкции "
+        "работают без скрипта сбора данных, данные можно вставить в чат. Расскажите, как получилось")
+    assert status.get_by_role("link", name="Расскажите, как получилось").get_attribute("href") == (
+        "https://github.com/ozerova152-lab/youtube-producer/issues")
     # у Codex понятный путь: дать ссылку на репозиторий и написать фразу
     codex_card = page.locator("#how-to-run .grid article").nth(2)
     assert "Дайте Codex ссылку на репозиторий" in codex_card.inner_text()
     assert "Изучи youtube-producer и помоги начать" in codex_card.inner_text()
     assert codex_card.get_by_role("link", name="репозиторий").get_attribute("href") == (
         "https://github.com/ozerova152-lab/youtube-producer")
-    assert page.get_by_role("link", name="Issues").get_attribute("href") == (
-        "https://github.com/ozerova152-lab/youtube-producer/issues")
-    # про агентов сказано ровно то, что проверено: Codex одной точной фразой, Cowork «не проверяли»
-    run_text = page.locator("#how-to-run").inner_text()
-    codex_fact = "Codex проверен на реальном канале (30.10.2026) от установки до брифов"
-    claude_fact = "Основной путь — Claude Code, проверен полностью"
-    assert run_text.count(codex_fact) == 1 and run_text.count(claude_fact) == 1
-    assert "проверен" not in run_text.replace(codex_fact, "").replace(claude_fact, "").lower()
-    assert run_text.count("Cowork мы не проверяли") == 1
+    # подробный статус остаётся в README; на витрине нет ни одной формы «не провер…»
+    html = (SITE / "index.html").read_text(encoding="utf-8")
+    assert not re.search(r"не\s+провер", page.locator("body").inner_text(), re.IGNORECASE)
+    assert not re.search(r"не\s+провер", html, re.IGNORECASE)
+    assert "Основной путь" not in html and "Cowork мы" not in html
     assert page.get_by_text("лишь на базовом уровне", exact=False).count() == 0
     assert page.get_by_text("Нет ключа YouTube? Можно загрузить видео из файла.").is_visible()
     assert page.get_by_text("Пример на демо-данных, не реальный канал.").is_visible()
