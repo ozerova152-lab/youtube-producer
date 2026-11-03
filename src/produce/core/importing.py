@@ -288,5 +288,6 @@ def import_file(run: runs.Run, path: Path, min_channel_videos: int = MIN_CHANNEL
     run.data["source"] = "import"
     run.data["no_comments"] = not result.comments
     runs.advance_stage(run, "собрано")
+    run.data["collected_on"] = runs.today().isoformat()
     write_json_atomic(run.path / "run.json", run.data)
     return result

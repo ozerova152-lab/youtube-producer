@@ -7,6 +7,7 @@ from datetime import date
 from pathlib import Path
 
 from produce.core import quota
+from produce.core.clock import now
 from produce.core.errors import RunError
 from produce.core.files import read_json, write_json_atomic
 
@@ -58,8 +59,13 @@ def runs_dir(channel_dir: Path) -> Path:
     return channel_dir / "runs"
 
 
-def current_month(today: date | None = None) -> str:
-    return (today or date.today()).strftime("%Y-%m")
+def today() -> date:
+    """Сегодняшний день по часам проекта (учитывает `PRODUCE_NOW`)."""
+    return now().date()
+
+
+def current_month(day: date | None = None) -> str:
+    return (day or today()).strftime("%Y-%m")
 
 
 def load_run(path: Path) -> Run:
@@ -115,6 +121,7 @@ def _create(channel_dir: Path, month: str, segment: str, brief_lang: str, versio
         "requests_count": 0,
         "awaiting_confirmation": False,
         "incomplete_data": [],
+        "started_on": today().isoformat(),
     }
     write_json_atomic(path / "run.json", data)
     return Run(path, data)
@@ -151,6 +158,12 @@ def record_usage(run: Run, units: int, requests: int, ledger: Path,
     run.data["requests_count"] += requests
     write_json_atomic(run.path / "run.json", run.data)
     return total
+
+
+def mark_collected(run: Run) -> None:
+    """Дата последнего успешного сбора или импорта: для обзора запуска."""
+    run.data["collected_on"] = today().isoformat()
+    write_json_atomic(run.path / "run.json", run.data)
 
 
 def set_awaiting(run: Run, awaiting: bool) -> None:

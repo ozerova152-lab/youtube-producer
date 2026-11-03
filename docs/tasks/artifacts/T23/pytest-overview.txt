@@ -1,0 +1,31 @@
+...........................................................F............ [ 38%]
+........................................................................ [ 76%]
+............................................                             [100%]
+=================================== FAILURES ===================================
+_________ test_odd_run_json_values_never_traceback_on_overview[patch0] _________
+
+channel = PosixPath('/tmp/pytest-of-matebook/pytest-69/test_odd_run_json_values_never0/chan')
+patch = {'quota_spent': 'много'}
+
+    @pytest.mark.parametrize("patch", [
+        {"quota_spent": "много"},
+        {"quota_spent": None},
+        {"quota_spent": 12.7},
+        {"segment": None, "version": None},
+    ])
+    def test_odd_run_json_values_never_traceback_on_overview(channel, patch):
+        old_run(channel, {**OLD_RUN_JSON, **patch})
+        res = cli(channel, "overview")
+        assert "Traceback" not in res.output, res.output
+        assert res.exit_code in (0, 1)
+        if res.exit_code == 1:
+>           assert res.output.strip()
+E           assert ''
+E            +  where '' = <built-in method strip of str object at 0xadd188>()
+E            +    where <built-in method strip of str object at 0xadd188> = ''.strip
+E            +      where '' = <Result ValueError("invalid literal for int() with base 10: 'много'")>.output
+
+tests/test_overview_verify.py:547: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_overview_verify.py::test_odd_run_json_values_never_traceback_on_overview[patch0]
+1 failed, 187 passed in 8.46s

@@ -6,13 +6,13 @@
 """
 
 import math
-import os
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from produce.core import quota, runs
+from produce.core.clock import now
 from produce.core.errors import ProduceError, QuotaExceededError, RunError
 from produce.core.files import read_json, write_json_atomic
 from produce.core.settings import my_channel_id
@@ -29,15 +29,6 @@ WINDOW_DAYS = 30
 AUTHOR_UPLOADS = 20  # норма канала берётся по 10 без трансляций и премьер: берём с запасом
 COMPETITOR_UPLOADS = 50
 COMMENTS_UPPER = 20  # верхняя граница на комментарии залётов (до 20 видео по 1 ед.)
-
-
-def now() -> datetime:
-    """Текущее время. `PRODUCE_NOW` (ГГГГ-ММ-ДД) нужен автотестам: записанные ответы
-    не стареют вместе с календарём."""
-    fixed = os.environ.get("PRODUCE_NOW", "").strip()
-    if fixed:
-        return datetime.fromisoformat(fixed).replace(tzinfo=UTC)
-    return datetime.now(UTC)
 
 
 def _batches(ids: list[str]) -> list[list[str]]:

@@ -14,6 +14,7 @@ from produce.core import comments as commenting
 from produce.core import covers as covering
 from produce.core import history, importing, quota, report, runs
 from produce.core import niche as niching
+from produce.core import overview as overviewing
 from produce.core import plan as planning
 from produce.core import strategy as strategizing
 from produce.core import virals as finding
@@ -36,6 +37,21 @@ app = typer.Typer(
     help="AI-продюсер YouTube-канала",
     pretty_exceptions_show_locals=False,
 )
+
+
+def _channel_name(channel: Path) -> str | None:
+    try:
+        return str(load_settings(channel)["channel"]["name"])
+    except (ProduceError, KeyError, TypeError):
+        return None
+
+
+def _refresh_overview(channel: Path, run: runs.Run) -> None:
+    """Обновляет `00-overview.md` после шага. Обзор вспомогательный: его сбой команду не роняет."""
+    try:
+        overviewing.write(run, _channel_name(channel))
+    except Exception:  # noqa: BLE001, S110 - обзор вспомогательный, детали (там бывают данные) не печатаем
+        pass
 
 
 def _fail(err: ProduceError) -> typer.Exit:
@@ -150,6 +166,8 @@ def start(
     except ProduceError as err:
         raise _fail(err) from err
     data = result.run.data
+    if result.action in ("created", "new_version"):  # «продолжить» папку не трогает
+        _refresh_overview(ctx.obj, result.run)
     if result.action == "ask_new_version":
         v = data["version"]
         typer.echo(
@@ -213,6 +231,7 @@ def _collect(channel: Path, segment_id: str | None, confirm: bool, env_file: Pat
     est = collecting.estimate(plan, cache)
     available = quota.remaining_today(ledger)
     runs.advance_stage(run, "оценка квоты")
+    _refresh_overview(channel, run)
     if est.total > available:
         runs.set_awaiting(run, False)
         raise ProduceError(
@@ -241,6 +260,8 @@ def _collect(channel: Path, segment_id: str | None, confirm: bool, env_file: Pat
         quota.mark_exhausted(ledger)
         raise
     runs.advance_stage(run, "собрано")
+    runs.mark_collected(run)
+    _refresh_overview(channel, run)
     typer.echo(
         f"Собрано: {summary.videos} видео, {summary.channels} "
         f"{plural(summary.channels, 'канал', 'канала', 'каналов')}. "
@@ -280,6 +301,7 @@ def _import(channel: Path, file: Path, segment_id: str | None) -> None:
     run = existing[-1] if existing else runs.start_run(
         channel, month, segment_id, str(segment.get("language", "ru"))).run
     result = importing.import_file(run, file, minimum, mine)
+    _refresh_overview(channel, run)
     typer.echo(
         f"Загружено: {len(result.videos)} видео, {len(result.channels)} "
         f"{plural(len(result.channels), 'канал', 'канала', 'каналов')}. Обращений к YouTube: 0"
@@ -309,6 +331,7 @@ def virals(
         if not found:
             raise RunError(f"Запуска для сегмента {segment} ещё нет: сначала `produce collect`")
         result = finding.find_and_save(found[-1], settings)
+        _refresh_overview(ctx.obj, found[-1])
     except ProduceError as err:
         raise _fail(err) from err
     typer.echo(f"Проверено видео: {result['checked']}. Залётов: {len(result['virals'])}")
@@ -344,6 +367,7 @@ def report_command(
         if not found:
             raise RunError(f"Запуска для сегмента {segment} ещё нет: сначала `produce collect`")
         report.write_report(found[-1], my_channel_id(settings))
+        _refresh_overview(ctx.obj, found[-1])
         typer.echo(f"Отчёт записан: {found[-1].path / 'report.md'}")
     except ProduceError as err:
         raise _fail(err) from err
@@ -426,6 +450,7 @@ def _comments(channel: Path, segment_id: str | None, confirm: bool, env_file: Pa
         raise QuotaExceededError(
             quota.quota_message(int(run.data["quota_spent"]) - spent_before, units)
         ) from None
+    _refresh_overview(channel, run)
     total = sum(len(stored.get(i, [])) for i in ids)
     typer.echo(f"Комментарии собраны: {len(ids)} {plural(len(ids), 'залёт', 'залёта', 'залётов')}, "
                f"{total} комментариев. Расход: {_num(int(run.data['quota_spent']) - spent_before)} ед.")
@@ -481,6 +506,7 @@ def _later(channel: Path, segment_id: str | None, picks: list[int], everything: 
                        f"Номера: 1–{len(info.later)}" if info.later else "Брифов «позже» нет")
     run = history.require_run(channel, segment_id, month)
     done = history.return_briefs(run, [info.later[n - 1] for n in dict.fromkeys(wanted)])
+    _refresh_overview(channel, run)
     for old, target in done:
         typer.echo(f"Бриф «{old.title}» из `{old.rel}` -> `briefs/{target.name}`, статус пустой")
     typer.echo(f"Возвращено брифов: {len(done)}")
@@ -558,6 +584,7 @@ def check_files(
                 typer.echo(line)
             if problems:
                 raise typer.Exit(code=1)
+            _refresh_overview(ctx.obj, run)
             return
         settings, seg, run = _current_run(ctx.obj, segment)
         _, minimum = commenting.limits_from(settings)
@@ -588,6 +615,27 @@ def check_files(
         for line in problems:
             typer.echo(line)
         raise typer.Exit(code=1)
+    _refresh_overview(ctx.obj, run)
+
+
+@app.command(name="overview")
+def overview_command(
+    ctx: typer.Context,
+    segment: Annotated[str | None, typer.Option(help="Сегмент; если он один, берётся он")] = None,
+) -> None:
+    """Пересобрать `00-overview.md` текущего запуска (без сети и ключа)."""
+    try:
+        _, _, run = _current_run(ctx.obj, segment)
+        path = overviewing.write(run, _channel_name(ctx.obj))
+    except OSError as err:
+        typer.echo(f"Не удалось записать обзор запуска: {err.__class__.__name__}")
+        raise typer.Exit(code=1) from None
+    except ProduceError as err:
+        raise _fail(err) from err
+    except Exception:  # noqa: BLE001 - человеческое сообщение вместо traceback, без деталей
+        typer.echo("Не удалось собрать обзор запуска: проверьте `run.json` в папке запуска")
+        raise typer.Exit(code=1) from None
+    typer.echo(f"Обзор записан: {path}")
 
 
 if __name__ == "__main__":
