@@ -88,7 +88,7 @@ def test_c1_json_equivalent_gives_same_cache(channel, tmp_path):
              "channel_id": r["channel_id"], "channel_title": r["channel_title"],
              "published_at": r["published_at"], "duration_seconds": int(r["duration_seconds"]),
              "is_live": False, "views": int(r["views"]), "likes": int(r["likes"]),
-             "comments": int(r["comments"])} for r in recs]
+             "comments": int(r["comments"]), "thumbnail_url": r["thumbnail_url"]} for r in recs]
     chs = {}
     for r in recs:
         chs[r["channel_id"]] = {"id": r["channel_id"], "title": r["channel_title"],

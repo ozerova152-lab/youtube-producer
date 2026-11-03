@@ -5,6 +5,7 @@
 """
 
 import csv
+import io
 import json
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -14,6 +15,7 @@ from produce.core import runs
 from produce.core.collect import AUTHOR_UPLOADS, Cache
 from produce.core.errors import FileFormatError
 from produce.core.files import write_json_atomic
+from produce.core.youtube import is_thumbnail_url
 
 MIN_CHANNEL_VIDEOS = 5
 
@@ -87,6 +89,28 @@ def _text(row: dict, name: str, where: str, required: bool) -> str:
     return str(value)
 
 
+def _thumbnail(row: dict, where: str) -> str:
+    """Пустая ячейка — обложки нет; чужой адрес — ошибка. Значение в сообщение не попадает (чужие данные)."""
+    value = row.get("thumbnail_url")
+    if value is None:
+        return ""
+    if not isinstance(value, str):
+        raise _bad_thumbnail(where)
+    url = value.strip()
+    if not url:
+        return ""
+    if not is_thumbnail_url(url):
+        raise _bad_thumbnail(where)
+    return url
+
+
+def _bad_thumbnail(where: str) -> FileFormatError:
+    kind = "колонке" if where.startswith("Строка") else "поле"
+    return FileFormatError(
+        f"{where}: в {kind} `thumbnail_url` значение не подходит "
+        "(нужен адрес вида https://i.ytimg.com/…). Исправьте и повторите импорт")
+
+
 def _video(row: dict, where: str) -> dict:
     duration = _int(row.get("duration_seconds"), where, "duration_seconds", False)
     return {
@@ -96,6 +120,7 @@ def _video(row: dict, where: str) -> dict:
         "channel_id": _text(row, "channel_id", where, True).strip(),
         "channel_title": _text(row, "channel_title", where, False),
         "published_at": _date(row.get("published_at"), where),
+        "thumbnail_url": _thumbnail(row, where),
         "duration_seconds": duration,
         "is_live": _bool(row.get("is_live"), where, "is_live"),
         "views": _int(row.get("views"), where, "views", True),
@@ -111,7 +136,7 @@ def _read_csv(path: Path) -> tuple[list[dict], list[dict]]:
         raise FileFormatError(f"Не найден файл: {path}") from None
     except (OSError, UnicodeDecodeError):
         raise FileFormatError(f"Не удалось прочитать файл {path}: нужен текст в кодировке UTF-8") from None
-    reader = csv.DictReader(text.splitlines())
+    reader = csv.DictReader(io.StringIO(text, newline=""))
     header = [h.strip() for h in (reader.fieldnames or [])]
     if len(header) == 1 and ";" in header[0]:
         raise FileFormatError("В файле CSV разделитель «;», а нужна запятая. Замените и повторите импорт")

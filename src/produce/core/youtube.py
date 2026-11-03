@@ -218,12 +218,16 @@ THUMBNAIL_SIZES = ("maxres", "standard", "high", "medium", "default")  # от л
 
 
 THUMBNAIL_HOST = "i.ytimg.com"
-_UNSAFE = set(" \t\r\n()[]<>\"'\\")  # ломают ссылку в Markdown
+_UNSAFE = set("()[]<>\"'\\`")  # ломают ссылку в Markdown
+THUMBNAIL_MAX_LENGTH = 2048
 
 
-def _allowed_thumbnail(url: str) -> bool:
+def is_thumbnail_url(url: str) -> bool:
     """Только `https://i.ytimg.com/...`: точный хост, без логина и порта (разбор URL, не подстрока)."""
-    if any(ch in _UNSAFE or ord(ch) < 32 for ch in url):
+    if len(url) > THUMBNAIL_MAX_LENGTH:
+        return False
+    # Только печатный ASCII без пробела: невидимые и управляющие символы отсекаются целиком.
+    if any(ch in _UNSAFE or not 0x21 <= ord(ch) <= 0x7E for ch in url):
         return False
     try:
         parts = urlparse(url)
@@ -241,7 +245,7 @@ def best_thumbnail(thumbnails: object) -> str:
     for size in THUMBNAIL_SIZES:
         entry = thumbnails.get(size)
         url = entry.get("url") if isinstance(entry, dict) else None
-        if isinstance(url, str) and _allowed_thumbnail(url):
+        if isinstance(url, str) and is_thumbnail_url(url):
             return url
     return ""
 

@@ -39,7 +39,7 @@ def test_demo_csv_creates_cache_without_key(channel):
     # Поля те же, что у сбора из YouTube
     assert set(videos["demo_v01"]) == {
         "id", "title", "description", "channel_id", "channel_title", "published_at",
-        "duration_seconds", "is_live", "views", "likes", "comments"}
+        "duration_seconds", "is_live", "views", "likes", "comments", "thumbnail_url"}
     assert {"recent_ids", "video_count", "subscribers", "uploads_playlist"} <= set(channels["UC_demo_a"])
     assert len(channels["UC_demo_a"]["recent_ids"]) == 6
     data = read_json(run_dir(channel) / "run.json")

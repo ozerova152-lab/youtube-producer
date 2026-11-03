@@ -163,8 +163,6 @@ def test_newline_in_title_json(channel, tmp_path):
     assert "Строка один строка два / хвост" in row and row.count("|") == 6
 
 
-@pytest.mark.xfail(strict=True, reason="importing._read_csv режет файл по splitlines(): перевод строки "
-                   "внутри кавычек теряется без пробела (находка implementer, вне критериев T06)")
 def test_newline_in_title_csv(channel, tmp_path):
     set_my(channel, "UC_mine")
     rows = mine(("n1", "Строка один\nстрока два", 9000, "1", "1", False), *videos(5))

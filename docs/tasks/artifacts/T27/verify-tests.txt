@@ -1,0 +1,11 @@
+=========================== short test summary info ============================
+FAILED tests/test_import_thumbnail_verify.py::test_csv_newline_inside_cell_rejected_without_cache_changes
+FAILED tests/test_import_thumbnail_verify.py::test_json_exotic_chars_and_huge_length_rejected[U+2028]
+FAILED tests/test_import_thumbnail_verify.py::test_json_exotic_chars_and_huge_length_rejected[NBSP]
+FAILED tests/test_import_thumbnail_verify.py::test_json_exotic_chars_and_huge_length_rejected[U+0085]
+FAILED tests/test_import_thumbnail_verify.py::test_json_exotic_chars_and_huge_length_rejected[ZWSP]
+FAILED tests/test_import_thumbnail_verify.py::test_json_exotic_chars_and_huge_length_rejected[bidi-RLO]
+FAILED tests/test_import_thumbnail_verify.py::test_json_exotic_chars_and_huge_length_rejected[DEL]
+FAILED tests/test_import_thumbnail_verify.py::test_json_exotic_chars_and_huge_length_rejected[backtick]
+FAILED tests/test_import_thumbnail_verify.py::test_json_exotic_chars_and_huge_length_rejected[100k-long]
+9 failed, 90 passed in 1.45s
