@@ -179,6 +179,9 @@ class FakeHttp(httplib2.Http):
                             "liveBroadcastContent": "none"},
                 "contentDetails": {"duration": v["duration"], "dimension": "2d", "definition": "hd"},
                 "statistics": stats}
+        thumbs = _thumbnails(v["id"])
+        if thumbs:
+            item["snippet"]["thumbnails"] = thumbs
         if v["live"]:
             item["liveStreamingDetails"] = {"actualStartTime": v["published"], "actualEndTime": v["published"]}
         return item
@@ -192,6 +195,22 @@ class FakeHttp(httplib2.Http):
         return {"kind": "youtube#channel", "etag": "demo", "id": cid, "snippet": {"title": title},
                 "contentDetails": {"relatedPlaylists": {"uploads": "UU" + cid[2:]}},
                 "statistics": stats}
+
+
+def _thumbnails(vid):
+    """Обложки выдуманного мира: адреса i.ytimg.com в форме настоящих ответов, без картинок.
+
+    У демо-ролика demoVid_c03 YouTube обложек не прислал: так проверяется пустое поле.
+    """
+    if vid == "demoVid_c03":
+        return None
+    base = f"https://i.ytimg.com/vi/{vid}"
+    sizes = {"default": (120, 90, "default"), "medium": (320, 180, "mqdefault"),
+             "high": (480, 360, "hqdefault")}
+    if vid.endswith("01"):  # у части роликов есть и лучшие размеры
+        sizes["standard"] = (640, 480, "sddefault")
+        sizes["maxres"] = (1280, 720, "maxresdefault")
+    return {k: {"url": f"{base}/{f}.jpg", "width": w, "height": h} for k, (w, h, f) in sizes.items()}
 
 
 def _key_error():

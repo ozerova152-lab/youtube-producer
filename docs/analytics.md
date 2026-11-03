@@ -45,6 +45,7 @@
 | Проверки и зависимости | локально `make check`, `make audit` | красный `make check`, найденные уязвимости |
 | Обновления зависимостей | `gh pr list --state open` (pull request от Dependabot) | больше недели без разбора |
 | Квота у человека | `quota_spent`, `requests_count` в `run.json` запуска | только локально, наружу не уходит и в отчёты не попадает |
+| Обложки (`thumbnail_url`) | поле в `cache/videos.json`, `virals.json`, `my_results.json`; в `report.md` ссылкой | только адреса `i.ytimg.com`, картинки не скачиваются, новых запросов и квоты нет; пустое поле — «обложка: нет данных» |
 
 ## 5. Где брать данные
 

@@ -22,6 +22,7 @@ def _item(video: dict) -> dict:
         "title": video.get("title", ""),
         "url": f"https://www.youtube.com/watch?v={video['id']}",
         "published_at": video.get("published_at", ""),
+        "thumbnail_url": video.get("thumbnail_url") or "",  # старые кэши без поля: пусто
         "views": int(video["views"]),
         "likes": video.get("likes"),
         "comments": video.get("comments"),

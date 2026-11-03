@@ -11,6 +11,7 @@ import re
 import time
 from collections.abc import Callable
 from datetime import datetime
+from urllib.parse import urlparse
 
 import httplib2
 from googleapiclient.discovery import build
@@ -213,6 +214,38 @@ def _int(value: object) -> int | None:
         return None
 
 
+THUMBNAIL_SIZES = ("maxres", "standard", "high", "medium", "default")  # от лучшего к худшему
+
+
+THUMBNAIL_HOST = "i.ytimg.com"
+_UNSAFE = set(" \t\r\n()[]<>\"'\\")  # ломают ссылку в Markdown
+
+
+def _allowed_thumbnail(url: str) -> bool:
+    """Только `https://i.ytimg.com/...`: точный хост, без логина и порта (разбор URL, не подстрока)."""
+    if any(ch in _UNSAFE or ord(ch) < 32 for ch in url):
+        return False
+    try:
+        parts = urlparse(url)
+        port = parts.port
+    except ValueError:
+        return False
+    return (parts.scheme == "https" and parts.hostname == THUMBNAIL_HOST
+            and parts.netloc == THUMBNAIL_HOST and port is None)
+
+
+def best_thumbnail(thumbnails: object) -> str:
+    """Адрес обложки лучшего размера с допустимым адресом или пустая строка. Картинка не скачивается."""
+    if not isinstance(thumbnails, dict):
+        return ""
+    for size in THUMBNAIL_SIZES:
+        entry = thumbnails.get(size)
+        url = entry.get("url") if isinstance(entry, dict) else None
+        if isinstance(url, str) and _allowed_thumbnail(url):
+            return url
+    return ""
+
+
 def _video(item: dict) -> dict:
     snip, stats = item.get("snippet", {}), item.get("statistics", {})
     duration = item.get("contentDetails", {}).get("duration")
@@ -223,6 +256,7 @@ def _video(item: dict) -> dict:
         "channel_id": snip.get("channelId", ""),
         "channel_title": snip.get("channelTitle", ""),
         "published_at": snip.get("publishedAt", ""),
+        "thumbnail_url": best_thumbnail(snip.get("thumbnails")),
         "duration_seconds": parse_duration(duration),
         # Трансляции и премьеры в норму канала не идут (слой 1): помечаем здесь.
         "is_live": "liveStreamingDetails" in item

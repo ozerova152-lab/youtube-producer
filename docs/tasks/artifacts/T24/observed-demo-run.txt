@@ -1,0 +1,40 @@
+0
+0 0
+== videos.json thumbnail_url
+demoVid_a01 'https://i.ytimg.com/vi/demoVid_a01/maxresdefault.jpg'
+demoVid_a02 'https://i.ytimg.com/vi/demoVid_a02/hqdefault.jpg'
+demoVid_b01 'https://i.ytimg.com/vi/demoVid_b01/maxresdefault.jpg'
+demoVid_b02 'https://i.ytimg.com/vi/demoVid_b02/hqdefault.jpg'
+demoVid_c01 'https://i.ytimg.com/vi/demoVid_c01/maxresdefault.jpg'
+demoVid_c02 'https://i.ytimg.com/vi/demoVid_c02/hqdefault.jpg'
+demoVid_d01 'https://i.ytimg.com/vi/demoVid_d01/maxresdefault.jpg'
+demoVid_d02 'https://i.ytimg.com/vi/demoVid_d02/hqdefault.jpg'
+demoVid_a03 'https://i.ytimg.com/vi/demoVid_a03/hqdefault.jpg'
+demoVid_a04 'https://i.ytimg.com/vi/demoVid_a04/hqdefault.jpg'
+demoVid_a05 'https://i.ytimg.com/vi/demoVid_a05/hqdefault.jpg'
+demoVid_a06 'https://i.ytimg.com/vi/demoVid_a06/hqdefault.jpg'
+demoVid_b03 'https://i.ytimg.com/vi/demoVid_b03/hqdefault.jpg'
+demoVid_b04 'https://i.ytimg.com/vi/demoVid_b04/hqdefault.jpg'
+demoVid_b05 'https://i.ytimg.com/vi/demoVid_b05/hqdefault.jpg'
+demoVid_c03 ''
+demoVid_d03 'https://i.ytimg.com/vi/demoVid_d03/hqdefault.jpg'
+demoVid_d04 'https://i.ytimg.com/vi/demoVid_d04/hqdefault.jpg'
+demoVid_d05 'https://i.ytimg.com/vi/demoVid_d05/hqdefault.jpg'
+== virals.json
+demoVid_a01 https://i.ytimg.com/vi/demoVid_a01/maxresdefault.jpg
+== my_results
+demoVid_a01 https://i.ytimg.com/vi/demoVid_a01/maxresdefault.jpg
+demoVid_a02 https://i.ytimg.com/vi/demoVid_a02/hqdefault.jpg
+demoVid_a05 https://i.ytimg.com/vi/demoVid_a05/hqdefault.jpg
+demoVid_a06 https://i.ytimg.com/vi/demoVid_a06/hqdefault.jpg
+demoVid_a04 https://i.ytimg.com/vi/demoVid_a04/hqdefault.jpg
+demoVid_a03 https://i.ytimg.com/vi/demoVid_a03/hqdefault.jpg
+== report.md lines with обложка
+| [Как я заменил ассистента нейросетью за вечер](https://www.youtube.com/watch?v=demoVid_a01) · [обложка](https://i.ytimg.com/vi/demoVid_a01/maxresdefault.jpg) | 90 000 | 5 100 | ×17.65 | 6.0% | 0.68% | 6 171 |
+| [Как я заменил ассистента нейросетью за вечер](https://www.youtube.com/watch?v=demoVid_a01) · [обложка](https://i.ytimg.com/vi/demoVid_a01/maxresdefault.jpg) | 90 000 | 5 400 | 610 | 2026-10-12 |
+| [ChatGPT для отчётов: 5 приёмов](https://www.youtube.com/watch?v=demoVid_a02) · [обложка](https://i.ytimg.com/vi/demoVid_a02/hqdefault.jpg) | 6 200 | 210 | 40 | 2026-10-03 |
+| [Шпаргалка по ChatGPT](https://www.youtube.com/watch?v=demoVid_a05) · [обложка](https://i.ytimg.com/vi/demoVid_a05/hqdefault.jpg) | 5 300 | 190 | 25 | 2026-08-25 |
+| [Обзор новых моделей](https://www.youtube.com/watch?v=demoVid_a06) · [обложка](https://i.ytimg.com/vi/demoVid_a06/hqdefault.jpg) | 4 500 | 120 | 12 | 2026-08-10 |
+| [Промпты для писем](https://www.youtube.com/watch?v=demoVid_a04) · [обложка](https://i.ytimg.com/vi/demoVid_a04/hqdefault.jpg) | 4 800 | 150 | 18 | 2026-09-05 |
+| [Нейросеть против Excel](https://www.youtube.com/watch?v=demoVid_a03) · [обложка](https://i.ytimg.com/vi/demoVid_a03/hqdefault.jpg) | 5 100 | 180 | 22 | 2026-09-20 |
+files images: []

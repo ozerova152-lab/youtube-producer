@@ -157,68 +157,131 @@ interactions:
         : \"UC_demo_a\",\n        \"title\": \"Как я заменил ассистента нейросетью\
         \ за вечер\",\n        \"description\": \"Описание ролика «Как я заменил ассистента\
         \ нейросетью за вечер»\",\n        \"channelTitle\": \"Нейро для всех\",\n\
-        \        \"liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\"\
-        : {\n        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n\
-        \        \"definition\": \"hd\"\n      },\n      \"statistics\": {\n     \
-        \   \"viewCount\": \"90000\",\n        \"favoriteCount\": \"0\",\n       \
-        \ \"likeCount\": \"5400\",\n        \"commentCount\": \"610\"\n      }\n \
-        \   },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"demo\"\
-        ,\n      \"id\": \"demoVid_a02\",\n      \"snippet\": {\n        \"publishedAt\"\
-        : \"2026-10-03T10:00:00Z\",\n        \"channelId\": \"UC_demo_a\",\n     \
-        \   \"title\": \"ChatGPT для отчётов: 5 приёмов\",\n        \"description\"\
-        : \"Описание ролика «ChatGPT для отчётов: 5 приёмов»\",\n        \"channelTitle\"\
-        : \"Нейро для всех\",\n        \"liveBroadcastContent\": \"none\"\n      },\n\
-        \      \"contentDetails\": {\n        \"duration\": \"PT8M30S\",\n       \
-        \ \"dimension\": \"2d\",\n        \"definition\": \"hd\"\n      },\n     \
-        \ \"statistics\": {\n        \"viewCount\": \"6200\",\n        \"favoriteCount\"\
-        : \"0\",\n        \"likeCount\": \"210\",\n        \"commentCount\": \"40\"\
-        \n      }\n    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\"\
-        : \"demo\",\n      \"id\": \"demoVid_b01\",\n      \"snippet\": {\n      \
-        \  \"publishedAt\": \"2026-10-08T12:00:00Z\",\n        \"channelId\": \"UC_demo_b\"\
-        ,\n        \"title\": \"ИИ для новичков: с чего начать\",\n        \"description\"\
-        : \"Описание ролика «ИИ для новичков: с чего начать»\",\n        \"channelTitle\"\
-        : \"ИИ с нуля\",\n        \"liveBroadcastContent\": \"none\"\n      },\n \
-        \     \"contentDetails\": {\n        \"duration\": \"PT8M30S\",\n        \"\
-        dimension\": \"2d\",\n        \"definition\": \"hd\"\n      },\n      \"statistics\"\
-        : {\n        \"viewCount\": \"2500\",\n        \"favoriteCount\": \"0\",\n\
-        \        \"likeCount\": \"60\",\n        \"commentCount\": \"4\"\n      }\n\
-        \    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"demo\"\
-        ,\n      \"id\": \"demoVid_b02\",\n      \"snippet\": {\n        \"publishedAt\"\
-        : \"2026-10-15T12:00:00Z\",\n        \"channelId\": \"UC_demo_b\",\n     \
-        \   \"title\": \"Нейросети для работы без кода\",\n        \"description\"\
-        : \"Описание ролика «Нейросети для работы без кода»\",\n        \"channelTitle\"\
-        : \"ИИ с нуля\",\n        \"liveBroadcastContent\": \"none\"\n      },\n \
-        \     \"contentDetails\": {\n        \"duration\": \"PT8M30S\",\n        \"\
-        dimension\": \"2d\",\n        \"definition\": \"hd\"\n      },\n      \"statistics\"\
-        : {\n        \"viewCount\": \"1900\",\n        \"favoriteCount\": \"0\",\n\
-        \        \"likeCount\": \"41\",\n        \"commentCount\": \"3\"\n      }\n\
-        \    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"demo\"\
-        ,\n      \"id\": \"demoVid_c01\",\n      \"snippet\": {\n        \"publishedAt\"\
-        : \"2026-10-10T09:00:00Z\",\n        \"channelId\": \"UC_demo_c\",\n     \
-        \   \"title\": \"Первый ролик про ИИ\",\n        \"description\": \"Описание\
-        \ ролика «Первый ролик про ИИ»\",\n        \"channelTitle\": \"Мини-канал\"\
-        ,\n        \"liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\"\
-        : {\n        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n\
-        \        \"definition\": \"hd\"\n      },\n      \"statistics\": {\n     \
-        \   \"viewCount\": \"400\",\n        \"favoriteCount\": \"0\",\n        \"\
-        likeCount\": \"12\",\n        \"commentCount\": \"2\"\n      }\n    },\n \
-        \   {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"demo\",\n   \
-        \   \"id\": \"demoVid_c02\",\n      \"snippet\": {\n        \"publishedAt\"\
-        : \"2026-10-18T09:00:00Z\",\n        \"channelId\": \"UC_demo_c\",\n     \
-        \   \"title\": \"Нейросеть читает мои заметки\",\n        \"description\"\
-        : \"Описание ролика «Нейросеть читает мои заметки»\",\n        \"channelTitle\"\
-        : \"Мини-канал\",\n        \"liveBroadcastContent\": \"none\"\n      },\n\
-        \      \"contentDetails\": {\n        \"duration\": \"PT8M30S\",\n       \
-        \ \"dimension\": \"2d\",\n        \"definition\": \"hd\"\n      },\n     \
-        \ \"statistics\": {\n        \"viewCount\": \"900\",\n        \"favoriteCount\"\
-        : \"0\",\n        \"likeCount\": \"20\",\n        \"commentCount\": \"3\"\n\
-        \      }\n    },\n    {\n      \"kind\": \"youtube#video\",\n      \"etag\"\
-        : \"demo\",\n      \"id\": \"demoVid_d01\",\n      \"snippet\": {\n      \
-        \  \"publishedAt\": \"2026-10-05T15:00:00Z\",\n        \"channelId\": \"UC_demo_d\"\
-        ,\n        \"title\": \"ChatGPT tutorial на русском: полный курс\",\n    \
-        \    \"description\": \"Описание ролика «ChatGPT tutorial на русском: полный\
-        \ курс»\",\n        \"channelTitle\": \"Промпт-лаб\",\n        \"liveBroadcastContent\"\
-        : \"none\"\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        \        \"liveBroadcastContent\": \"none\",\n        \"thumbnails\": {\n\
+        \          \"default\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_a01/default.jpg\"\
+        ,\n            \"width\": 120,\n            \"height\": 90\n          },\n\
+        \          \"medium\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_a01/mqdefault.jpg\"\
+        ,\n            \"width\": 320,\n            \"height\": 180\n          },\n\
+        \          \"high\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_a01/hqdefault.jpg\"\
+        ,\n            \"width\": 480,\n            \"height\": 360\n          },\n\
+        \          \"standard\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_a01/sddefault.jpg\"\
+        ,\n            \"width\": 640,\n            \"height\": 480\n          },\n\
+        \          \"maxres\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_a01/maxresdefault.jpg\"\
+        ,\n            \"width\": 1280,\n            \"height\": 720\n          }\n\
+        \        }\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
+        \n      },\n      \"statistics\": {\n        \"viewCount\": \"90000\",\n \
+        \       \"favoriteCount\": \"0\",\n        \"likeCount\": \"5400\",\n    \
+        \    \"commentCount\": \"610\"\n      }\n    },\n    {\n      \"kind\": \"\
+        youtube#video\",\n      \"etag\": \"demo\",\n      \"id\": \"demoVid_a02\"\
+        ,\n      \"snippet\": {\n        \"publishedAt\": \"2026-10-03T10:00:00Z\"\
+        ,\n        \"channelId\": \"UC_demo_a\",\n        \"title\": \"ChatGPT для\
+        \ отчётов: 5 приёмов\",\n        \"description\": \"Описание ролика «ChatGPT\
+        \ для отчётов: 5 приёмов»\",\n        \"channelTitle\": \"Нейро для всех\"\
+        ,\n        \"liveBroadcastContent\": \"none\",\n        \"thumbnails\": {\n\
+        \          \"default\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_a02/default.jpg\"\
+        ,\n            \"width\": 120,\n            \"height\": 90\n          },\n\
+        \          \"medium\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_a02/mqdefault.jpg\"\
+        ,\n            \"width\": 320,\n            \"height\": 180\n          },\n\
+        \          \"high\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_a02/hqdefault.jpg\"\
+        ,\n            \"width\": 480,\n            \"height\": 360\n          }\n\
+        \        }\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
+        \n      },\n      \"statistics\": {\n        \"viewCount\": \"6200\",\n  \
+        \      \"favoriteCount\": \"0\",\n        \"likeCount\": \"210\",\n      \
+        \  \"commentCount\": \"40\"\n      }\n    },\n    {\n      \"kind\": \"youtube#video\"\
+        ,\n      \"etag\": \"demo\",\n      \"id\": \"demoVid_b01\",\n      \"snippet\"\
+        : {\n        \"publishedAt\": \"2026-10-08T12:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_b\",\n        \"title\": \"ИИ для новичков: с чего начать\",\n\
+        \        \"description\": \"Описание ролика «ИИ для новичков: с чего начать»\"\
+        ,\n        \"channelTitle\": \"ИИ с нуля\",\n        \"liveBroadcastContent\"\
+        : \"none\",\n        \"thumbnails\": {\n          \"default\": {\n       \
+        \     \"url\": \"https://i.ytimg.com/vi/demoVid_b01/default.jpg\",\n     \
+        \       \"width\": 120,\n            \"height\": 90\n          },\n      \
+        \    \"medium\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_b01/mqdefault.jpg\"\
+        ,\n            \"width\": 320,\n            \"height\": 180\n          },\n\
+        \          \"high\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_b01/hqdefault.jpg\"\
+        ,\n            \"width\": 480,\n            \"height\": 360\n          },\n\
+        \          \"standard\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_b01/sddefault.jpg\"\
+        ,\n            \"width\": 640,\n            \"height\": 480\n          },\n\
+        \          \"maxres\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_b01/maxresdefault.jpg\"\
+        ,\n            \"width\": 1280,\n            \"height\": 720\n          }\n\
+        \        }\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
+        \n      },\n      \"statistics\": {\n        \"viewCount\": \"2500\",\n  \
+        \      \"favoriteCount\": \"0\",\n        \"likeCount\": \"60\",\n       \
+        \ \"commentCount\": \"4\"\n      }\n    },\n    {\n      \"kind\": \"youtube#video\"\
+        ,\n      \"etag\": \"demo\",\n      \"id\": \"demoVid_b02\",\n      \"snippet\"\
+        : {\n        \"publishedAt\": \"2026-10-15T12:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_b\",\n        \"title\": \"Нейросети для работы без кода\",\n\
+        \        \"description\": \"Описание ролика «Нейросети для работы без кода»\"\
+        ,\n        \"channelTitle\": \"ИИ с нуля\",\n        \"liveBroadcastContent\"\
+        : \"none\",\n        \"thumbnails\": {\n          \"default\": {\n       \
+        \     \"url\": \"https://i.ytimg.com/vi/demoVid_b02/default.jpg\",\n     \
+        \       \"width\": 120,\n            \"height\": 90\n          },\n      \
+        \    \"medium\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_b02/mqdefault.jpg\"\
+        ,\n            \"width\": 320,\n            \"height\": 180\n          },\n\
+        \          \"high\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_b02/hqdefault.jpg\"\
+        ,\n            \"width\": 480,\n            \"height\": 360\n          }\n\
+        \        }\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
+        \n      },\n      \"statistics\": {\n        \"viewCount\": \"1900\",\n  \
+        \      \"favoriteCount\": \"0\",\n        \"likeCount\": \"41\",\n       \
+        \ \"commentCount\": \"3\"\n      }\n    },\n    {\n      \"kind\": \"youtube#video\"\
+        ,\n      \"etag\": \"demo\",\n      \"id\": \"demoVid_c01\",\n      \"snippet\"\
+        : {\n        \"publishedAt\": \"2026-10-10T09:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_c\",\n        \"title\": \"Первый ролик про ИИ\",\n        \"\
+        description\": \"Описание ролика «Первый ролик про ИИ»\",\n        \"channelTitle\"\
+        : \"Мини-канал\",\n        \"liveBroadcastContent\": \"none\",\n        \"\
+        thumbnails\": {\n          \"default\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_c01/default.jpg\"\
+        ,\n            \"width\": 120,\n            \"height\": 90\n          },\n\
+        \          \"medium\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_c01/mqdefault.jpg\"\
+        ,\n            \"width\": 320,\n            \"height\": 180\n          },\n\
+        \          \"high\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_c01/hqdefault.jpg\"\
+        ,\n            \"width\": 480,\n            \"height\": 360\n          },\n\
+        \          \"standard\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_c01/sddefault.jpg\"\
+        ,\n            \"width\": 640,\n            \"height\": 480\n          },\n\
+        \          \"maxres\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_c01/maxresdefault.jpg\"\
+        ,\n            \"width\": 1280,\n            \"height\": 720\n          }\n\
+        \        }\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
+        \n      },\n      \"statistics\": {\n        \"viewCount\": \"400\",\n   \
+        \     \"favoriteCount\": \"0\",\n        \"likeCount\": \"12\",\n        \"\
+        commentCount\": \"2\"\n      }\n    },\n    {\n      \"kind\": \"youtube#video\"\
+        ,\n      \"etag\": \"demo\",\n      \"id\": \"demoVid_c02\",\n      \"snippet\"\
+        : {\n        \"publishedAt\": \"2026-10-18T09:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_c\",\n        \"title\": \"Нейросеть читает мои заметки\",\n \
+        \       \"description\": \"Описание ролика «Нейросеть читает мои заметки»\"\
+        ,\n        \"channelTitle\": \"Мини-канал\",\n        \"liveBroadcastContent\"\
+        : \"none\",\n        \"thumbnails\": {\n          \"default\": {\n       \
+        \     \"url\": \"https://i.ytimg.com/vi/demoVid_c02/default.jpg\",\n     \
+        \       \"width\": 120,\n            \"height\": 90\n          },\n      \
+        \    \"medium\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_c02/mqdefault.jpg\"\
+        ,\n            \"width\": 320,\n            \"height\": 180\n          },\n\
+        \          \"high\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_c02/hqdefault.jpg\"\
+        ,\n            \"width\": 480,\n            \"height\": 360\n          }\n\
+        \        }\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
+        \n      },\n      \"statistics\": {\n        \"viewCount\": \"900\",\n   \
+        \     \"favoriteCount\": \"0\",\n        \"likeCount\": \"20\",\n        \"\
+        commentCount\": \"3\"\n      }\n    },\n    {\n      \"kind\": \"youtube#video\"\
+        ,\n      \"etag\": \"demo\",\n      \"id\": \"demoVid_d01\",\n      \"snippet\"\
+        : {\n        \"publishedAt\": \"2026-10-05T15:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_d\",\n        \"title\": \"ChatGPT tutorial на русском: полный\
+        \ курс\",\n        \"description\": \"Описание ролика «ChatGPT tutorial на\
+        \ русском: полный курс»\",\n        \"channelTitle\": \"Промпт-лаб\",\n  \
+        \      \"liveBroadcastContent\": \"none\",\n        \"thumbnails\": {\n  \
+        \        \"default\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_d01/default.jpg\"\
+        ,\n            \"width\": 120,\n            \"height\": 90\n          },\n\
+        \          \"medium\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_d01/mqdefault.jpg\"\
+        ,\n            \"width\": 320,\n            \"height\": 180\n          },\n\
+        \          \"high\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_d01/hqdefault.jpg\"\
+        ,\n            \"width\": 480,\n            \"height\": 360\n          },\n\
+        \          \"standard\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_d01/sddefault.jpg\"\
+        ,\n            \"width\": 640,\n            \"height\": 480\n          },\n\
+        \          \"maxres\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_d01/maxresdefault.jpg\"\
+        ,\n            \"width\": 1280,\n            \"height\": 720\n          }\n\
+        \        }\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
         PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
         \n      },\n      \"statistics\": {\n        \"viewCount\": \"70000\",\n \
         \       \"favoriteCount\": \"0\",\n        \"likeCount\": \"2800\",\n    \
@@ -228,12 +291,18 @@ interactions:
         ,\n        \"channelId\": \"UC_demo_d\",\n        \"title\": \"Нейросети для\
         \ работы: 10 сервисов\",\n        \"description\": \"Описание ролика «Нейросети\
         \ для работы: 10 сервисов»\",\n        \"channelTitle\": \"Промпт-лаб\",\n\
-        \        \"liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\"\
-        : {\n        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n\
-        \        \"definition\": \"hd\"\n      },\n      \"statistics\": {\n     \
-        \   \"viewCount\": \"21000\",\n        \"favoriteCount\": \"0\",\n       \
-        \ \"likeCount\": \"800\",\n        \"commentCount\": \"95\"\n      }\n   \
-        \ }\n  ]\n}"
+        \        \"liveBroadcastContent\": \"none\",\n        \"thumbnails\": {\n\
+        \          \"default\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_d02/default.jpg\"\
+        ,\n            \"width\": 120,\n            \"height\": 90\n          },\n\
+        \          \"medium\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_d02/mqdefault.jpg\"\
+        ,\n            \"width\": 320,\n            \"height\": 180\n          },\n\
+        \          \"high\": {\n            \"url\": \"https://i.ytimg.com/vi/demoVid_d02/hqdefault.jpg\"\
+        ,\n            \"width\": 480,\n            \"height\": 360\n          }\n\
+        \        }\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
+        \n      },\n      \"statistics\": {\n        \"viewCount\": \"21000\",\n \
+        \       \"favoriteCount\": \"0\",\n        \"likeCount\": \"800\",\n     \
+        \   \"commentCount\": \"95\"\n      }\n    }\n  ]\n}"
     headers:
       content-type:
       - application/json; charset=UTF-8

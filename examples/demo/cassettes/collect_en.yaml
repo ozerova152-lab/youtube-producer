@@ -118,7 +118,18 @@ interactions:
         : \"UC_demo_en1\",\n        \"title\": \"ChatGPT tutorial for absolute beginners\"\
         ,\n        \"description\": \"Описание ролика «ChatGPT tutorial for absolute\
         \ beginners»\",\n        \"channelTitle\": \"AI Basics\",\n        \"liveBroadcastContent\"\
-        : \"none\"\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        : \"none\",\n        \"thumbnails\": {\n          \"default\": {\n       \
+        \     \"url\": \"https://i.ytimg.com/vi/demoEn_a01/default.jpg\",\n      \
+        \      \"width\": 120,\n            \"height\": 90\n          },\n       \
+        \   \"medium\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_a01/mqdefault.jpg\"\
+        ,\n            \"width\": 320,\n            \"height\": 180\n          },\n\
+        \          \"high\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_a01/hqdefault.jpg\"\
+        ,\n            \"width\": 480,\n            \"height\": 360\n          },\n\
+        \          \"standard\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_a01/sddefault.jpg\"\
+        ,\n            \"width\": 640,\n            \"height\": 480\n          },\n\
+        \          \"maxres\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_a01/maxresdefault.jpg\"\
+        ,\n            \"width\": 1280,\n            \"height\": 720\n          }\n\
+        \        }\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
         PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
         \n      },\n      \"statistics\": {\n        \"viewCount\": \"60000\",\n \
         \       \"favoriteCount\": \"0\",\n        \"likeCount\": \"2000\",\n    \
@@ -128,21 +139,39 @@ interactions:
         ,\n        \"channelId\": \"UC_demo_en1\",\n        \"title\": \"AI tools\
         \ I use every day\",\n        \"description\": \"Описание ролика «AI tools\
         \ I use every day»\",\n        \"channelTitle\": \"AI Basics\",\n        \"\
-        liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\": {\n\
-        \        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n    \
-        \    \"definition\": \"hd\"\n      },\n      \"statistics\": {\n        \"\
-        viewCount\": \"7000\",\n        \"favoriteCount\": \"0\",\n        \"likeCount\"\
-        : \"200\",\n        \"commentCount\": \"30\"\n      }\n    },\n    {\n   \
-        \   \"kind\": \"youtube#video\",\n      \"etag\": \"demo\",\n      \"id\"\
-        : \"demoEn_b01\",\n      \"snippet\": {\n        \"publishedAt\": \"2026-10-14T10:00:00Z\"\
-        ,\n        \"channelId\": \"UC_demo_en2\",\n        \"title\": \"AI for beginners:\
-        \ first steps\",\n        \"description\": \"Описание ролика «AI for beginners:\
-        \ first steps»\",\n        \"channelTitle\": \"Prompt Garage\",\n        \"\
-        liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\": {\n\
-        \        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n    \
-        \    \"definition\": \"hd\"\n      },\n      \"statistics\": {\n        \"\
-        viewCount\": \"3000\",\n        \"favoriteCount\": \"0\",\n        \"likeCount\"\
-        : \"90\",\n        \"commentCount\": \"12\"\n      }\n    }\n  ]\n}"
+        liveBroadcastContent\": \"none\",\n        \"thumbnails\": {\n          \"\
+        default\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_a02/default.jpg\"\
+        ,\n            \"width\": 120,\n            \"height\": 90\n          },\n\
+        \          \"medium\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_a02/mqdefault.jpg\"\
+        ,\n            \"width\": 320,\n            \"height\": 180\n          },\n\
+        \          \"high\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_a02/hqdefault.jpg\"\
+        ,\n            \"width\": 480,\n            \"height\": 360\n          }\n\
+        \        }\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
+        \n      },\n      \"statistics\": {\n        \"viewCount\": \"7000\",\n  \
+        \      \"favoriteCount\": \"0\",\n        \"likeCount\": \"200\",\n      \
+        \  \"commentCount\": \"30\"\n      }\n    },\n    {\n      \"kind\": \"youtube#video\"\
+        ,\n      \"etag\": \"demo\",\n      \"id\": \"demoEn_b01\",\n      \"snippet\"\
+        : {\n        \"publishedAt\": \"2026-10-14T10:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_en2\",\n        \"title\": \"AI for beginners: first steps\",\n\
+        \        \"description\": \"Описание ролика «AI for beginners: first steps»\"\
+        ,\n        \"channelTitle\": \"Prompt Garage\",\n        \"liveBroadcastContent\"\
+        : \"none\",\n        \"thumbnails\": {\n          \"default\": {\n       \
+        \     \"url\": \"https://i.ytimg.com/vi/demoEn_b01/default.jpg\",\n      \
+        \      \"width\": 120,\n            \"height\": 90\n          },\n       \
+        \   \"medium\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_b01/mqdefault.jpg\"\
+        ,\n            \"width\": 320,\n            \"height\": 180\n          },\n\
+        \          \"high\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_b01/hqdefault.jpg\"\
+        ,\n            \"width\": 480,\n            \"height\": 360\n          },\n\
+        \          \"standard\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_b01/sddefault.jpg\"\
+        ,\n            \"width\": 640,\n            \"height\": 480\n          },\n\
+        \          \"maxres\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_b01/maxresdefault.jpg\"\
+        ,\n            \"width\": 1280,\n            \"height\": 720\n          }\n\
+        \        }\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
+        \n      },\n      \"statistics\": {\n        \"viewCount\": \"3000\",\n  \
+        \      \"favoriteCount\": \"0\",\n        \"likeCount\": \"90\",\n       \
+        \ \"commentCount\": \"12\"\n      }\n    }\n  ]\n}"
     headers:
       content-type:
       - application/json; charset=UTF-8
@@ -247,22 +276,34 @@ interactions:
         \       \"publishedAt\": \"2026-09-01T10:00:00Z\",\n        \"channelId\"\
         : \"UC_demo_en1\",\n        \"title\": \"Prompt tricks\",\n        \"description\"\
         : \"Описание ролика «Prompt tricks»\",\n        \"channelTitle\": \"AI Basics\"\
-        ,\n        \"liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\"\
-        : {\n        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n\
-        \        \"definition\": \"hd\"\n      },\n      \"statistics\": {\n     \
-        \   \"viewCount\": \"6500\",\n        \"favoriteCount\": \"0\",\n        \"\
-        likeCount\": \"190\",\n        \"commentCount\": \"20\"\n      }\n    },\n\
-        \    {\n      \"kind\": \"youtube#video\",\n      \"etag\": \"demo\",\n  \
-        \    \"id\": \"demoEn_b02\",\n      \"snippet\": {\n        \"publishedAt\"\
-        : \"2026-09-22T10:00:00Z\",\n        \"channelId\": \"UC_demo_en2\",\n   \
-        \     \"title\": \"Ten useful AI tools\",\n        \"description\": \"Описание\
-        \ ролика «Ten useful AI tools»\",\n        \"channelTitle\": \"Prompt Garage\"\
-        ,\n        \"liveBroadcastContent\": \"none\"\n      },\n      \"contentDetails\"\
-        : {\n        \"duration\": \"PT8M30S\",\n        \"dimension\": \"2d\",\n\
-        \        \"definition\": \"hd\"\n      },\n      \"statistics\": {\n     \
-        \   \"viewCount\": \"2800\",\n        \"favoriteCount\": \"0\",\n        \"\
-        likeCount\": \"80\",\n        \"commentCount\": \"9\"\n      }\n    }\n  ]\n\
-        }"
+        ,\n        \"liveBroadcastContent\": \"none\",\n        \"thumbnails\": {\n\
+        \          \"default\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_a03/default.jpg\"\
+        ,\n            \"width\": 120,\n            \"height\": 90\n          },\n\
+        \          \"medium\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_a03/mqdefault.jpg\"\
+        ,\n            \"width\": 320,\n            \"height\": 180\n          },\n\
+        \          \"high\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_a03/hqdefault.jpg\"\
+        ,\n            \"width\": 480,\n            \"height\": 360\n          }\n\
+        \        }\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
+        \n      },\n      \"statistics\": {\n        \"viewCount\": \"6500\",\n  \
+        \      \"favoriteCount\": \"0\",\n        \"likeCount\": \"190\",\n      \
+        \  \"commentCount\": \"20\"\n      }\n    },\n    {\n      \"kind\": \"youtube#video\"\
+        ,\n      \"etag\": \"demo\",\n      \"id\": \"demoEn_b02\",\n      \"snippet\"\
+        : {\n        \"publishedAt\": \"2026-09-22T10:00:00Z\",\n        \"channelId\"\
+        : \"UC_demo_en2\",\n        \"title\": \"Ten useful AI tools\",\n        \"\
+        description\": \"Описание ролика «Ten useful AI tools»\",\n        \"channelTitle\"\
+        : \"Prompt Garage\",\n        \"liveBroadcastContent\": \"none\",\n      \
+        \  \"thumbnails\": {\n          \"default\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_b02/default.jpg\"\
+        ,\n            \"width\": 120,\n            \"height\": 90\n          },\n\
+        \          \"medium\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_b02/mqdefault.jpg\"\
+        ,\n            \"width\": 320,\n            \"height\": 180\n          },\n\
+        \          \"high\": {\n            \"url\": \"https://i.ytimg.com/vi/demoEn_b02/hqdefault.jpg\"\
+        ,\n            \"width\": 480,\n            \"height\": 360\n          }\n\
+        \        }\n      },\n      \"contentDetails\": {\n        \"duration\": \"\
+        PT8M30S\",\n        \"dimension\": \"2d\",\n        \"definition\": \"hd\"\
+        \n      },\n      \"statistics\": {\n        \"viewCount\": \"2800\",\n  \
+        \      \"favoriteCount\": \"0\",\n        \"likeCount\": \"80\",\n       \
+        \ \"commentCount\": \"9\"\n      }\n    }\n  ]\n}"
     headers:
       content-type:
       - application/json; charset=UTF-8

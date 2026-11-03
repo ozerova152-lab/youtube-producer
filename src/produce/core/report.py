@@ -12,6 +12,12 @@ def _cell(text: object) -> str:
     return " ".join(str(text).replace("|", "/").split())
 
 
+def _cover(item: dict) -> str:
+    """Обложка ссылкой; адреса нет (старый кэш или YouTube не прислал) — честная пометка."""
+    url = item.get("thumbnail_url")
+    return f"[обложка]({url})" if url else "обложка: нет данных"
+
+
 def _num(n: int) -> str:
     return f"{n:,}".replace(",", " ")
 
@@ -27,7 +33,7 @@ def _virals_section(run: runs.Run) -> list[str]:
                   "|----------|-----------|--------------|---------------------|-------|-------------|--------|"]
         for v in data["virals"]:
             lines.append(
-                f"| [{_cell(v['title'])}]({v['url']}) | {_num(v['views'])} | {_num(v['norm'])} | "
+                f"| [{_cell(v['title'])}]({v['url']}) · {_cover(v)} | {_num(v['views'])} | {_num(v['norm'])} | "
                 f"{times_text(v)} | {v['likes_ratio']:.1%} | {v['comments_ratio']:.2%} | "
                 f"{_num(v['views_per_day'])} |")
         lines += ["", "«В день» — скорость набора просмотров, дополнительный сигнал: на отбор не влияет.", ""]
@@ -35,7 +41,7 @@ def _virals_section(run: runs.Run) -> list[str]:
         lines += ["Залётов нет. Ближайшие 5 к порогу:", ""]
         for v in data["nearest"]:
             lines.append(f"- {_cell(v['title'])}: {_num(v['views'])} просмотров, норма "
-                         f"{_num(v['norm'])}, {times_text(v)}")
+                         f"{_num(v['norm'])}, {times_text(v)}, {_cover(v)}")
         lines += ["", "Могу предложить ослабить пороги в `settings.yaml`, но менять его вы будете сами.", ""]
     if data["skipped"]:
         lines += [(f"Мало данных: пропущено {len(data['skipped'])} видео "
@@ -51,7 +57,7 @@ def _my_table(title: str, items: list[dict]) -> list[str]:
     lines = [f"### {title}", "", "| Название | Просмотры | Лайки | Комментарии | Опубликовано |",
              "|----------|-----------|-------|-------------|--------------|"]
     for v in items:
-        lines.append(f"| [{_cell(v['title'])}]({v['url']}) | {_num(v['views'])} | "
+        lines.append(f"| [{_cell(v['title'])}]({v['url']}) · {_cover(v)} | {_num(v['views'])} | "
                      f"{_count(v['likes'])} | {_count(v['comments'])} | {v['published_at'][:10]} |")
     return lines + [""]
 

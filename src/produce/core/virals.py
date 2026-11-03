@@ -107,6 +107,7 @@ def _record(video: dict, norm: float, sample: int, th: Thresholds, moment: datet
         "channel_title": video.get("channel_title", ""),
         "url": f"https://www.youtube.com/watch?v={video['id']}",
         "published_at": video.get("published_at", ""),
+        "thumbnail_url": video.get("thumbnail_url") or "",  # старые кэши без поля: пусто
         "duration_seconds": video.get("duration_seconds"),
         "views": views,
         "norm": round(norm),
