@@ -14,7 +14,7 @@ DOCS = ["windows-wsl.md", "windows-wsl.en.md", "compatibility.md", "glossary.md"
 def test_sections_in_order_and_short():
     pos = [README.index("\n" + h + "\n") for h in HEADINGS]
     assert pos == sorted(pos)
-    assert len(README.splitlines()) <= 125
+    assert len(README.splitlines()) <= 132
 
 
 def test_quick_start_has_five_steps_with_three_labels():

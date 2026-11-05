@@ -8,6 +8,14 @@
 - **Claude Cowork.** Откройте папку проекта в приложении Claude Desktop.
 - **Codex.** Откройте терминал в папке проекта и запустите `codex`.
 
+## Как поставить агента
+
+Если агента ещё нет на компьютере, установите его по официальной странице (страницы на английском; нужна подписка на агента):
+
+- Claude Code: <https://code.claude.com/docs/en/setup>
+- Claude Desktop (для Claude Cowork): <https://claude.com/download>
+- Codex: <https://github.com/openai/codex>
+
 ## Статус
 
 **Основной путь — Claude Code, проверен полностью.** Codex проверен на реальном канале (30.10.2026) от установки до брифов: установка, ключ, сбор данных, залёты, ниша и кандидаты, стратегия, брифы. Cowork мы не проверяли: используйте тот же `AGENTS.md` и пишите в [Issues](https://github.com/ozerova152-lab/youtube-producer/issues). Обычный чат без терминала (режим без терминала, сценарий `playbooks/no-terminal.md`, [как он устроен](chat-mode.md)) на реальном канале мы тоже не проверяли.

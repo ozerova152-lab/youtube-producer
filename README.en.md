@@ -78,13 +78,20 @@ mkdir -p data && cp -r examples/demo data/demo && .venv/bin/produce --channel da
 .venv/bin/produce --channel data/demo virals --segment ru
 ```
 
-Expected: the second command loads 11 videos and 2 channels with 0 YouTube requests, the third finds 2 viral videos. If `data/demo` already exists, run `make reset` first. Then you can tell the agent "Read AGENTS.md and start the month" on the `data/demo` channel.
+Expected: the second command loads 11 videos and 2 channels with 0 YouTube requests, the third finds 2 viral videos. The date in the demo is fixed (27 October 2026), so the result is the same on any day. If `data/demo` already exists, run `make reset` first. Then you can tell the agent "Read AGENTS.md and start the month" on the `data/demo` channel.
 
 ## Your own channel
 
 Two ways to start.
 
-**YouTube Data API key.** It is free (10,000 quota units per day, no bank card). Step-by-step guide for beginners: `docs/api-key-guide.md` (in Russian). In short: in [Google Cloud Console](https://console.cloud.google.com/) create a project, enable YouTube Data API v3, create a key and restrict it to that API ("Application restrictions" stays None); do not press "Start free". The easiest way to store the key is `make add-key` in an ordinary terminal (in Windows the Ubuntu window, not the agent chat) in the project folder: it asks for the key with hidden input and creates `.env` for you only. **Never paste the key into a chat.** If a key leaks, reissue it in Google Cloud. Then tell the agent "key added".
+**YouTube Data API key.** It is free (10,000 quota units per day, no bank card). Detailed guide: `docs/api-key-guide.md` (in Russian). In short:
+
+1. Open [Google Cloud Console](https://console.cloud.google.com/) and create a project. Do not press "Start free".
+2. Enable **YouTube Data API v3** in the project.
+3. Create an API key and restrict it to that API ("Application restrictions" stays None).
+4. Open an ordinary terminal in the project folder (in Windows the Ubuntu window, not the agent chat) and run `make add-key`. No text editor needed.
+5. Paste the key when asked and repeat it. Nothing is shown while you type, that is normal. The command creates `.env` for you only and prints nothing. **Never paste the key into a chat.** If a key leaks, reissue it in Google Cloud.
+6. Tell the agent "key added".
 
 **A file instead of a key.** Prepare a table of videos as CSV/JSON (columns: `docs/import-format.md`, sample: `examples/demo/import.csv`). Import makes no network calls and spends no quota:
 

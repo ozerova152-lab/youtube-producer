@@ -13,6 +13,11 @@ def channel(tmp_path) -> Path:
     """Копия examples/demo в tmp_path/<канал>; рядом лежит общий учёт квоты."""
     dest = tmp_path / "chan"
     shutil.copytree(DEMO, dest)
+    # Свой канал, как в инструкции: строку `fixed_date` (только для демо) пользователь удаляет;
+    # вне папки demo она игнорируется с предупреждением, которое попало бы в вывод команд.
+    settings = dest / "settings.yaml"
+    settings.write_text("".join(line for line in settings.read_text(encoding="utf-8").splitlines(keepends=True)
+                                if not line.startswith("fixed_date:")), encoding="utf-8")
     return dest
 
 

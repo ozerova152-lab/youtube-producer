@@ -1,6 +1,7 @@
 """Настройки канала (`settings.yaml`) и ключ YouTube из `.env`."""
 
 import os
+from datetime import date
 from pathlib import Path
 
 import yaml
@@ -36,6 +37,41 @@ def load_settings(channel_dir: Path) -> dict:
     if len(set(ids)) != len(ids):
         raise SettingsError(f"В {path} id сегментов повторяются")
     return data
+
+
+DEMO_DIR_NAME = "demo"
+FIXED_DATE_IGNORED = (
+    "`fixed_date` игнорируется: это не демо-канал. Удалите строку из settings.yaml"
+)
+
+
+def apply_fixed_date(channel_dir: Path) -> tuple[str | None, str | None]:
+    """Демо-канал: `fixed_date` в `settings.yaml` замораживает «сегодня» (через `PRODUCE_NOW`).
+
+    Нужна, чтобы тестовый канал давал один и тот же результат в любой день: залёты демо старше
+    30 дней перестали бы быть залётами. Действует только в папке `demo` (`data/demo`): строка,
+    случайно скопированная в свой канал, заморозила бы ему даты, поэтому там она игнорируется
+    с предупреждением. Заданная `PRODUCE_NOW` сильнее. Возвращает (дата, предупреждение).
+    """
+    if os.environ.get("PRODUCE_NOW", "").strip():
+        return None, None
+    try:
+        data = load_settings(channel_dir)
+    except SettingsError:
+        return None, None  # о проблемах файла настроек скажет сама команда
+    value = data.get("fixed_date")
+    if value is None:
+        return None, None
+    if channel_dir.resolve().name != DEMO_DIR_NAME:
+        return None, FIXED_DATE_IGNORED
+    try:
+        day = date.fromisoformat(str(value).strip())
+    except ValueError as err:
+        raise SettingsError(
+            "В `settings.yaml` поле `fixed_date` должно быть датой ГГГГ-ММ-ДД. Исправьте и повторите"
+        ) from err
+    os.environ["PRODUCE_NOW"] = day.isoformat()
+    return day.isoformat(), None
 
 
 def list_segments(settings: dict) -> list[dict]:

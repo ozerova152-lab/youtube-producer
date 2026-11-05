@@ -64,7 +64,7 @@ def test_step3_checks_python_version_first_with_mac_and_ubuntu_advice():
 
 
 def test_readmes_are_short_and_have_no_removed_section():
-    assert len(RU.splitlines()) <= 125 and len(EN.splitlines()) <= 125
+    assert len(RU.splitlines()) <= 132 and len(EN.splitlines()) <= 132
     assert "Сколько времени и подписки" not in RU
     assert "не измерен" not in RU
 

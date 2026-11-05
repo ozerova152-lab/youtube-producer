@@ -20,6 +20,7 @@ from produce.core import strategy as strategizing
 from produce.core import virals as finding
 from produce.core.errors import KeyMissingError, ProduceError, QuotaExceededError, RunError
 from produce.core.settings import (
+    apply_fixed_date,
     get_segment,
     list_segments,
     load_api_key,
@@ -65,6 +66,12 @@ def main(
     channel: Annotated[Path, typer.Option(help="Папка канала с settings.yaml")] = Path("data/default"),
 ) -> None:
     ctx.obj = channel
+    try:
+        ctx.meta["fixed_date"], warning = apply_fixed_date(channel)
+    except ProduceError as err:
+        raise _fail(err) from err
+    if warning:
+        typer.echo(warning, err=True)  # в stderr: stdout команд (segments и др.) читают построчно
     if ctx.invoked_subcommand is not None:
         return
     try:
@@ -140,6 +147,11 @@ def start(
     new_version: Annotated[bool, typer.Option(help="Прямая просьба: создать новую версию")] = False,
 ) -> None:
     """Найти или создать запуск месяца и сегмента."""
+    if ctx.meta.get("fixed_date"):
+        typer.echo(
+            f"Дата зафиксирована для демо: {ctx.meta['fixed_date']} "
+            "(строка `fixed_date` в settings.yaml; для своего канала удалите её)"
+        )
     try:
         settings = load_settings(ctx.obj)
         ids = [str(s["id"]) for s in list_segments(settings)]
