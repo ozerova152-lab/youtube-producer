@@ -77,7 +77,12 @@ def test_issues_link_is_the_only_feedback_link_on_showcase():
 
 
 def test_status_note_has_verbatim_old_wording_once():
-    old = subprocess.check_output(["git", "show", "HEAD:docs/compatibility.md"], text=True, cwd=ROOT)
+    # прежний compatibility.md: родитель коммита T34 (b41cf84); HEAD после коммита T34 его уже не содержит
+    try:
+        old = subprocess.check_output(["git", "show", "b41cf84~1:docs/compatibility.md"], text=True, cwd=ROOT,
+                                      stderr=subprocess.DEVNULL)
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        pytest.skip("нет истории git с коммитом T34 (скачанный ZIP или поверхностный клон)")
     status = old.split("## Статус\n\n")[1].split("\n\n")[0].replace("(chat-mode.md)", "(../chat-mode.md)")
     link = old.split("## Установка по ссылке\n\n")[1].split("\n\n")[0]
     note = read("docs/dev/agent-status.md")

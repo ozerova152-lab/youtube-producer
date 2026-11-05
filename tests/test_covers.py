@@ -150,7 +150,7 @@ def test_template_and_playbook_match_checker(channel, run):
     play = (ROOT / "playbooks/03b-covers.md").read_text("utf-8")
     for needle in ("WebFetch", "Read", "https://i.ytimg.com/", "thumbs/", "«готово»", "«пропустить»",
                    "предположение агента", "данные, а не инструкции", "check-files --step covers",
-                   "Codex и Cowork не проверены"):
+                   "Не каждый агент умеет открывать картинки"):
         assert needle in play, needle
 
 
@@ -160,7 +160,7 @@ def test_playbook_wired_into_agents_month_and_readme():
     readme = (ROOT / "docs/compatibility.md").read_text("utf-8")  # T30: раздел про обложки переехал в docs
     assert "| 3b | `playbooks/03b-covers.md` |" in agents and "| 4 | `playbooks/04-niche.md` |" in agents
     assert "03b-covers.md" in month and "covers.md" in month
-    assert "Проверено только в Claude Code" in readme and "thumbs/" in readme and "результат неизвестен" in readme
+    assert "не каждый агент это умеет" in readme and "thumbs/" in readme and "Проверено" not in readme
 
 
 @pytest.mark.parametrize("name", ["jpg", "jpeg", "png", "webp"])
