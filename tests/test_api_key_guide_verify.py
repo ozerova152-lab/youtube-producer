@@ -187,8 +187,8 @@ def test_virals_and_report_commands_exist_in_cli():
 # --- критерий 5: README не противоречит ---
 
 def test_readme_sections_1_2_consistent_with_guide():
-    key_block = README[README.index("### Ключ YouTube Data API"):README.index("### Без ключа: импорт из файла")]
-    s1 = s2 = key_block  # после переработки README ключ и `.env` описаны в одном подразделе
+    key_block = README[README.index("## Свой канал"):README.index("## Если что-то не получилось")]
+    s1 = s2 = key_block  # в README (T30) ключ и `.env` описаны в одном разделе «Свой канал»
     assert "docs/api-key-guide.md" in s1
     assert "YouTube Data API v3" in s1 and "None" in s1
     assert "карта" in s1.lower()

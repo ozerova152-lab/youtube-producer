@@ -34,37 +34,22 @@ def test_showcase_follows_ui_rules():
 
 
 def test_readmes_same_numbers_and_commands():
-    for token in (
-        "30",
-        "60",
-        "5-20",
-        "10,000",
-        "make setup",
-        "make add-key",
-        "make reset",
-        "00-overview.md",
-        "thumbs/",
-        "playbooks/no-terminal.md",
-        "30 Oct 2026",
-    ):
+    # T30: в README остались быстрый старт, ключ и демо; статус, обложки и режим чата живут в docs (русские, T31 переведёт)
+    for token in ("30", "10,000", "make setup", "make add-key", "make reset", "00-overview.md", "thumbs/"):
         assert token in EN, token
-    for token in (
-        "30.10.2026",
-        "playbooks/no-terminal.md",
-        "make add-key",
-        "make reset",
-        "thumbs/",
-    ):
+    for token in ("make setup", "make add-key", "make reset", "00-overview.md"):
         assert token in RU, token
-    assert re.search(r"5[–-]20", RU) and re.search(r"\b60\b", RU)
+    docs = "".join((ROOT / "docs" / n).read_text(encoding="utf-8") for n in ("compatibility.md", "chat-mode.md"))
+    for token in ("30.10.2026", "playbooks/no-terminal.md", "thumbs/"):
+        assert token in docs, token
+    assert re.search(r"5[–-]20", docs) and re.search(r"\b60\b", docs)
 
 
 def test_readmes_do_not_overstate_and_do_not_leak():
-    for text in (RU, EN):
+    compat = (ROOT / "docs/compatibility.md").read_text(encoding="utf-8")
+    for text in (RU, EN, compat):
         assert not re.search(r"/home/|matebook|AIza", text)
         assert not re.search(r"Cowork[^.]{0,40}(fully|полностью) (tested|проверен)", text)
-    assert "We did not test Cowork" in EN and "Cowork мы не проверяли" in RU
-    assert (
-        "has also not been tested on a real channel" in EN
-        and "на реальном канале мы тоже не проверяли" in RU
-    )
+    # статус по агентам стоит один раз, в docs/compatibility.md (T30); README только ссылаются на него
+    assert "Cowork мы не проверяли" in compat and "на реальном канале мы тоже не проверяли" in compat
+    assert "docs/compatibility.md" in RU and "docs/compatibility.md" in EN

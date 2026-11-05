@@ -1,10 +1,10 @@
 ![YouTube Producer](assets/cover-producer.jpg)
 
-# AI Producer for a YouTube Channel
-
 [Русская версия](README.md) · English
 
-A set of instructions, templates and a small data-collection script. You open the project folder in an AI agent that reads `AGENTS.md` and say: "Read AGENTS.md and start the month." The agent then walks you through the steps. **You always decide and publish yourself.**
+# AI Producer for a YouTube Channel
+
+A helper that finds videos in your topic that got a lot of views, explains why, and suggests what to film.
 
 Repository: https://github.com/ozerova152-lab/youtube-producer · Showcase page: https://ozerova152-lab.github.io/youtube-producer/
 
@@ -12,156 +12,105 @@ Repository: https://github.com/ozerova152-lab/youtube-producer · Showcase page:
 
 One "month" of work produces files on your own computer in `data/<channel>/runs/<month>_<segment>_v<N>/`:
 
-- **Run overview** (`00-overview.md`): a good place to start; it lists the run files in working order, what is in each and why, and the start and last collection dates.
-- Viral videos in your niche for the last 30 days, plus your own best and weakest videos (`report.md`).
-- A breakdown of why they took off, based on viewer comments (`analysis.md`).
-- An optional **cover analysis** of the viral videos (`covers.md`): what their covers have in common (text, faces, color, composition). It is the agent's guess from the pictures, not a measurement.
-- The niche and competitor candidates (`niche.md`, `candidates.md`).
-- A content strategy (`strategy.md`): the agent writes a draft, you approve it.
-- Briefs with packaging for a long video, Shorts and a Community post, plus a monthly plan built from accepted briefs (`briefs/`, `plan.md`).
+- a list of **virals**: videos in your niche from the last 30 days with far more views than usual, plus your own best and weakest videos (`report.md`);
+- a breakdown of why they took off, based on viewer comments (`analysis.md`), and an optional cover analysis (`covers.md`);
+- the niche and competitor candidates, then a **strategy**: what to film and in which format (`strategy.md`); the agent writes a draft, you approve it;
+- **briefs** (an assignment for one video: title, cover, structure) and a monthly plan (`briefs/`, `plan.md`);
+- `00-overview.md`: an overview of all run files; a good place to start.
 
-The project **never publishes anything and never writes to YouTube**. It helps you choose topics; you film and upload.
+The project **never publishes anything and never writes to YouTube**. You decide and upload.
 
-## How it works
+## What you need
 
-1. **Setup.** You describe the channel in `data/<channel>/settings.yaml`: niche, region and language, search words.
-2. **Collection.** The agent calculates the YouTube quota cost and waits for your "yes". Without an API key you can import videos from a file.
-3. **Virals.** The script finds videos with far more views than usual for the channel.
-4. **Reasons.** The agent reads comments on those videos and summarizes what viewers say. Optionally it also analyzes the covers of the viral videos (step 3b; you can say "skip").
-5. **Niche and strategy.** The agent drafts the strategy and stops until you mark it "approved".
-6. **Briefs and plan.** You mark each brief "accepted", "rejected" or "later"; accepted ones become the plan.
-7. **Next month.** The agent remembers past runs: rejected ideas do not return, "later" ones can.
+- A computer with Windows, macOS or Linux. On Windows you install WSL once (Linux inside Windows, 20-30 minutes).
+- An AI agent: a helper program you write to in plain language ([list and status](docs/compatibility.md), in Russian). You need a subscription to it. The project needs no separate paid AI key.
+- Python 3.12 or newer, `git` and `make`: steps 2-3 show how to check.
+- A YouTube key comes later. You can start without it.
+- Only an ordinary AI chat where programs cannot be run? Install nothing: [chat mode](docs/chat-mode.md) (in Russian).
 
-## How the project remembers past months
+## Quick start
 
-The project's memory is just ordinary folders on your computer. Each run (one month, one segment) lives in its own folder, and the agent never changes old folders:
+**Terminal** is a window where you type commands instead of clicking. Mac: Cmd+Space, type "Terminal". Linux: Ctrl+Alt+T. Windows: "Start" → Ubuntu (after step 1). Copy a command whole, paste it (in a terminal usually Ctrl+Shift+V) and press Enter.
 
-```
-data/my-channel/runs/
-├── 2026-09_ru_v1/   ← last month: report.md, strategy.md, briefs/01.md, 02.md…
-└── 2026-10_ru_v1/   ← this month
-```
+### Step 1. Windows only: install WSL
 
-When you say "start the month", the agent reads only past runs of the same segment (`ru` and `en` are not mixed), all their versions (v1, v2). From old briefs it takes the statuses: "rejected" (the topic does not return), "later" (the agent shows these topics and asks which to bring back) and "accepted" (the topic was already offered and will not be repeated). To bring back a rejected topic, change the `- Статус:` line in the old brief yourself.
+**What to do:** follow the [WSL guide](docs/windows-wsl.en.md) (once). On Mac and Linux skip this step.
+**What you will see:** a black Ubuntu window; the line starts with something like `anna@pc:~$`.
+**If it did not work:** the line starts with `PS C:\…`, so you are in PowerShell, not Ubuntu. Open Ubuntu from the Start menu. Anything else: "If you get stuck" at the end of the guide.
 
-## What is inside
+### Step 2. Download the project
 
-- `AGENTS.md`: the general agent instruction; `playbooks/`: step-by-step scenarios, starting with `playbooks/00-month.md`
-- `templates/`: sample files (strategy, briefs, plan); `examples/demo/`: a demo channel with sample results
-- `src/produce/`: the data-collection script (`produce`); `site/`: the showcase page
+**What to do:** in the terminal run two commands: `git clone https://github.com/ozerova152-lab/youtube-producer.git`, then `cd youtube-producer`.
+**What you will see:** the word "Cloning…" and then the input line again. The `ls` command lists files, including `AGENTS.md`.
+**If it did not work:** "git: command not found". On Ubuntu run `sudo apt install -y git`. On Mac the terminal offers to install developer tools: agree and repeat the command.
 
-## Install and run
+### Step 3. Check Python and prepare the project
 
-**Requirements:** Linux, macOS or Windows (on Windows, work inside WSL, which is Linux inside Windows), Python 3.12+ with `venv`, `make`, `git`, and an AI agent that reads `AGENTS.md` (AI steps use your agent subscription; no separate paid AI key is needed).
+**What to do:** first find out the Python version (the language the project script is written in): run `python3 --version`. Then run `make setup`: it downloads everything needed (internet required, it may take a few minutes).
+**What you will see:** the first command answers like `Python 3.12.3`: 3.12 or higher is fine (3.13 too). The second prints scrolling installation lines; the word "Error" does not appear at the end.
+**If it did not work:**
 
-```bash
-git clone https://github.com/ozerova152-lab/youtube-producer.git
-cd youtube-producer
-make setup
-```
+- The version is below 3.12 (for example `Python 3.9.6`). **Mac:** the built-in Python is old. Open <https://www.python.org/downloads/>, download the Python 3.12 or newer installer, run it (keep pressing "Continue"), close the terminal, open a new one and run `python3 --version` again: it must show 3.12 or higher. **Ubuntu:** you need a newer Ubuntu (24.04 comes with Python 3.12); on Windows that is `wsl --install -d Ubuntu-24.04`, see the [WSL guide](docs/windows-wsl.en.md).
+- "python3: command not found" or "make: command not found". Ubuntu: `sudo apt install -y make python3-venv python3-pip`. Mac: `make` comes with the developer tools (see step 2), Python is installed from python.org as above. Then run `make setup` again.
+- Other cases: [table below](#if-something-went-wrong).
 
-Open the folder in your agent and say: **"Read AGENTS.md and start the month."** To resume: **"Read AGENTS.md and continue the month."**
+### Step 4. Open the folder in the agent
 
-Run `make setup` once inside the `youtube-producer` folder: it downloads everything needed (internet required; after that the demo and file import work offline). Chromium (about 120 MB) is not downloaded by `make setup`: it is only needed by developers (`make setup-dev`). You do not need `make check`.
+**What to do:** in the same folder start the agent: `claude` (Claude Code) or `codex` (Codex). For Claude Cowork open the project folder in the Claude Desktop app.
+**What you will see:** the agent's input window.
+**If it did not work:** the agent is not installed or you have no subscription: the project does not work without an agent. How to start each one: [agents](docs/compatibility.md) (in Russian).
 
-If you only have an ordinary AI chat (no terminal, no access to the project folder), you need to install nothing: see "If you only have a chat" below.
+### Step 5. Say the phrase
 
-### Windows: how to install WSL (once)
+**What to do:** write to the agent: "Read AGENTS.md and start the month."
+**What you will see:** the agent says how it will work and asks about your channel. Then it leads you itself and waits for your word at each stop ("yes", "done", "approved").
+**If it did not work:** the agent answers off topic. Check that the `youtube-producer` folder itself is open (it contains `AGENTS.md`) and start the phrase with "Read AGENTS.md and…".
 
-WSL is Linux inside Windows; the project runs in it. **This is a single one-time step, about 20-30 minutes.** You need Windows 10 version 2004 or newer, or Windows 11 ([Microsoft guide](https://learn.microsoft.com/windows/wsl/install)).
+To resume after a pause: "Read AGENTS.md and continue the month."
 
-- **Step 1.** Click "Start", find PowerShell, right-click it and choose "Run as administrator".
-- **Step 2.** Run `wsl --install` (it installs Ubuntu, which is Linux).
-- **Step 3.** Restart the computer.
-- **Step 4.** Open Ubuntu (it usually opens by itself after the restart; if not, find it in the Start menu). On first launch choose a user name and password (the password is not shown while you type, that is normal) and remember it.
-- **Step 5.** In the Ubuntu window run `sudo apt update && sudo apt install -y git make python3-venv python3-pip`, then `python3 --version`: it must be 3.12 or newer.
+## Try it without a key
 
-**Do not want to figure it out yourself?** Open any AI agent and tell it: "I am on Windows and understand nothing about the terminal. Help me install WSL and get to running the project, explain every step."
-
-**If you get stuck:**
-
-- **The password is not shown while typing.** No dots or stars: that is normal, just type it and press Enter.
-- **`wsl --install` mentions virtualization.** On some computers it must be turned on in the BIOS (look for Virtualization, Intel VT-x or AMD-V). How to enter the BIOS depends on the model: search for "enable virtualization BIOS" and your computer's name.
-- **How to tell you are in the Ubuntu window.** The line starts with name@computer (for example `anna@pc:~$`). If it shows `PS C:\...>`, that is PowerShell: close it and open Ubuntu from the Start menu.
-
-Do all the steps in the Ubuntu window: `git clone`, `make setup` and starting the agent. **Keep the project in the Ubuntu home folder** (for example `~/youtube-producer`), not under `/mnt/c`: running from the Windows disk also works through WSL, but installing Python packages there may break off and leave locked files. Run `cd ~`, then `git clone https://github.com/ozerova152-lab/youtube-producer.git`. Check where you are with `pwd`; if the path starts with `/mnt/c`, copy the project to the home folder, and do not run `make setup` in the old folder.
-
-### Agents
-
-- **Claude Code:** open a terminal in the project folder and run `claude`. This is the main, fully tested path.
-- **Codex:** run `codex` in the project folder. Tested on a real channel (30 Oct 2026) from setup to briefs.
-- **Claude Cowork:** open the folder in Claude Desktop. Not tested; the same `AGENTS.md` is used.
-
-**The main path is Claude Code, fully tested.** Codex was tested on a real channel (30 Oct 2026) from setup to briefs: setup, key, data collection, virals, niche and candidates, strategy, briefs. We did not test Cowork: use the same `AGENTS.md` and write to [Issues](https://github.com/ozerova152-lab/youtube-producer/issues). An ordinary chat without a terminal (no-terminal mode, scenario `playbooks/no-terminal.md`) has also not been tested on a real channel.
-
-Only for Claude Code there is an optional bonus: mini-skills `/start-month`, `/continue-month`, `/demo`, `/setup-check` (described in `CLAUDE.md`). Without them everything works by phrases.
-
-**Cover analysis (step 3b).** The agent looks at pictures only at `https://i.ytimg.com/` addresses. Tested only in Claude Code: it downloads the cover file and opens it as an image. Other agents have not tried this step yet, the result is unknown. If the agent cannot see images or there are no cover links (old cache, import without covers), it asks you to put files into `data/<channel>/runs/<run>/thumbs/` named `<video id>.jpg` (`.png` and `.webp` also work) and waits for "done"; you can say "skip", the other steps do not depend on it. The script does not download images itself, and `data/` and `*.jpg`, `*.png`, `*.jpeg`, `*.webp` files stay out of git.
-
-## YouTube Data API key (free, needed for real collection)
-
-The free quota is 10,000 units per day, usually plenty for a month. No bank card is required. Create a project in Google Cloud Console, enable YouTube Data API v3, create an API key and restrict it to that API. Do not press "Start free". Details: `docs/api-key-guide.md`.
-
-Store the key only in the local `.env` file (it is in `.gitignore`). The easiest way is:
+A test channel is already in the project. Nothing paid, no internet needed. Run three commands in order:
 
 ```bash
-make add-key
-```
-
-It asks for the key with hidden input and creates `.env` for you only. **Never paste the key into a chat.** If a key leaks, reissue it in Google Cloud.
-
-## No key? Import from a file
-
-The agent can load videos from a CSV/JSON file you prepare (format: `docs/import-format.md`, sample: `examples/demo/import.csv`). Import makes no network calls and spends no quota.
-
-## Demo without a key or network
-
-```bash
-mkdir -p data
-cp -r examples/demo data/demo
-.venv/bin/produce --channel data/demo start --segment ru --brief-lang ru
+mkdir -p data && cp -r examples/demo data/demo && .venv/bin/produce --channel data/demo start --segment ru --brief-lang ru
 .venv/bin/produce --channel data/demo import examples/demo/import_comments.json --segment ru
 .venv/bin/produce --channel data/demo virals --segment ru
 ```
 
-Expected: 11 videos and 2 channels loaded with 0 YouTube requests, and 2 viral videos found. Reset with `make reset`.
+Expected: the second command loads 11 videos and 2 channels with 0 YouTube requests, the third finds 2 viral videos. If `data/demo` already exists, run `make reset` first. Then you can tell the agent "Read AGENTS.md and start the month" on the `data/demo` channel.
 
-## If you only have a chat
+## Your own channel
 
-Sometimes all you have is an ordinary AI chat: no terminal, no access to the project folder. The project works that way too, but differently, and we are honest about what is worse. We have not tested this mode on a real channel: the `playbooks/no-terminal.md` scenario is checked against the code by automated tests, but not run end to end.
+Two ways to start.
 
-**How it works.** Open the chat, give it the `AGENTS.md` file (or paste its text) and write "start the month". The agent understands it cannot run commands and says so once. Then it works from data you paste or attach: a table or file in the format of [`docs/import-format.md`](docs/import-format.md) (CSV, JSON or a Google Sheets table). Each channel needs 5-20 recent videos, otherwise there is no "norm" and the videos are skipped.
+**YouTube Data API key.** It is free (10,000 quota units per day, no bank card). Step-by-step guide for beginners: `docs/api-key-guide.md` (in Russian). In short: in [Google Cloud Console](https://console.cloud.google.com/) create a project, enable YouTube Data API v3, create a key and restrict it to that API ("Application restrictions" stays None); do not press "Start free". The easiest way to store the key is `make add-key` in an ordinary terminal (in Windows the Ubuntu window, not the agent chat) in the project folder: it asks for the key with hidden input and creates `.env` for you only. **Never paste the key into a chat.** If a key leaks, reissue it in Google Cloud. Then tell the agent "key added".
 
-**How it differs from the usual mode:**
+**A file instead of a key.** Prepare a table of videos as CSV/JSON (columns: `docs/import-format.md`, sample: `examples/demo/import.csv`). Import makes no network calls and spends no quota:
 
-- Collecting from YouTube by key is unavailable. Do not paste the key into the chat (it must stay only with you). Data comes from a file.
-- The agent counts virals and your results by hand, using the formulas in `playbooks/no-terminal.md`, so it marks every number "counted by hand, approximate" and shows a calculation table you can check. It takes at most 60 videos at a time: send more in parts.
-- The agent saves nothing to files. Results (`strategy.md`, briefs, `plan.md`) arrive as blocks with file names, and you save them: copy the block and put it in the run folder.
-- The chat has no memory of past months: in a new month the agent asks you to paste last briefs with the statuses "accepted / rejected / later", so it does not offer rejected topics again.
-- The pauses stay the same: you approve the strategy with the word "approved" and name the brief statuses in the chat. The agent publishes nothing.
-
-When you can, switch to the usual mode with a terminal (section "Install and run"): it is more accurate because the script counts the numbers and saves the files itself.
+```bash
+.venv/bin/produce --channel data/<channel> import path/to/file.csv
+```
 
 ## If something went wrong
 
 - **`make: command not found` or `python3: command not found`:** install `make` and Python 3.12+ with venv (Ubuntu/WSL: `sudo apt install -y make python3-venv python3-pip`).
-- **`make setup` fails and `pwd` starts with `/mnt/c`:** copy the project to the Ubuntu home folder (see the WSL section) and run `make setup` there.
+- **`make setup` fails and `pwd` starts with `/mnt/c`:** copy the project to the Ubuntu home folder (see the [WSL guide](docs/windows-wsl.en.md)) and run `make setup` there.
 - **`wsl --install` hangs at 0%:** in PowerShell as administrator run `wsl --install --web-download -d Ubuntu`.
+- **`make setup` fails with "ensurepip is not available":** `sudo apt install python3-venv`, then `make setup` again.
+- **`make setup` fails with "No space left on device":** free some disk space and repeat; if `.venv` was created, delete it (`rm -rf .venv`).
+- **"Key rejected" (YouTube refused it):** a typo or a key for another service; check it against `docs/api-key-guide.md` (in Russian) and reissue it if it leaked.
+- **"Settings file not found":** you need `data/<channel>/settings.yaml`; copy the sample `examples/demo/settings.yaml`.
 - **The agent says it cannot see covers and asks for files:** put the covers into `data/<channel>/runs/<run>/thumbs/` as `<video id>.jpg` (or `.png`, `.webp`) and write "done", or write "skip".
 
-## Limitations
+## More
 
-- Does not publish and does not write to YouTube. A human decides and publishes.
-- Public numbers only: no private analytics (retention, revenue).
-- Official API or your own file only; no scraping of YouTube pages.
-- Not autonomous: no scheduling, a human confirms each step (quota, strategy, brief statuses).
-- Free quota is limited; progress is saved and collection continues the next day.
-- Windows works through WSL only.
-- Main path is Claude Code, fully tested. Codex was tested on a real channel (30 Oct 2026) from setup to briefs; we did not test Cowork; an ordinary chat without a terminal (no-terminal mode) has not been tested on a real channel either. The same `AGENTS.md` is used for all, with no separate settings or mini-skills.
+All files in `docs/` below are in Russian for now.
 
-## Security
-
-The YouTube key lives only in local `.env`. The ban on reading `.env` in `.claude/settings.json` works only in Claude Code; in other agents it relies on the instruction in `AGENTS.md`, so do not paste the key into chat. Do not enable auto-approval of commands, and read each command before agreeing: video titles and comments from YouTube end up in reports, and foreign text may try to push the agent into unwanted actions.
+- [How the project works](docs/how-it-works.md): steps of the month, how the project remembers past months, folders, sample phrases.
+- [Agents](docs/compatibility.md): how to start Claude Code, Cowork, Codex and the status of each.
+- [Chat only, no terminal](docs/chat-mode.md) · [Glossary](docs/glossary.md) · [Limits and security](docs/limits-and-security.md).
+- [YouTube key guide](docs/api-key-guide.md) · [Import file format](docs/import-format.md).
 
 ## License
 

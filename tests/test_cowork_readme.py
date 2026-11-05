@@ -1,10 +1,16 @@
-"""T16/T21: README, подсказка про Claude Cowork в разделе «Подсказки по агентам»: честные пометки и живые ссылки."""
+"""T16/T21/T30: подсказка про Cowork и статус по агентам лежат один раз в docs/compatibility.md: честные пометки и живые ссылки.
+
+T30 вынес подсказки, статус и ограничения из README в docs: проверки те же, меняется только файл, который читается;
+в самом README слов «проверен…» быть не должно (статус живёт в одном месте).
+"""
 
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 README = (ROOT / "README.md").read_text(encoding="utf-8")
+COMPAT = (ROOT / "docs/compatibility.md").read_text(encoding="utf-8")
+LIMITS_DOC = (ROOT / "docs/limits-and-security.md").read_text(encoding="utf-8")
 
 
 def _block(text, start, stop):
@@ -13,10 +19,10 @@ def _block(text, start, stop):
     return m.group(1)
 
 
-AGENTS_HINTS = _block(README, "### Подсказки по агентам", r"^### |^## ")
+AGENTS_HINTS = _block(COMPAT, "## Подсказки по агентам", r"^## ")
 # подсказка про Cowork — один пункт списка: от «- **Claude Cowork» до следующего пункта или абзаца
 COWORK = re.search(r"^- \*\*Claude Cowork[^\n]*", AGENTS_HINTS, re.MULTILINE).group(0)
-INSTALL = _block(README, "## Установка и запуск", r"^## ")
+QUICK_START = _block(README, "## Быстрый старт", r"^## ")
 
 
 def test_cowork_hint_is_short_and_makes_no_checked_claim():
@@ -33,9 +39,9 @@ def test_three_hints_are_equal_in_length_and_form():
     assert max(sizes) - min(sizes) < 60, sizes
 
 
-def test_exact_agent_phrase_in_install_section():
-    assert "«Прочитай AGENTS.md и запусти месяц»" in INSTALL
-    assert "«Прочитай AGENTS.md и продолжи месяц»" in INSTALL
+def test_exact_agent_phrase_in_quick_start():
+    assert "«Прочитай AGENTS.md и запусти месяц»" in QUICK_START
+    assert "«Прочитай AGENTS.md и продолжи месяц»" in QUICK_START
 
 
 # Единственное разрешённое утверждение «проверено» про другой агент (слова человека, 2026-10-30).
@@ -47,50 +53,64 @@ STATUS = (f"**{CLAUDE_FACT}.** {CODEX_FACT}: {CODEX_STEPS}. Cowork мы не п�
 
 
 def _without_allowed(text):
-    """Убирает ровно три разрешённые формулировки «проверен»: Claude Code и Codex (дословно)."""
+    """Убирает ровно две разрешённые формулировки «проверен»: Claude Code и Codex (дословно)."""
     return text.replace(CLAUDE_FACT, "").replace(CODEX_FACT, "")
 
 
-def test_status_line_under_hints_and_limits_say_exactly_what_was_checked():
-    assert STATUS in AGENTS_HINTS
-    limits = _block(README, "## Для чего проект не подходит и ограничения", r"^## ")
-    assert CLAUDE_FACT in limits
-    assert CODEX_FACT in limits and "Cowork мы не проверяли" in limits
-    assert "используется тот же `AGENTS.md`" in limits
-    # кроме двух дословных фраз (Claude Code, Codex), слова «проверен…» в ограничениях быть не должно
-    assert not re.search(r"проверен", _without_allowed(limits))
+def test_status_is_stated_once_in_compatibility_doc():
+    assert STATUS in COMPAT
+    assert "Для всех используется тот же `AGENTS.md`" in COMPAT
+    assert COMPAT.count(CODEX_FACT) == 1 and COMPAT.count(CLAUDE_FACT) == 1
+    assert COMPAT.count(CODEX_STEPS) == 1
+    assert COMPAT.count("Cowork мы не проверяли") == 1
+    assert "Обычный чат без терминала" in COMPAT and "мы тоже не проверяли" in COMPAT
 
 
 def test_no_claims_about_agents_beyond_the_allowed_sentences():
-    assert README.count(CODEX_FACT) == 2  # строка под подсказками и раздел ограничений, больше нигде
-    assert README.count(CLAUDE_FACT) == 2
-    assert README.count(CODEX_STEPS) == 1  # полный перечень этапов Codex только в строке под подсказками
-    rest = _without_allowed(README)
+    # статус живёт только в docs/compatibility.md: в README, ограничениях и проверка-тексте его нет
+    for name, text in (("README.md", README), ("limits-and-security.md", LIMITS_DOC)):
+        assert CODEX_FACT not in text and CLAUDE_FACT not in text, name
+        assert not re.search(r"проверен", text), name
+    rest = _without_allowed(COMPAT)
     # про Cowork ничего «проверенного», про Codex ничего сверх точной фразы выше
     assert not re.search(r"(Cowork|Codex)[^.\n]{0,40}проверен", rest)
     assert not re.search(r"Claude Code[^.\n]{0,40}проверен", rest)
     assert not re.search(r"не сверяли|лишь на базовом|проверен лишь|проверен полностью", rest)
-    # про Cowork сказано прямо, что не проверяли; про Codex «не проверяли» нет
-    assert README.count("Cowork мы не проверяли") == 2
-    assert not re.search(r"Codex[^.\n]{0,40}не проверя", README)
+    assert not re.search(r"Codex[^.\n]{0,40}не проверя", COMPAT)
+
+
+def test_readme_links_to_status_instead_of_repeating_it():
+    assert "docs/compatibility.md" in README and "docs/limits-and-security.md" in README
 
 
 def test_key_paragraph():
-    assert "не вставляйте ключ в чат" in AGENTS_HINTS
-    assert "только в Claude Code" in AGENTS_HINTS
-    assert "лишь на инструкции в `AGENTS.md`" in AGENTS_HINTS
+    assert "не вставляйте ключ в чат" in COMPAT
+    assert "только в Claude Code" in COMPAT
+    assert "лишь на инструкции в `AGENTS.md`" in COMPAT
+    assert "YOUTUBE_API_KEY=" not in COMPAT
 
 
 def test_pauses_and_bans_repeated():
-    security = _block(README, "## Безопасность", r"^## ")
+    security = _block(LIMITS_DOC, "## Безопасность", r"^## ")
     assert "ничего не публикует" in security
     assert "`--confirm`" in security and "только после вашего слова" in security
     assert "стратегию утверждаете вы" in security
 
 
+def test_limits_keep_all_bullets():
+    limits = _block(LIMITS_DOC, "## Для чего проект не подходит и ограничения", r"^## ")
+    for word in ("Не публикует", "Только публичные числа", "Только официальный API", "Не работает сам по себе",
+                 "Квота ограничена", "Windows"):
+        assert word in limits, word
+
+
 def test_links_alive_and_no_keys():
-    for rel in re.findall(r"\]\((?!https?:|#)([^)\s]+)\)", README):
-        assert (ROOT / rel).exists(), rel
+    for doc, base in [(README, ROOT), *[((ROOT / "docs" / n).read_text(encoding="utf-8"), ROOT / "docs")
+                                         for n in ("compatibility.md", "limits-and-security.md", "how-it-works.md",
+                                                   "chat-mode.md", "glossary.md", "windows-wsl.md")]]:
+        for rel in re.findall(r"\]\((?!https?:|#)([^)\s]+)\)", doc):
+            path = rel.split("#")[0]
+            if path:
+                assert (base / path).exists(), rel
+        assert not re.search(r"AIza[0-9A-Za-z_\-]{35}|sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{30,}", doc)
     assert (ROOT / ".env.example").is_file()
-    assert not re.search(r"AIza[0-9A-Za-z_\-]{35}|sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{30,}", README)
-    assert "YOUTUBE_API_KEY=" not in AGENTS_HINTS

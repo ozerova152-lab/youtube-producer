@@ -1,16 +1,17 @@
-"""README и AGENTS.md: короткая инструкция для новичка с Windows без WSL (команда, перезагрузка, Ubuntu, дальше)."""
+"""docs/windows-wsl.md (T30: вынесено из README) и AGENTS.md: короткая инструкция для новичка с Windows без WSL (команда, перезагрузка, Ubuntu, дальше)."""
 
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 README = (ROOT / "README.md").read_text(encoding="utf-8")
+WSL_DOC = (ROOT / "docs/windows-wsl.md").read_text(encoding="utf-8")
 AGENTS = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 
 
 def _wsl_block():
-    m = re.search(r"^### Windows: как поставить WSL[^\n]*\n(.*?)(?=^### |^## |\Z)", README, re.DOTALL | re.MULTILINE)
-    assert m, "нет подраздела «Windows: как поставить WSL» в README"
+    m = re.search(r"^# Windows: как поставить WSL[^\n]*\n(.*)", WSL_DOC, re.DOTALL | re.MULTILINE)
+    assert m, "нет заголовка «Windows: как поставить WSL» в docs/windows-wsl.md"
     return m.group(1)
 
 
@@ -34,15 +35,16 @@ def test_wsl_block_is_short_plain_and_sourced():
     assert "в окне Ubuntu" in b and "ZIP" in b
 
 
-def test_wsl_block_is_inside_install_section_before_the_three_steps():
-    install = README.index("## Установка и запуск")
-    assert install < README.index("### Windows: как поставить WSL") < README.index("1. **Скачайте проект")
-    assert README.index("### Windows: как поставить WSL") < README.index("### Подсказки по агентам")
+def test_wsl_step_is_first_in_quick_start_and_links_to_the_doc():
+    quick = README.index("## Быстрый старт")
+    step1 = README.index("### Шаг 1.")
+    assert quick < step1 < README.index("### Шаг 2.")
+    assert "docs/windows-wsl.md" in README[step1:README.index("### Шаг 2.")]
 
 
 def test_troubleshooting_row_for_stuck_wsl_install():
-    assert "wsl --install --web-download -d Ubuntu" in README
-    assert "0%" in README
+    assert "wsl --install --web-download -d Ubuntu" in WSL_DOC
+    assert "0%" in WSL_DOC
 
 
 def test_agents_md_sends_windows_users_without_wsl_to_readme():
@@ -70,7 +72,7 @@ def test_home_folder_rule_with_reason_and_copy_instructions():
 
 
 def test_troubleshooting_row_for_project_on_windows_disk():
-    row = next(l for l in README.splitlines() if l.startswith("| `make setup` падает, а путь проекта"))
+    row = next(l for l in README.splitlines() if l.startswith("| `make setup` падает, а `pwd` начинается с `/mnt/c`"))
     assert "/mnt/c" in row and "домашнюю папку Ubuntu" in row
 
 
@@ -102,4 +104,4 @@ def test_wsl_block_has_if_stuck_list():
     assert "wsl --install" in stuck and "виртуализаци" in stuck and "BIOS" in stuck
     assert "имя@компьютер" in stuck and "PowerShell" in stuck
     # список стоит до «Дальше все шаги…» и не вытесняет советов про домашнюю папку
-    assert b.index("Если застряли") < b.index("Дальше все шаги ниже")
+    assert b.index("Если застряли") < b.index("Дальше все шаги быстрого старта")

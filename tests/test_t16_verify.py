@@ -5,22 +5,24 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 README = (ROOT / "README.md").read_text(encoding="utf-8")
+COMPAT = (ROOT / "docs/compatibility.md").read_text(encoding="utf-8")  # T30: подсказки и статус по агентам переехали в docs
+LIMITS = (ROOT / "docs/limits-and-security.md").read_text(encoding="utf-8")
 CLAUDE = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-m = re.search(r"^- \*\*Claude Cowork[^\n]*", README, re.MULTILINE)
+m = re.search(r"^- \*\*Claude Cowork[^\n]*", COMPAT, re.MULTILINE)
 assert m
 SEC = m.group(0)  # подсказка про Cowork: один пункт списка в «Подсказки по агентам»
-INSTALL = re.search(r"^## Установка и запуск\n(.*?)(?=^## |\Z)", README, re.DOTALL | re.MULTILINE).group(1)
-SECURITY = re.search(r"^## Безопасность\n(.*?)(?=^## |\Z)", README, re.DOTALL | re.MULTILINE).group(1)
+INSTALL = re.search(r"^## Быстрый старт\n(.*?)(?=^## |\Z)", README, re.DOTALL | re.MULTILINE).group(1)
+SECURITY = re.search(r"^## Безопасность\n(.*?)(?=^## |\Z)", LIMITS, re.DOTALL | re.MULTILINE).group(1)
 
 
 def test_cowork_hint_single_and_marked():
-    assert len(re.findall(r"^- \*\*Claude Cowork", README, re.MULTILINE)) == 1
+    assert len(re.findall(r"^- \*\*Claude Cowork", COMPAT, re.MULTILINE)) == 1 and "Claude Cowork" not in README.split("## Быстрый старт")[0]
     assert SEC.startswith("- **Claude Cowork.**")
 
 
 def test_steps_in_order():
     # путь целиком: скачать, открыть папку, сказать фразу; ключ и импорт дальше по README
-    order = ["Download ZIP", "Откройте папку", "Прочитай AGENTS.md и запусти месяц"]
+    order = ["git clone", "Откройте папку", "Прочитай AGENTS.md и запусти месяц"]
     pos = [INSTALL.find(x) for x in order]
     assert all(p >= 0 for p in pos), pos
     assert pos == sorted(pos)
@@ -54,8 +56,8 @@ def test_no_invented_ui_names():
 def test_cowork_not_claimed_as_checked():
     # в самой подсказке про Cowork статуса нет; статус одной строкой под подсказками: Cowork не проверяли
     assert not re.search(r"проверен|проверено|не проверя", SEC, re.IGNORECASE)
-    assert "Основной путь — Claude Code, проверен полностью." in README
-    assert "Cowork мы не проверяли: используйте тот же `AGENTS.md` и пишите в [Issues]" in README
+    assert "Основной путь — Claude Code, проверен полностью." in COMPAT
+    assert "Cowork мы не проверяли: используйте тот же `AGENTS.md` и пишите в [Issues]" in COMPAT
 
 
 def test_consistent_with_claude_md_section_a():
@@ -82,5 +84,5 @@ def test_readme_size_and_no_secrets():
 
 def test_links_alive():
     for rel in re.findall(r"\]\((?!https?:|#)([^)\s]+)\)", README):
-        assert (ROOT / rel).exists(), rel
+        assert (ROOT / rel.split("#")[0]).exists(), rel  # якорь внутри файла (T30) отбрасывается
 

@@ -22,6 +22,7 @@ FLOWS = (ROOT / "docs/spec/04-user-flows.md").read_text(encoding="utf-8")
 L1 = (ROOT / "docs/spec/01-functional-requirements.md").read_text(encoding="utf-8")
 AGENTS = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 README = (ROOT / "README.md").read_text(encoding="utf-8")
+CHAT_DOC = (ROOT / "docs/chat-mode.md").read_text(encoding="utf-8")  # T30: раздел «Если у вас только чат» переехал в docs
 MOMENT = datetime(2026, 10, 27, tzinfo=UTC)
 
 NO_TERMINAL_TEXT = (
@@ -329,7 +330,7 @@ def test_manual_mark_and_calculation_table_and_cap_everywhere():
     for doc in (PLAYBOOK, FLOWS, AGENTS):
         assert "посчитано вручную, приблизительно" in doc.lower()
     assert "таблиц" in PLAYBOOK and "расчёт" in PLAYBOOK
-    for doc in (PLAYBOOK, FLOWS, README):
+    for doc in (PLAYBOOK, FLOWS, CHAT_DOC):
         assert "не больше 60" in doc
     assert "пришлите, пожалуйста, видео частями" in PLAYBOOK.lower() or "частями" in PLAYBOOK
 
@@ -358,7 +359,7 @@ def test_files_come_as_named_blocks_and_history_is_asked_for():
 
 def test_key_is_never_requested_in_chat():
     bad = re.compile(r"(вставьте|пришлите|отправьте|введите|напишите|дайте)[^.\n]{0,30}ключ", re.IGNORECASE)
-    readme_block = README.split("## Если у вас только чат")[1].split("\n## ")[0]
+    readme_block = CHAT_DOC
     agents_block = AGENTS.split("## Режим без терминала")[1].split("## Запреты")[0]
     flows_block = FLOWS.split("### Ветка «нет терминала»")[1].split("## Поток 2")[0]
     for doc in (PLAYBOOK, readme_block, agents_block, flows_block):
@@ -382,9 +383,9 @@ def test_terminal_mode_commands_kept():
 
 
 def test_readme_documents_chat_only_mode():
-    assert "## Если у вас только чат" in README
-    needs = next(line for line in README.splitlines() if line.startswith("Что понадобится:"))
-    assert "только обычный чат" in needs and "Если у вас только чат" in needs
+    assert CHAT_DOC.startswith("# Если у вас только чат")
+    needs = README.split("## Что понадобится")[1].split("\n## ")[0]
+    assert "только обычный чат" in needs.lower() and "docs/chat-mode.md" in needs
 
 
 def test_spec_layer1_has_the_feature():

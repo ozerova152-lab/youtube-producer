@@ -1,4 +1,8 @@
-"""README.en.md: по смыслу те же разделы, что в README.md; числа, пути и команды совпадают; статус совместимости тот же."""
+"""README.en.md и английская копия инструкции по WSL: по смыслу те же разделы, что в русских файлах; числа, пути и команды совпадают.
+
+T30: статус по агентам, WSL, память месяцев и режим чата вынесены в docs/ (русские; перевод — отдельная задача T31),
+поэтому здесь сверяются два README и пара docs/windows-wsl.md ↔ docs/windows-wsl.en.md.
+"""
 
 import re
 from pathlib import Path
@@ -6,16 +10,26 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 RU = (ROOT / "README.md").read_text(encoding="utf-8")
 EN = (ROOT / "README.en.md").read_text(encoding="utf-8")
+WSL_RU = (ROOT / "docs/windows-wsl.md").read_text(encoding="utf-8")
+WSL_EN = (ROOT / "docs/windows-wsl.en.md").read_text(encoding="utf-8")
 
 # (раздел в README.md, раздел в README.en.md)
 SECTION_PAIRS = [
-    ("## Что это и что вы получите", "## What you get"),
-    ("## Как проект помнит прошлые месяцы", "## How the project remembers past months"),
-    ("### Windows: как поставить WSL (один раз)", "### Windows: how to install WSL (once)"),
-    ("### Подсказки по агентам", "### Agents"),
-    ("## Если у вас только чат", "## If you only have a chat"),
+    ("## Что вы получите", "## What you get"),
+    ("## Что понадобится", "## What you need"),
+    ("## Быстрый старт", "## Quick start"),
+    ("## Попробовать без ключа", "## Try it without a key"),
+    ("## Свой канал", "## Your own channel"),
     ("## Если что-то не получилось", "## If something went wrong"),
-    ("## Для чего проект не подходит и ограничения", "## Limitations"),
+    ("## Подробнее", "## More"),
+    ("## Лицензия", "## License"),
+]
+STEP_PAIRS = [
+    ("### Шаг 1. Только Windows: поставьте WSL", "### Step 1. Windows only: install WSL"),
+    ("### Шаг 2. Скачайте проект", "### Step 2. Download the project"),
+    ("### Шаг 3. Проверьте Python и подготовьте проект", "### Step 3. Check Python and prepare the project"),
+    ("### Шаг 4. Откройте папку в агенте", "### Step 4. Open the folder in the agent"),
+    ("### Шаг 5. Скажите фразу", "### Step 5. Say the phrase"),
 ]
 
 
@@ -27,45 +41,61 @@ def _block(text, heading):
 
 
 def test_same_sections_in_both_readmes():
-    for ru, en in SECTION_PAIRS:
+    for ru, en in SECTION_PAIRS + STEP_PAIRS:
         assert _block(RU, ru).strip() and _block(EN, en).strip(), (ru, en)
 
 
-def test_run_overview_cover_analysis_and_thumbs_described():
-    for token in ("00-overview.md", "covers.md", "step 3b", "thumbs/", "<video id>.jpg"):
-        assert token in EN, token
-    for token in ("00-overview.md", "covers.md", "шаг 3б", "thumbs/", "<id видео>.jpg"):
-        assert token in RU, token
-    assert "i.ytimg.com" in EN and "i.ytimg.com" in RU
-    assert "Claude Code" in _block(EN, "### Agents").split("Cover analysis (step 3b)")[1]
+def test_every_step_has_three_parts_in_both_languages():
+    for (ru, en) in STEP_PAIRS:
+        for text, heading, parts in ((RU, ru, ("**Что сделать:**", "**Что увидите:**", "**Если не получилось:**")),
+                                     (EN, en, ("**What to do:**", "**What you will see:**",
+                                               "**If it did not work:**"))):
+            body = _block(text, heading)
+            positions = [body.index(p) for p in parts]
+            assert positions == sorted(positions), heading
 
 
-def test_memory_section_mentions_same_statuses_and_paths():
-    en = _block(EN, "## How the project remembers past months")
-    ru = _block(RU, "## Как проект помнит прошлые месяцы")
-    for path in re.findall(r"[\w\-]+_v\d|runs/|report\.md|strategy\.md|briefs/01\.md", ru):
-        assert path in en, path
-    assert "rejected" in en and "later" in en and "accepted" in en
-    assert "`- Статус:`" in en and "`- Статус:`" in ru  # строка из шаблона брифа не переводится
+def test_step3_checks_python_version_first_with_mac_and_ubuntu_advice():
+    for text, heading in ((RU, STEP_PAIRS[2][0]), (EN, STEP_PAIRS[2][1])):
+        body = _block(text, heading)
+        assert body.index("python3 --version") < body.index("make setup")
+        assert "python.org/downloads" in body and "3.12" in body
+        assert "Mac" in body and "Ubuntu" in body and "Ubuntu-24.04" in body
 
 
-def test_chat_mode_section_matches_russian_numbers_and_paths():
-    en = _block(EN, "## If you only have a chat")
-    ru = _block(RU, "## Если у вас только чат")
-    for path in ("playbooks/no-terminal.md", "docs/import-format.md", "strategy.md", "plan.md"):
-        assert path in en and path in ru, path
-    assert "60 videos" in en and "не больше 60 видео" in ru
-    assert "5-20" in en and "5–20" in ru
+def test_readmes_are_short_and_have_no_removed_section():
+    assert len(RU.splitlines()) <= 125 and len(EN.splitlines()) <= 125
+    assert "Сколько времени и подписки" not in RU
+    assert "не измерен" not in RU
 
 
-def test_wsl_section_matches_russian_commands_and_numbers():
-    en = _block(EN, "### Windows: how to install WSL (once)")
-    ru = _block(RU, "### Windows: как поставить WSL (один раз)")
+def test_run_overview_and_cover_files_named_in_both():
+    for token in ("00-overview.md", "covers.md", "report.md", "strategy.md", "plan.md"):
+        assert token in EN and token in RU, token
+    docs_ru = (ROOT / "docs/compatibility.md").read_text(encoding="utf-8")
+    for token in ("шаг 3б", "thumbs/", "<id видео>.jpg", "i.ytimg.com"):
+        assert token in docs_ru, token
+
+
+def test_memory_and_chat_docs_keep_statuses_and_numbers():
+    memory = (ROOT / "docs/how-it-works.md").read_text(encoding="utf-8")
+    for token in ("_v1", "runs/", "report.md", "strategy.md", "briefs/01.md", "`- Статус:`", "отклонён", "позже", "принят"):
+        assert token in memory, token
+    chat = (ROOT / "docs/chat-mode.md").read_text(encoding="utf-8")
+    for token in ("playbooks/no-terminal.md", "docs/import-format.md", "strategy.md", "plan.md", "не больше 60 видео",
+                  "5–20"):
+        assert token in chat, token
+
+
+def test_wsl_docs_match_commands_and_numbers():
     for cmd in ("wsl --install", "sudo apt update && sudo apt install -y git make python3-venv python3-pip",
-                "python3 --version", "3.12"):
-        assert cmd in en and cmd in ru, cmd
-    assert "20-30 minutes" in en and "20–30 минут" in ru
-    assert "/mnt/c" in EN and "/mnt/c" in RU and "~/youtube-producer" in EN
+                "python3 --version", "3.12", "wsl --install --web-download -d Ubuntu", "wsl --install -d Ubuntu-24.04",
+                "/mnt/c", "~/youtube-producer", "pwd"):
+        assert cmd in WSL_EN and cmd in WSL_RU, cmd
+    assert "20-30 minutes" in WSL_EN and "20–30 минут" in WSL_RU
+    assert "Я на Windows и ничего не понимаю в терминале" in WSL_RU
+    assert "I am on Windows and understand nothing about the terminal" in WSL_EN
+    assert "windows-wsl.md" in RU and "windows-wsl.en.md" in EN and "windows-wsl.en.md" not in RU
 
 
 def test_every_command_and_path_in_english_readme_exists_in_russian_or_repo():
@@ -73,55 +103,56 @@ def test_every_command_and_path_in_english_readme_exists_in_russian_or_repo():
     to_ru = {"<channel>": "<канал>", "<run>": "<запуск>", "<video id>": "<id видео>",
              "<month>_<segment>_v<N>": "<месяц>_<сегмент>_v<N>"}
     command = re.compile(r"^(make |\.venv/|wsl |sudo |cd |cp |pwd|git |python3|mkdir )")
+    # английский README вправе упомянуть команду из английской копии WSL
+    allowed_text = RU + WSL_RU + (ROOT / "docs/compatibility.md").read_text(encoding="utf-8")
     for span in set(spans):
         if command.match(span):
-            assert span in RU, f"команды {span!r} нет в README.md"
+            span = span.replace("<channel>", "<канал>")
+            assert span in allowed_text, f"команды {span!r} нет в README.md"
         elif "/" in span and not span.startswith(("http", "~", "/", "<")) and "*" not in span and " " not in span:
             path = span.rstrip("/")
             if "<" in path:
                 for en_word, ru_word in to_ru.items():
                     span = span.replace(en_word, ru_word)
-                assert span in RU, f"шаблона пути {span!r} нет в README.md"
+                assert span in allowed_text, f"шаблона пути {span!r} нет в README.md"
             else:
                 assert (ROOT / path).exists() or span in RU, f"пути {span!r} нет"
 
 
 def test_fenced_commands_match_russian():
     en_blocks = re.findall(r"```bash\n(.*?)```", EN, re.DOTALL)
-    ru_text = RU
+    assert en_blocks
     for block in en_blocks:
         for line in block.splitlines():
             if line.strip():
-                assert line.strip() in ru_text or line.strip() == "cd youtube-producer", line
+                # перевод только заготовок в угловых скобках и примера пути; команды совпадают дословно
+                ru_line = line.strip().replace("<channel>", "<канал>").replace("path/to/file.csv", "путь/к/файлу.csv")
+                assert ru_line in RU or ru_line == "cd youtube-producer", line
+    # три команды демо идут в том же порядке
+    ru_demo = _block(RU, "## Попробовать без ключа")
+    en_demo = _block(EN, "## Try it without a key")
+    ru_cmds = re.findall(r"```bash\n(.*?)```", ru_demo, re.DOTALL)[0].strip().splitlines()
+    en_cmds = re.findall(r"```bash\n(.*?)```", en_demo, re.DOTALL)[0].strip().splitlines()
+    assert ru_cmds == en_cmds and len(ru_cmds) == 3
 
 
 def test_numbers_match():
-    assert "10,000 units" in EN and "10 000 единиц" in RU
-    assert "120 MB" in EN and "120 МБ" in RU
+    assert "10,000" in EN and "10 000" in RU
     assert "3.12" in EN and "3.12" in RU
-    assert "30 Oct 2026" in EN and "30.10.2026" in RU
     assert "11 videos and 2 channels" in EN and "11 видео, 2 канала" in RU
 
 
-def test_compatibility_status_is_same_and_not_overstated():
-    # то, что проверено: только Claude Code (полностью) и Codex (30.10.2026, установка → брифы)
-    assert "main path is claude code, fully tested" in EN.lower()
-    assert "Codex was tested on a real channel (30 Oct 2026) from setup to briefs" in EN
-    assert "We did not test Cowork" in EN
-    assert "has not been tested on a real channel" in EN  # обычный чат без терминала
-    assert "playbooks/no-terminal.md" in EN
-    # то же в русском README
-    assert "Cowork мы не проверяли" in RU and "Обычный чат без терминала" in RU
-    # Cowork и чат нигде не названы проверенными
-    for m in re.finditer(r"(Cowork|chat)[^.\n]{0,60}(tested|verified)", EN):
-        assert re.search(r"not|did not|never|un", m.group(0)), m.group(0)
+def test_english_readme_does_not_restate_status_but_points_to_it():
+    # статус по агентам живёт один раз, в docs/compatibility.md (T30); английский README только ссылается на него
+    assert "docs/compatibility.md" in EN
+    assert not re.search(r"fully tested|was tested on a real channel", EN)
     assert not re.search(r"Cowork[^.\n]{0,40}(is|was) (fully )?tested", EN)
-    # «fully tested» сказано только про Claude Code
-    for m in re.finditer(r"fully tested", EN):
-        assert "Claude Code" in EN[max(0, m.start() - 120):m.start()], EN[m.start() - 60:m.end()]
 
 
 def test_english_readme_has_no_keys_and_links_alive():
     assert not re.search(r"AIza[0-9A-Za-z_\-]{35}|sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{30,}", EN)
-    for rel in re.findall(r"\]\((?!https?:|#)([^)\s]+)\)", EN):
-        assert (ROOT / rel).exists(), rel
+    for text, base in ((EN, ROOT), (WSL_EN, ROOT / "docs")):
+        for rel in re.findall(r"\]\((?!https?:|#)([^)\s]+)\)", text):
+            path = rel.split("#")[0]
+            if path:
+                assert (base / path).exists(), rel

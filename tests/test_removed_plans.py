@@ -37,5 +37,5 @@ def test_spec_not_doing_table_keeps_the_other_rows():
         assert row in table, row
     flows = (ROOT / "docs/spec/04-user-flows.md").read_text(encoding="utf-8")
     assert "| Работа с закрытой аналитикой канала | Следующие версии (слой 1) |" in flows
-    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    readme = (ROOT / "docs/limits-and-security.md").read_text(encoding="utf-8")  # T30: ограничения переехали в docs
     assert "**Windows** только через WSL." in readme and "**Ещё нет:**" not in readme

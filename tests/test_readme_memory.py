@@ -1,15 +1,15 @@
-"""README: раздел «Как проект помнит прошлые месяцы» — простыми словами, со схемой папок, до 14 строк."""
+"""docs/how-it-works.md (T30: вынесено из README): раздел «Как проект помнит прошлые месяцы» — простыми словами, со схемой папок, до 14 строк."""
 
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
-README = (ROOT / "README.md").read_text(encoding="utf-8")
+README = (ROOT / "docs/how-it-works.md").read_text(encoding="utf-8")
 
 
 def _section():
     m = re.search(r"^## Как проект помнит прошлые месяцы\n(.*?)(?=^## )", README, re.DOTALL | re.MULTILINE)
-    assert m, "нет раздела «Как проект помнит прошлые месяцы» в README"
+    assert m, "нет раздела «Как проект помнит прошлые месяцы» в docs/how-it-works.md"
     return m.group(1)
 
 

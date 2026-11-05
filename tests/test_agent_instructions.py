@@ -152,7 +152,7 @@ def test_agents_md_links_match_playbooks_exactly():
 def test_all_playbook_cross_references_exist():
     """Ссылки на файлы проекта внутри сценариев и README не ведут в пустоту."""
     pattern = re.compile(r"`((?:playbooks|templates|docs|examples)/[\w./-]+\.(?:md|yaml|csv|json))`")
-    for doc in [*(ROOT / "playbooks").glob("*.md"), ROOT / "README.md"]:
+    for doc in [*(ROOT / "playbooks").glob("*.md"), ROOT / "README.md", *(ROOT / "docs").glob("*.md")]:
         for ref in pattern.findall(doc.read_text(encoding="utf-8")):
             assert (ROOT / ref).exists(), f"{doc.name}: {ref}"
 
@@ -199,10 +199,11 @@ def test_month_skills_point_to_month_playbook():
 def test_readme_states_env_limit_next_to_agent_hints_and_in_security_section():
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     # предупреждение стоит прямо рядом с подсказками по агентам, а полный раздел безопасности идёт в конце
-    hints = readme[readme.index("### Подсказки по агентам"):readme.index("### Ключ YouTube Data API")]
+    # T30: подсказки и полный раздел безопасности переехали в docs
+    hints = (ROOT / "docs/compatibility.md").read_text(encoding="utf-8")
     assert "только в Claude Code" in hints and "лишь на инструкции в `AGENTS.md`" in hints
-    sec = readme.index("\n## Безопасность")
-    block = readme[sec:readme.index("\n## ", sec + 5) if "\n## " in readme[sec + 5:] else len(readme)]
+    security = (ROOT / "docs/limits-and-security.md").read_text(encoding="utf-8")
+    block = security[security.index("\n## Безопасность"):]
     assert ".claude/settings.json" in block and "только в Claude Code" in block
     assert "автоподтверждение" in block and "не вставляйте ключ в чат" in block
     assert "Адрес репозитория: `https://github.com/ozerova152-lab/youtube-producer`." in readme

@@ -11,6 +11,10 @@ ROOT = Path(__file__).resolve().parent.parent
 AGENTS = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 CLAUDE = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
 README = (ROOT / "README.md").read_text(encoding="utf-8")
+# T30: подсказки по агентам, статус, ограничения, безопасность и словарь переехали из README в docs
+COMPAT = (ROOT / "docs/compatibility.md").read_text(encoding="utf-8")
+LIMITS = (ROOT / "docs/limits-and-security.md").read_text(encoding="utf-8")
+GLOSSARY = (ROOT / "docs/glossary.md").read_text(encoding="utf-8")
 SETUP = (ROOT / "docs/dev/setup.md").read_text(encoding="utf-8")
 
 
@@ -67,44 +71,43 @@ def test_claude_imports_agents_and_has_no_duplicate_sentences():
 
 # --- 3-4, 7-8: README -------------------------------------------------------------------------
 
-def test_install_three_steps_and_key_later():
-    qs = _section(README, "Установка и запуск")
-    assert len(re.findall(r"^\d\. ", qs, re.MULTILINE)) == 3
+def test_quick_start_five_steps_and_key_later():
+    qs = _section(README, "Быстрый старт")
+    assert len(re.findall(r"^### Шаг \d\. ", qs, re.MULTILINE)) == 5
     assert "make setup" in qs and "Прочитай AGENTS.md и запусти месяц" in qs
-    assert "позже" in qs and "демо" in qs
+    assert "позже" in README and "Попробовать без ключа" in README
 
 
 def test_first_screens_are_agent_neutral_and_sections_in_requested_order():
-    # до раздела установки ни одного упоминания конкретных агентов
-    head = README[:README.index("## Установка и запуск")]
+    # до быстрого старта ни одного упоминания конкретных агентов
+    head = README[:README.index("## Быстрый старт")]
     for name in ("Claude Code", "Cowork", "Codex", "CLAUDE.md"):
         assert name not in head, name
-    order = ["## Что это и что вы получите", "## Как это работает", "## Что внутри",
-             "## Установка и запуск", "## Примеры запросов", "## Для чего проект не подходит",
-             "## Лицензия", "## Безопасность"]
+    order = ["## Что вы получите", "## Что понадобится", "## Быстрый старт", "## Попробовать без ключа",
+             "## Свой канал", "## Если что-то не получилось", "## Подробнее", "## Лицензия"]
     pos = [README.index(h) for h in order]
     assert pos == sorted(pos), pos
 
 
 def test_three_paths_have_phrases_and_marks():
-    install = _section(README, "Установка и запуск")
-    cc = next(l for l in install.splitlines() if l.startswith("- **Claude Code"))
-    cw = next(l for l in install.splitlines() if l.startswith("- **Claude Cowork"))
-    cx = next(l for l in install.splitlines() if l.startswith("- **Codex"))
+    hints = _section(COMPAT, "Подсказки по агентам")
+    cc = next(l for l in hints.splitlines() if l.startswith("- **Claude Code"))
+    cw = next(l for l in hints.splitlines() if l.startswith("- **Claude Cowork"))
+    cx = next(l for l in hints.splitlines() if l.startswith("- **Codex"))
     assert "claude" in cc
-    # общая фраза для любого агента стоит в основном пути, подсказки её не повторяют
-    assert "Прочитай AGENTS.md и запусти месяц" in install and "Прочитай AGENTS.md и продолжи месяц" in install
-    assert "Основной путь — Claude Code, проверен полностью." in install and "тот же `AGENTS.md`" in install
+    # общая фраза для любого агента стоит в быстром старте, подсказки её не повторяют
+    qs = _section(README, "Быстрый старт")
+    assert "Прочитай AGENTS.md и запусти месяц" in qs and "Прочитай AGENTS.md и продолжи месяц" in README
+    assert "Основной путь — Claude Code, проверен полностью." in COMPAT and "тот же `AGENTS.md`" in COMPAT
     assert not re.search(r"не проверя|не проверен|проверено", cw + cx)
     # Cowork и Codex не названы «проверенными полностью»
     assert "проверен полностью" not in cw.lower() and "проверен полностью" not in cx.lower()
 
 
-def test_security_warning_next_to_hints_and_in_final_section():
-    install = _section(README, "Установка и запуск")
-    assert "только в Claude Code" in install and "не вставляйте ключ в чат" in install
-    assert "автоподтверждение" in install
-    sec = _section(README, "Безопасность")
+def test_security_warning_in_compatibility_and_in_security_section():
+    assert "только в Claude Code" in COMPAT and "не вставляйте ключ в чат" in COMPAT
+    assert "автоподтверждение" in COMPAT
+    sec = _section(LIMITS, "Безопасность")
     for p in ("только в Claude Code", ".claude/settings.json", "автоподтверждение", "не вставляйте ключ в чат"):
         assert p in sec, p
 
@@ -117,36 +120,36 @@ def test_address_lines_are_real_after_publication():
 
 
 def test_demo_section_commands_and_expected_result():
-    demo = _section(README, "Демо без ключа")
+    demo = _section(README, "Попробовать без ключа")
     assert "examples/demo/import_comments.json" in demo and "virals" in demo and "×12.68" in demo
     assert (ROOT / "examples/demo/import_comments.json").is_file()
 
 
 def test_troubleshooting_covers_all_cases():
     t = _section(README, "Если что-то не получилось").lower()
-    for k in ("python3: command not found", "make: command not found", "make setup", "no space left",
-              "ключ не подошёл", "квота", "агент не понимает"):
+    for k in ("make setup", "no space left", "ключ не подошёл", "квота", "не понимает фразу"):
         assert k in t, k
+    # «command not found» разобраны в шаге 3 быстрого старта
+    step3 = _section(README, "Быстрый старт").lower()
+    assert "python3: command not found" in step3 and "make: command not found" in step3
     rows = [r for r in t.splitlines() if r.startswith("|") and not r.startswith("|--") and "что видите" not in r]
     assert len(rows) >= 6
     assert all(r.count("|") >= 3 and r.split("|")[2].strip() for r in rows)  # у каждого пункта есть «что сделать»
 
 
 def test_glossary_words_and_size():
-    g = _section(README, "Слова, которые встретятся")
-    items = [l for l in g.splitlines() if l.startswith("- ")]
-    assert 6 <= len(items) <= 8
+    items = [l for l in GLOSSARY.splitlines() if l.startswith("- ")]
+    assert 8 <= len(items) <= 12
     for w in ("залёт", "норма канала", "квота", "сегмент", "бриф", "стратегия", "запуск", "wsl"):
         assert any(w in i.lower().split("—")[0] for i in items), w
 
 
 def test_no_invented_time_or_subscription_numbers():
-    s = _section(README, "Сколько времени и подписки")
-    assert "не измерено" in s and "не измерен" in s
-    # числа допустимы только про квоту/обращения; ни минут, ни часов, ни рублей, ни долларов
-    assert not re.search(r"\d+\s*(мин|час|ч\b|сек|₽|руб|\$|usd|%)", s, re.IGNORECASE), s
-    # чужие утверждения без пометки: Cowork/Codex нигде не заявлены как работающие
-    low = README.lower()
+    # T30: раздел «Сколько времени и подписки уходит» убран, пока он про «не измерено»
+    assert "Сколько времени и подписки" not in README and "не измерен" not in README
+    # ни рублей, ни долларов; единственное время в README — разовая установка WSL из потока 1
+    assert not re.search(r"\d+\s*(₽|руб|\$|usd)", README, re.IGNORECASE)
+    low = (README + COMPAT).lower()
     assert "cowork работает" not in low and "codex работает" not in low
 
 
@@ -184,7 +187,7 @@ def test_demo_skill_safe():
 
 
 def test_readme_says_skills_optional():
-    assert "Без них всё работает по фразам" in README
+    assert "Без них всё работает по фразам" in COMPAT
 
 
 # --- 10: make ---------------------------------------------------------------------------------

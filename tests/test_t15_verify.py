@@ -17,6 +17,9 @@ from produce.core.runs import STAGES
 ROOT = Path(__file__).resolve().parent.parent
 MONTH = (ROOT / "playbooks/00-month.md").read_text(encoding="utf-8")
 README = (ROOT / "README.md").read_text(encoding="utf-8")
+# T30: часть содержимого переехала из README в docs; «что сказано в README и его docs» читается вместе
+COMPAT = (ROOT / "docs/compatibility.md").read_text(encoding="utf-8")
+README_AND_DOCS = README + COMPAT + (ROOT / "docs/how-it-works.md").read_text(encoding="utf-8")
 CLAUDE = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 SITE = (ROOT / "site/index.html").read_text(encoding="utf-8")
 
@@ -136,14 +139,14 @@ def test_missing_playbook_reference_would_be_detected(tmp_path):
     "WSL", "make setup", "Без ключа",
 ])
 def test_readme_mentions(needle):
-    assert needle.lower() in README.lower(), needle
+    assert needle.lower() in README_AND_DOCS.lower(), needle
 
 
 def test_readme_codex_honest_note_and_no_tutorials():
-    codex = next(l for l in README.splitlines() if l.startswith("- **Codex"))
+    codex = next(l for l in COMPAT.splitlines() if l.startswith("- **Codex"))
     assert "`codex`" in codex and not re.search(r"проверен|не проверя", codex)
     assert "лишь на базовом уровне" not in README
-    assert "Cowork мы не проверяли: используйте тот же `AGENTS.md` и пишите в [Issues]" in README
+    assert "Cowork мы не проверяли: используйте тот же `AGENTS.md` и пишите в [Issues]" in COMPAT
     assert len(README.splitlines()) < 260  # не учебник (T21: лимит поднят вместе с быстрым стартом и разделом ошибок)
     assert "```mermaid" not in README
     # картинка допустима только одна: обложка в шапке (assets/cover-producer.jpg)

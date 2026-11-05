@@ -157,7 +157,7 @@ def test_template_and_playbook_match_checker(channel, run):
 def test_playbook_wired_into_agents_month_and_readme():
     agents = (ROOT / "AGENTS.md").read_text("utf-8")
     month = (ROOT / "playbooks/00-month.md").read_text("utf-8")
-    readme = (ROOT / "README.md").read_text("utf-8")
+    readme = (ROOT / "docs/compatibility.md").read_text("utf-8")  # T30: раздел про обложки переехал в docs
     assert "| 3b | `playbooks/03b-covers.md` |" in agents and "| 4 | `playbooks/04-niche.md` |" in agents
     assert "03b-covers.md" in month and "covers.md" in month
     assert "Проверено только в Claude Code" in readme and "thumbs/" in readme and "результат неизвестен" in readme
