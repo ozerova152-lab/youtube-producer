@@ -50,6 +50,8 @@
   --pico-code-background-color: #ffffff;
 
   --note-background: #e4f3ea;
+  --decision-background: #fff0cf;
+  --decision-border: #b36b00;
 }
 
 h1,
@@ -162,4 +164,83 @@ dd {
 
 details {
   margin-bottom: var(--pico-spacing);
+}
+
+/* Схема «Путь от темы до плана»: квадратики друг под другом на телефоне, сетка 3×2 на компьютере.
+   Шаги, где решает человек, выделены цветом и подписаны словами (цвет не единственный признак). */
+.scheme {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+}
+
+.scheme li {
+  position: relative;
+  margin: 0;
+  padding: 1.25rem;
+  border: var(--pico-border-width) solid var(--pico-card-border-color);
+  border-radius: 1rem;
+  background: var(--pico-card-background-color);
+}
+
+.scheme li.decision {
+  background: var(--decision-background);
+  border-color: var(--decision-border);
+}
+
+.scheme h3 {
+  margin: 0.5rem 0;
+  --pico-font-size: 1.25rem;
+}
+
+.scheme p {
+  margin-bottom: 0.5rem;
+}
+
+.scheme .icon {
+  color: var(--pico-primary);
+}
+
+.scheme .who {
+  display: inline-block;
+}
+
+/* Стрелка к следующему шагу: вниз под квадратиком (телефон), вправо на компьютере. */
+.scheme .arrow {
+  position: absolute;
+  left: 50%;
+  bottom: -2.1rem;
+  transform: translateX(-50%) rotate(90deg);
+  color: var(--pico-muted-color);
+}
+
+.scheme li:last-child .arrow {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .scheme {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem 3rem;
+  }
+
+  .scheme li {
+    min-height: 13rem;
+  }
+
+  .scheme .arrow {
+    left: auto;
+    right: -2.4rem;
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
+  }
+
+  /* В конце ряда стрелка вправо ни к чему: порядок задают номера. */
+  .scheme li:nth-child(3n) .arrow {
+    display: none;
+  }
 }

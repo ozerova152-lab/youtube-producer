@@ -66,7 +66,7 @@ def test_visitor_reads_blocks_and_reaches_github(browser):
 
     headings = [h.inner_text() for h in page.get_by_role("heading", level=2).all()]
     assert headings == ["Установка одной фразой", "Как это работает", "Если что-то не получилось",
-                        "Пример результата"]
+                        "Путь от темы до плана"]
     assert page.locator("#how-it-works .steps li").count() == 5
     assert page.get_by_text("Решает и публикует всегда человек.", exact=True).is_visible()
     # готовое сообщение агенту видно сразу и совпадает с README
@@ -133,7 +133,6 @@ def test_visitor_reads_blocks_and_reaches_github(browser):
     assert "Основной путь" not in html and "Cowork мы" not in html
     assert page.get_by_text("лишь на базовом уровне", exact=False).count() == 0
     assert page.get_by_text("Нет ключа YouTube?").count() == 0  # T33: про «без ключа» на витрине не пишем
-    assert page.get_by_text("Пример на выдуманном канале, не реальный.").is_visible()
     assert page.get_by_text(
         "Откроется страница репозитория: нажмите Code → Download ZIP."
     ).is_visible()
@@ -257,38 +256,11 @@ def test_site_files_have_no_api_keys():
     assert not found, found
 
 
-def test_example_block_comes_from_demo_data(browser):
-    """T15: пример результата взят из examples/demo, а не условный."""
-    page = open_page(browser)
-    page.goto(PAGE_URL)
-    row = page.locator("#example table tbody tr").first.inner_text()
-    for cell in ("Как использовать нейросеть: выпуск 1", "52 000", "4 100", "×12.68"):
-        assert cell in row
-    brief = (ROOT / "examples/demo/expected/briefs/01.md").read_text(encoding="utf-8")
-    assert "Бриф 1: Нейросеть для таблиц без формул" in brief
-    assert page.get_by_role("heading", name="Бриф 1: Нейросеть для таблиц без формул").is_visible()
-    first_15 = re.search(r"Первые 15 секунд: (.+)", brief).group(1)
-    assert first_15 in page.locator("#example article").inner_text().replace("\n", " ")
-    assert page.get_by_text("Пример на выдуманном канале, не реальный.").is_visible()
-    # Старого условного примера нет.
-    assert "монтажёра" not in page.content()
-
-
 def test_github_fallback_phrase_next_to_address(browser):
     page = open_page(browser)
     page.goto(PAGE_URL)
     assert page.get_by_text("Если GitHub не открывается, попробуйте позже.").is_visible()
     assert page.locator("#repo-address").inner_text() == REPO
-
-
-def test_demo_table_row_matches_report_numbers():
-    """Числа в таблице совпадают с демо-запуском (examples/demo/import.csv)."""
-    import csv
-
-    rows = list(csv.DictReader((ROOT / "examples/demo/import.csv").open(encoding="utf-8")))
-    first = next(r for r in rows if r["id"] == "demo_v01")
-    assert f"{int(first['views']):,}".replace(",", " ") == "52 000"
-    assert first["title"] in (SITE / "index.html").read_text(encoding="utf-8")
 
 
 def test_copy_message_shows_confirmation_and_copies_full_text(browser):

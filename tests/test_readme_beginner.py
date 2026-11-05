@@ -58,7 +58,7 @@ def test_demo_and_no_key_trial_are_not_mentioned_at_the_start():
     """T33: проба молчаливая; про демо и «без ключа» в начале README и на витрине не пишем."""
     head = README[:README.index("## Быстрый старт")]
     site = (ROOT / "site/index.html").read_text(encoding="utf-8")
-    site_top = site[:site.index("<!-- Пример взят")]
+    site_top = site[:site.index('<section id="scheme">')]
     for text in (head, site_top):
         low = text.lower()
         assert "без ключа" not in low and "демо" not in low and "тестов" not in low, text[:60]

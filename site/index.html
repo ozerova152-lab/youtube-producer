@@ -101,35 +101,50 @@
       </details>
     </section>
 
-    <!-- Пример взят из examples/demo: таблица залётов из report.md демо-запуска, бриф из examples/demo/expected/briefs/01.md. -->
-    <section id="example">
-      <h2>Пример результата</h2>
-      <figure>
-        <table>
-          <thead>
-            <tr><th scope="col">Видео</th><th scope="col">Просмотры</th><th scope="col">Норма канала</th><th scope="col">Выше нормы</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Как использовать нейросеть: выпуск 1</td><td>52 000</td><td>4 100</td><td>×12.68</td></tr>
-          </tbody>
-        </table>
-      </figure>
-      <article>
-        <h3>Бриф 1: Нейросеть для таблиц без формул</h3>
-        <dl>
-          <dt>Вид</dt>
-          <dd>Длинное видео, 10–12 минут.</dd>
-          <dt>Идея</dt>
-          <dd>Показать новичку, как бесплатная нейросеть собирает рабочую таблицу из обычной просьбы словами: без формул и без страха сломать файл.</dd>
-          <dt>Чем отличаемся</dt>
-          <dd>Залёт «Как использовать нейросеть: выпуск 1» объяснял, как написать нейросети письмо; мы берём следующий шаг, о котором просили зрители в комментариях (таблицы), и делаем один рабочий пример, а не обзор сервисов.</dd>
-          <dt>Первые 15 секунд</dt>
-          <dd>«Вот таблица расходов за месяц. Я не написал в ней ни одной формулы. Сейчас покажу, как это сделала бесплатная нейросеть, и вы повторите за десять минут». На экране сначала готовая таблица, затем пустой лист.</dd>
-          <dt>Название 1</dt>
-          <dd>Нейросеть собрала мне таблицу за 5 минут: без формул</dd>
-        </dl>
-      </article>
-      <p class="caption">Пример на выдуманном канале, не реальный.</p>
+    <section id="scheme">
+      <h2>Путь от темы до плана</h2>
+      <ol class="scheme">
+        <li>
+          <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+          <h3><span class="number">1.</span> Ваш канал и тема</h3>
+          <p>Вы рассказываете агенту, о чём ваш канал</p>
+          <svg class="arrow" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </li>
+        <li>
+          <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          <h3><span class="number">2.</span> Залёты</h3>
+          <p>Находим видео вашей темы, у которых просмотров в разы больше обычного</p>
+          <svg class="arrow" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </li>
+        <li>
+          <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <h3><span class="number">3.</span> Разбор причин</h3>
+          <p>По комментариям понимаем, почему они выстрелили</p>
+          <svg class="arrow" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </li>
+        <li class="decision">
+          <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+          <h3><span class="number">4.</span> Стратегия</h3>
+          <p>Предлагаем, о чём и как снимать</p>
+          <strong class="who">Утверждаете вы</strong>
+          <svg class="arrow" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </li>
+        <li class="decision">
+          <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+          <h3><span class="number">5.</span> Брифы</h3>
+          <p>Названия, описания и идея обложки для каждого видео</p>
+          <strong class="who">Решаете вы</strong>
+          <svg class="arrow" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </li>
+        <li>
+          <svg class="icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+          <h3><span class="number">6.</span> План на месяц</h3>
+          <p>Из принятых брифов собираем месяц съёмок</p>
+          <svg class="arrow" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </li>
+      </ol>
+      <p class="caption">Цветом выделены шаги, где решаете вы: агент ничего не публикует и не решает за вас.</p>
+      <p><a href="https://github.com/ozerova152-lab/youtube-producer/tree/main/examples/demo/expected">Посмотреть полный пример</a></p>
     </section>
 
     <section id="download" class="download">

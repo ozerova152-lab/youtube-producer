@@ -204,7 +204,7 @@ def test_three_check_commands_only_in_quick_start_between_step3_and_step4():
         s4 = text.index("### Шаг 4") if name == "README" else text.index("### Step 4")
         assert all(s3 < p < s4 for p in positions), name
         assert text.count("```bash") >= 1
-    assert marker not in SITE_HTML and "examples/demo" not in SITE_HTML.split("<!-- Пример")[0]
+    assert marker not in SITE_HTML and "examples/demo" not in SITE_HTML.split('<section id="scheme">')[0]  # T37: ссылка на examples/demo/expected только под схемой
     assert "### Проверьте, что всё работает" in README
 
 
@@ -218,7 +218,7 @@ def test_old_caption_gone():
     ):
         if p.is_file() and p.suffix in {".html", ".css", ".md", ".py", ".js"}:
             assert old not in p.read_text(encoding="utf-8"), p
-    assert "Пример на выдуманном канале, не реальный" in SITE_HTML
+    assert "Пример на выдуманном канале" not in SITE_HTML  # T37: подпись ушла вместе с примером
 
 
 # ---------- (3) AGENTS.md ----------
@@ -403,7 +403,6 @@ def test_spec_matches_real_texts():
         "Сообщение скопировано",
         "Не получилось скопировать. Выделите сообщение вручную",
         "Установка по ссылке",
-        "Пример на выдуманном канале, не реальный",
         "Всё установилось и работает, расскажите про свой канал",
     ):
         assert needle in flows, needle

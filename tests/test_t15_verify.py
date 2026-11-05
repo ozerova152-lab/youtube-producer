@@ -4,9 +4,7 @@
 Сценарий 00-month доказывается структурно: живой сессии агента нет.
 """
 
-import csv
 import re
-import statistics
 import subprocess
 from pathlib import Path
 
@@ -216,38 +214,8 @@ def test_gitignore_env_and_data_and_example_clean():
 
 # ---- критерии 7-8: витрина ----
 
-def _demo_numbers():
-    rows = list(csv.DictReader((ROOT / "examples/demo/import.csv").read_text(encoding="utf-8").splitlines()))
-    top = max(rows, key=lambda r: int(r["views"]))
-    same = [int(r["views"]) for r in rows
-            if r["channel_id"] == top["channel_id"] and r["id"] != top["id"]]
-    norm = statistics.median(same)
-    return top, int(top["views"]), norm, int(top["views"]) / norm
-
-
-def test_site_example_numbers_recomputed_from_demo():
-    top, views, norm, ratio = _demo_numbers()
-    fmt = lambda n: f"{int(n):,}".replace(",", " ")
-    assert top["title"] in SITE
-    row = re.search(r"<tr><td>[^<]*</td>.*?</tr>", SITE.split("<tbody>")[1], re.DOTALL).group(0)
-    assert fmt(views) in row and fmt(norm) in row and f"×{ratio:.2f}" in row
-
-
-def test_site_example_brief_taken_from_demo_brief():
-    brief = (ROOT / "examples/demo/expected/briefs/01.md").read_text(encoding="utf-8")
-    title = re.search(r"^# (.+)$", brief, re.MULTILINE).group(1)
-    assert title in SITE
-    for key in ("Идея:", "Первые 15 секунд:", "Название 1:", "Чем отличаемся:"):
-        m = re.search(rf"^- {re.escape(key)} (.+)$", brief, re.MULTILINE)
-        assert m, key
-        text = m.group(1).split(". На экране")[0].split(" Сохраняем")[0]
-        text = text.removeprefix("залёт ")  # на витрине здесь вставлено название залёта
-        norm = re.sub(r"\s+", " ", text)[:40]
-        assert norm.lower() in SITE.lower(), (key, norm)
-
-
 def test_site_texts_and_no_external_resources():
-    assert "Пример на выдуманном канале, не реальный" in SITE
+    assert "Путь от темы до плана" in SITE and "Пример на выдуманном канале" not in SITE  # T37: схема вместо примера
     assert "Если GitHub не открывается, попробуйте позже" in SITE
     assert SITE.count("https://github.com/ozerova152-lab/youtube-producer") >= 2
     assert re.search(r"<code[^>]*>https://github\.com/ozerova152-lab/youtube-producer</code>", SITE)
@@ -275,13 +243,13 @@ def test_phone_360_no_horizontal_scroll_and_no_js_no_css():
             page = ctx.new_page()
             page.goto(url)
             assert page.evaluate("document.documentElement.scrollWidth <= 360")
-            assert page.get_by_text("Пример на выдуманном канале, не реальный").is_visible()
+            assert page.get_by_role("heading", name="Путь от темы до плана").is_visible()
             ctx.close()
             ctx = b.new_context(viewport={"width": 360, "height": 740}, java_script_enabled=False)
             page = ctx.new_page()
             page.goto(url)
             assert page.get_by_text("Если GitHub не открывается, попробуйте позже").is_visible()
-            assert page.get_by_text("×12.68").is_visible()
+            assert page.locator("#scheme li").count() == 6 and page.locator("#scheme li").first.is_visible()
             ctx.close()
             ctx = b.new_context(viewport={"width": 360, "height": 740})
             page = ctx.new_page()
