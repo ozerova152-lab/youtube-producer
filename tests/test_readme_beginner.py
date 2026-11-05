@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 README = (ROOT / "README.md").read_text(encoding="utf-8")
-HEADINGS = ["## Что вы получите", "## Что понадобится", "## Быстрый старт", "## Попробовать без ключа",
+HEADINGS = ["## Установка одной фразой", "## Что вы получите", "## Что понадобится", "## Быстрый старт",
             "## Свой канал", "## Если что-то не получилось", "## Подробнее", "## Лицензия"]
 DOCS = ["windows-wsl.md", "windows-wsl.en.md", "compatibility.md", "glossary.md", "limits-and-security.md",
         "how-it-works.md", "chat-mode.md"]
@@ -14,7 +14,7 @@ DOCS = ["windows-wsl.md", "windows-wsl.en.md", "compatibility.md", "glossary.md"
 def test_sections_in_order_and_short():
     pos = [README.index("\n" + h + "\n") for h in HEADINGS]
     assert pos == sorted(pos)
-    assert len(README.splitlines()) <= 132
+    assert len(README.splitlines()) <= 165
 
 
 def test_quick_start_has_five_steps_with_three_labels():
@@ -48,7 +48,21 @@ def test_docs_exist_and_are_linked_from_readme():
 
 
 def test_demo_block_has_three_commands_and_expected_line():
-    demo = README[README.index("## Попробовать без ключа"):README.index("## Свой канал")]
+    demo = README[README.index("### Проверьте, что всё работает"):README.index("### Шаг 4.")]
     cmds = re.findall(r"```bash\n(.*?)```", demo, re.DOTALL)[0].strip().splitlines()
     assert len(cmds) == 3
     assert "Загружено: 11 видео, 2 канала. Обращений к YouTube: 0" in demo and "2 залёта" in demo
+
+
+def test_demo_and_no_key_trial_are_not_mentioned_at_the_start():
+    """T33: проба молчаливая; про демо и «без ключа» в начале README и на витрине не пишем."""
+    head = README[:README.index("## Быстрый старт")]
+    site = (ROOT / "site/index.html").read_text(encoding="utf-8")
+    site_top = site[:site.index("<!-- Пример взят")]
+    for text in (head, site_top):
+        low = text.lower()
+        assert "без ключа" not in low and "демо" not in low and "тестов" not in low, text[:60]
+    # три команды проверки стоят только в «Быстром старте», после шага 3 и до шага 4
+    qs = README[README.index("## Быстрый старт"):README.index("## Свой канал")]
+    assert qs.index("### Шаг 3.") < qs.index("### Проверьте, что всё работает") < qs.index("### Шаг 4.")
+    assert README.count("examples/demo/import_comments.json") == 1

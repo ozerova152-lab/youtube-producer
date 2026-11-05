@@ -16,6 +16,10 @@ PAGE_URL = (SITE / "index.html").as_uri()
 SHOTS = ROOT / "test-results" / "showcase"
 REPO = "https://github.com/ozerova152-lab/youtube-producer"
 COPY_FAILED = "Не получилось скопировать. Выделите адрес вручную"
+MESSAGE_FAILED = "Не получилось скопировать. Выделите сообщение вручную"
+README_TEXT = (ROOT / "README.md").read_text(encoding="utf-8")
+# готовое сообщение агенту: один и тот же текст в README, README.en.md и на витрине (T33)
+AGENT_MESSAGE = re.search(r"## Установка одной фразой.*?```text\n(.*?)\n```", README_TEXT, re.DOTALL).group(1)
 
 # Подмена буфера обмена: настоящий требует разрешений и недетерминирован.
 CLIPBOARD_OK = """
@@ -61,27 +65,47 @@ def test_visitor_reads_blocks_and_reaches_github(browser):
     ).first.is_visible()
 
     headings = [h.inner_text() for h in page.get_by_role("heading", level=2).all()]
-    assert headings == ["Как это работает", "Как запустить", "Пример результата"]
+    assert headings == ["Установка одной фразой", "Как это работает", "Если что-то не получилось",
+                        "Пример результата"]
     assert page.locator("#how-it-works .steps li").count() == 5
     assert page.get_by_text("Решает и публикует всегда человек.", exact=True).is_visible()
-    # три общих шага над подсказками, без «клонируйте» в основных шагах
-    steps = page.locator("#how-to-run > ol > li")
-    assert steps.count() == 3
-    assert "Скачайте проект" in steps.nth(0).inner_text() and "make setup" in steps.nth(0).inner_text()
-    assert "Откройте папку проекта в вашем агенте" in steps.nth(1).inner_text()
-    assert "Прочитай AGENTS.md и запусти месяц" in steps.nth(2).inner_text()
-    assert "Клонируйте" not in page.locator("#how-to-run").inner_text()
-    assert page.get_by_text("WSL: это Linux внутри Windows", exact=False).is_visible()
-    # блок для новичка с Windows: время, фраза для агента, «Если застряли»
+    # готовое сообщение агенту видно сразу и совпадает с README
+    assert page.locator("#agent-message").inner_text() == AGENT_MESSAGE
+    assert REPO in AGENT_MESSAGE and "Установка по ссылке" in AGENT_MESSAGE
+    assert page.get_by_role("button", name="Скопировать сообщение для агента").is_visible()
+    assert page.get_by_text("отвечайте «да» на его вопросы", exact=False).first.is_visible()
+    # трудные слова не стоят в основной части: только в раскрывающихся блоках
+    visible = page.evaluate(
+        "() => { const c = document.querySelector('main').cloneNode(true);"
+        " c.querySelectorAll('details, pre').forEach(e => e.remove()); return c.innerText; }")
+    for word in ("WSL", "make", "Python", "git "):
+        assert word not in visible, word
+    # блоки «Если что-то не получилось» закрыты и раскрываются
+    blocks = page.locator("#troubleshooting details")
+    assert blocks.count() == 5
+    assert all(not blocks.nth(i).evaluate("e => e.open") for i in range(5))
     wsl = page.locator("#windows-wsl")
+    assert not page.get_by_text("Если застряли", exact=False).first.is_visible()
+    wsl.locator("summary").click()
     text = wsl.inner_text()
+    assert ("Если вы запускаете Claude Code или Codex на Windows, один раз нужно поставить WSL: это Linux "
+            "внутри Windows") in text
+    assert "Для работы в обычном чате WSL не нужен." in text and "Cowork" not in text
     assert "один разовый шаг, около 20–30 минут" in text
     assert ("Я на Windows и ничего не понимаю в терминале. Помоги поставить WSL и дойти до запуска проекта, "
             "объясняй каждый шаг") in text
     assert "Если застряли" in text and "Пароль при вводе не показывается" in text
     assert "включить в BIOS" in text and "имя@компьютер" in text
+    manual = page.locator("#manual-install")
+    manual.locator("summary").click()
+    steps = manual.locator("ol > li")
+    assert steps.count() == 3
+    assert "Скачайте проект" in steps.nth(0).inner_text() and "make setup" in steps.nth(0).inner_text()
+    assert "Откройте папку проекта в вашем агенте" in steps.nth(1).inner_text()
+    assert "Прочитай AGENTS.md и запусти месяц" in steps.nth(2).inner_text()
+    assert "Клонируйте" not in manual.inner_text()
     # три подсказки одинаковой структуры и примерно одной длины, без главного агента
-    cards = page.locator("#how-to-run .grid article")
+    cards = manual.locator(".grid article")
     assert cards.count() == 3
     lengths = [len(cards.nth(i).inner_text()) for i in range(3)]
     assert max(lengths) - min(lengths) < 40, lengths
@@ -96,7 +120,7 @@ def test_visitor_reads_blocks_and_reaches_github(browser):
     assert status.get_by_role("link", name="Расскажите, как получилось").get_attribute("href") == (
         "https://github.com/ozerova152-lab/youtube-producer/issues")
     # у Codex понятный путь: дать ссылку на репозиторий и написать фразу
-    codex_card = page.locator("#how-to-run .grid article").nth(2)
+    codex_card = manual.locator(".grid article").nth(2)
     assert "Дайте Codex ссылку на репозиторий" in codex_card.inner_text()
     assert "Изучи youtube-producer и помоги начать" in codex_card.inner_text()
     assert codex_card.get_by_role("link", name="репозиторий").get_attribute("href") == (
@@ -107,8 +131,8 @@ def test_visitor_reads_blocks_and_reaches_github(browser):
     assert not re.search(r"не\s+провер", html, re.IGNORECASE)
     assert "Основной путь" not in html and "Cowork мы" not in html
     assert page.get_by_text("лишь на базовом уровне", exact=False).count() == 0
-    assert page.get_by_text("Нет ключа YouTube? Можно загрузить видео из файла.").is_visible()
-    assert page.get_by_text("Пример на демо-данных, не реальный канал.").is_visible()
+    assert page.get_by_text("Нет ключа YouTube?").count() == 0  # T33: про «без ключа» на витрине не пишем
+    assert page.get_by_text("Пример на выдуманном канале, не реальный.").is_visible()
     assert page.get_by_text(
         "Откроется страница репозитория: нажмите Code → Download ZIP."
     ).is_visible()
@@ -144,8 +168,8 @@ def test_phone_360_has_no_horizontal_scroll_and_shows_hint(browser):
         "чтобы открыть его там."
     )
     assert hint.is_visible()
-    # Подсказка открывает блок «Как запустить»: идёт сразу после его заголовка.
-    first = page.locator("#how-to-run > :nth-child(2)")
+    # Подсказка открывает блок установки: идёт сразу после его заголовка.
+    first = page.locator("#install-by-link > :nth-child(2)")
     assert first.inner_text().startswith("Запускать проект нужно на компьютере")
     button = page.get_by_role("button", name="Скачать на GitHub").first
     box = button.bounding_box()
@@ -244,7 +268,7 @@ def test_example_block_comes_from_demo_data(browser):
     assert page.get_by_role("heading", name="Бриф 1: Нейросеть для таблиц без формул").is_visible()
     first_15 = re.search(r"Первые 15 секунд: (.+)", brief).group(1)
     assert first_15 in page.locator("#example article").inner_text().replace("\n", " ")
-    assert page.get_by_text("Пример на демо-данных, не реальный канал.").is_visible()
+    assert page.get_by_text("Пример на выдуманном канале, не реальный.").is_visible()
     # Старого условного примера нет.
     assert "монтажёра" not in page.content()
 
@@ -264,3 +288,48 @@ def test_demo_table_row_matches_report_numbers():
     first = next(r for r in rows if r["id"] == "demo_v01")
     assert f"{int(first['views']):,}".replace(",", " ") == "52 000"
     assert first["title"] in (SITE / "index.html").read_text(encoding="utf-8")
+
+
+def test_copy_message_shows_confirmation_and_copies_full_text(browser):
+    page = open_page(browser)
+    page.add_init_script(CLIPBOARD_OK)
+    page.goto(PAGE_URL)
+    page.get_by_role("button", name="Скопировать сообщение для агента").click()
+    assert page.get_by_role("button", name="Сообщение скопировано").is_visible()
+    assert page.evaluate("window.__copied") == AGENT_MESSAGE
+    shot(page, "message-copied")
+
+
+def test_copy_message_denied_shows_manual_hint_and_keeps_text(browser):
+    page = open_page(browser)
+    page.add_init_script(CLIPBOARD_DENIED)
+    page.goto(PAGE_URL)
+    page.get_by_role("button", name="Скопировать сообщение для агента").click()
+    assert page.get_by_text(MESSAGE_FAILED).is_visible()
+    assert page.locator("#agent-message").inner_text() == AGENT_MESSAGE
+
+
+def test_without_javascript_message_stays_as_selectable_text(browser):
+    page = open_page(browser, java_script_enabled=False)
+    page.goto(PAGE_URL)
+    assert not page.locator("#copy-message").is_visible()
+    assert page.locator("#agent-message").inner_text() == AGENT_MESSAGE
+    shot(page, "no-javascript-message")
+
+
+def test_phone_360_message_wraps_without_horizontal_scroll(browser):
+    page = open_page(browser, width=360, height=640)
+    page.goto(PAGE_URL)
+    assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
+    box = page.locator("#agent-message").bounding_box()
+    assert box and box["x"] >= 0 and box["x"] + box["width"] <= 360
+    page.locator("#windows-wsl summary").click()
+    assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
+
+
+def test_same_message_in_readmes_and_site():
+    html = (SITE / "index.html").read_text(encoding="utf-8")
+    site = re.search(r'<pre id="agent-message">(.*?)</pre>', html, re.DOTALL).group(1)
+    en = re.search(r"## Install with one phrase.*?```text\n(.*?)\n```",
+                   (ROOT / "README.en.md").read_text(encoding="utf-8"), re.DOTALL).group(1)
+    assert site == AGENT_MESSAGE == en

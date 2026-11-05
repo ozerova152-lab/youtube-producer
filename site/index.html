@@ -18,6 +18,27 @@
       <a href="https://github.com/ozerova152-lab/youtube-producer" role="button">Скачать на GitHub</a>
     </header>
 
+    <section id="install-by-link">
+      <h2>Установка одной фразой</h2>
+      <p class="note phone-only">Запускать проект нужно на компьютере. Скопируйте адрес репозитория, чтобы открыть его там.</p>
+      <p>Откройте любого ИИ-агента, который умеет работать с вашим компьютером, вставьте это сообщение и отвечайте «да» на его вопросы. Он сам всё установит и поведёт вас дальше.</p>
+      <pre id="agent-message">Установи мне проект «AI-продюсер YouTube-канала» и помоги запустить.
+Адрес: https://github.com/ozerova152-lab/youtube-producer
+Я не разбираюсь в терминале, поэтому объясняй простыми словами.
+Перед каждой командой, которая что-то ставит или скачивает, спрашивай моё «да».
+Скачай проект в домашнюю папку, потом прочитай в нём AGENTS.md, раздел «Установка по ссылке», и действуй по нему.
+Ничего не публикуй.</pre>
+      <!-- Кнопка нужна только со скриптом: без JavaScript сообщение остаётся текстом, его можно выделить и скопировать. -->
+      <button type="button" id="copy-message" hidden>
+        <svg class="icon icon-copy" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        <svg class="icon icon-check" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M20 6 9 17l-5-5"/></svg>
+        <span class="label">Скопировать сообщение для агента</span>
+      </button>
+      <p id="copy-message-status" class="caption" role="status"></p>
+      <p>Вам останется только отвечать «да» и завести ключ YouTube (бесплатный). Ключ вводите сами и никому в чат не вставляйте.</p>
+      <p id="status">Полностью проверен в Claude Code и Codex. Рассчитан и на другие агенты: те же инструкции работают без скрипта сбора данных, данные можно вставить в чат. <a href="https://github.com/ozerova152-lab/youtube-producer/issues">Расскажите, как получилось</a></p>
+    </section>
+
     <section id="how-it-works">
       <h2>Как это работает</h2>
       <ol class="steps">
@@ -30,18 +51,12 @@
       <p class="note">Решает и публикует всегда человек.</p>
     </section>
 
-    <section id="how-to-run">
-      <h2>Как запустить</h2>
-      <p class="note phone-only">Запускать проект нужно на компьютере. Скопируйте адрес репозитория, чтобы открыть его там.</p>
-      <ol>
-        <li>Скачайте проект: на странице репозитория нажмите Code → Download ZIP и распакуйте архив. Один раз в терминале внутри папки выполните <code>make setup</code>: эта команда сама скачает всё нужное для работы (нужен интернет).</li>
-        <li>Откройте папку проекта в вашем агенте (подсказки ниже).</li>
-        <li>Скажите агенту: «Прочитай <code>AGENTS.md</code> и запусти месяц».</li>
-      </ol>
-      <p class="note">На Windows терминал открывайте в WSL: это Linux внутри Windows, без него проект не запустится.</p>
-      <article id="windows-wsl">
-        <h3>Windows: как поставить WSL</h3>
-        <p>WSL — это Linux внутри Windows. Это один разовый шаг, около 20–30 минут. Подробная инструкция по шагам — в <a href="https://github.com/ozerova152-lab/youtube-producer/blob/main/docs/windows-wsl.md">инструкции по WSL</a>.</p>
+    <section id="troubleshooting">
+      <h2>Если что-то не получилось</h2>
+      <details id="windows-wsl">
+        <summary>Я на Windows</summary>
+        <p>Если вы запускаете Claude Code или Codex на Windows, один раз нужно поставить WSL: это Linux внутри Windows, один разовый шаг, около 20–30 минут. Для работы в обычном чате WSL не нужен.</p>
+        <p>Агент сам WSL не ставит: нужны права администратора и перезагрузка, он расскажет шаги и подождёт. Подробная инструкция по шагам — в <a href="https://github.com/ozerova152-lab/youtube-producer/blob/main/docs/windows-wsl.md">инструкции по WSL</a>.</p>
         <p>Не хотите разбираться сами? Скажите любому ИИ-агенту: «Я на Windows и ничего не понимаю в терминале. Помоги поставить WSL и дойти до запуска проекта, объясняй каждый шаг».</p>
         <p><strong>Если застряли:</strong></p>
         <ul>
@@ -49,23 +64,41 @@
           <li>Если <code>wsl --install</code> пишет про виртуализацию, на некоторых компьютерах её нужно включить в BIOS.</li>
           <li>Вы в окне Ubuntu, если в начале строки стоит имя@компьютер. Если там <code>PS C:\...&gt;</code>, это PowerShell: откройте Ubuntu из меню «Пуск».</li>
         </ul>
-      </article>
-      <div class="grid">
-        <article>
-          <h3>В Claude Code</h3>
-          <p>Откройте терминал в папке проекта и запустите <code>claude</code>.</p>
-        </article>
-        <article>
-          <h3>В Claude Cowork</h3>
-          <p>Откройте папку проекта в приложении Claude Desktop.</p>
-        </article>
-        <article>
-          <h3>В Codex</h3>
-          <p>Дайте Codex ссылку на <a href="https://github.com/ozerova152-lab/youtube-producer">репозиторий</a> и напишите: «Изучи youtube-producer и помоги начать».</p>
-        </article>
-      </div>
-      <p id="status">Полностью проверен в Claude Code и Codex. Рассчитан и на другие агенты: те же инструкции работают без скрипта сбора данных, данные можно вставить в чат. <a href="https://github.com/ozerova152-lab/youtube-producer/issues">Расскажите, как получилось</a></p>
-      <p>Нет ключа YouTube? Можно загрузить видео из файла.</p>
+      </details>
+      <details id="missing-tools">
+        <summary>Не хватает Python, make или git</summary>
+        <p>Это маленькие программы, без которых проект не запускается: Python запускает скрипт, <code>git</code> скачивает проект, <code>make</code> запускает готовые команды. Агент скажет, чего не хватает, и подскажет команду. Команды с паролем администратора вводите сами: агент пароль не знает.</p>
+      </details>
+      <details id="manual-install">
+        <summary>Хочу поставить сам, по шагам</summary>
+        <ol>
+          <li>Скачайте проект: на странице репозитория нажмите Code → Download ZIP и распакуйте архив. Один раз в терминале внутри папки выполните <code>make setup</code>: эта команда сама скачает всё нужное для работы (нужен интернет).</li>
+          <li>Откройте папку проекта в вашем агенте (подсказки ниже).</li>
+          <li>Скажите агенту: «Прочитай <code>AGENTS.md</code> и запусти месяц».</li>
+        </ol>
+        <div class="grid">
+          <article>
+            <h3>В Claude Code</h3>
+            <p>Откройте терминал в папке проекта и запустите <code>claude</code>.</p>
+          </article>
+          <article>
+            <h3>В Claude Cowork</h3>
+            <p>Откройте папку проекта в приложении Claude Desktop.</p>
+          </article>
+          <article>
+            <h3>В Codex</h3>
+            <p>Дайте Codex ссылку на <a href="https://github.com/ozerova152-lab/youtube-producer">репозиторий</a> и напишите: «Изучи youtube-producer и помоги начать».</p>
+          </article>
+        </div>
+      </details>
+      <details id="chat-only">
+        <summary>У меня только чат, без терминала</summary>
+        <p>Установка не нужна. Дайте чату файл <code>AGENTS.md</code> и напишите «запусти месяц»: данные о видео вы вставляете в чат, результаты чат присылает текстом.</p>
+      </details>
+      <details id="terminal">
+        <summary>Как открыть терминал</summary>
+        <p>Терминал — окно, куда печатают команды вместо кликов мышью. Mac: Cmd+Пробел и слово «Терминал». Linux: Ctrl+Alt+T. Windows: «Пуск» и Ubuntu (после установки WSL).</p>
+      </details>
     </section>
 
     <!-- Пример взят из examples/demo: таблица залётов из report.md демо-запуска, бриф из examples/demo/expected/briefs/01.md. -->
@@ -96,7 +129,7 @@
           <dd>Нейросеть собрала мне таблицу за 5 минут: без формул</dd>
         </dl>
       </article>
-      <p class="caption">Пример на демо-данных, не реальный канал.</p>
+      <p class="caption">Пример на выдуманном канале, не реальный.</p>
     </section>
 
     <section id="download" class="download">
@@ -117,37 +150,46 @@
 
   <script>
     (function () {
-      var button = document.getElementById("copy-address");
-      var address = document.getElementById("repo-address");
-      var status = document.getElementById("copy-status");
-      var label = button.querySelector(".label");
-      var iconCopy = button.querySelector(".icon-copy");
-      var iconCheck = button.querySelector(".icon-check");
-      var timer;
+      function setupCopy(buttonId, sourceId, statusId, idleText, doneText, failText) {
+        var button = document.getElementById(buttonId);
+        var source = document.getElementById(sourceId);
+        var status = document.getElementById(statusId);
+        var label = button.querySelector(".label");
+        var iconCopy = button.querySelector(".icon-copy");
+        var iconCheck = button.querySelector(".icon-check");
+        var timer;
 
-      function reset() {
-        label.textContent = "Скопировать адрес";
-        iconCopy.hidden = false;
-        iconCheck.hidden = true;
+        function reset() {
+          label.textContent = idleText;
+          iconCopy.hidden = false;
+          iconCheck.hidden = true;
+        }
+
+        button.hidden = false;
+        button.addEventListener("click", function () {
+          clearTimeout(timer);
+          status.textContent = "";
+          var copied = navigator.clipboard
+            ? navigator.clipboard.writeText(source.textContent)
+            : Promise.reject(new Error("clipboard unavailable"));
+          copied.then(function () {
+            label.textContent = doneText;
+            iconCopy.hidden = true;
+            iconCheck.hidden = false;
+            timer = setTimeout(reset, 3000);
+          }, function () {
+            reset();
+            status.textContent = failText;
+          });
+        });
       }
 
-      button.hidden = false;
-      button.addEventListener("click", function () {
-        clearTimeout(timer);
-        status.textContent = "";
-        var copied = navigator.clipboard
-          ? navigator.clipboard.writeText(address.textContent)
-          : Promise.reject(new Error("clipboard unavailable"));
-        copied.then(function () {
-          label.textContent = "Адрес скопирован";
-          iconCopy.hidden = true;
-          iconCheck.hidden = false;
-          timer = setTimeout(reset, 3000);
-        }, function () {
-          reset();
-          status.textContent = "Не получилось скопировать. Выделите адрес вручную";
-        });
-      });
+      setupCopy("copy-message", "agent-message", "copy-message-status",
+        "Скопировать сообщение для агента", "Сообщение скопировано",
+        "Не получилось скопировать. Выделите сообщение вручную");
+      setupCopy("copy-address", "repo-address", "copy-status",
+        "Скопировать адрес", "Адрес скопирован",
+        "Не получилось скопировать. Выделите адрес вручную");
     })();
   </script>
 </body>

@@ -75,15 +75,16 @@ def test_quick_start_five_steps_and_key_later():
     qs = _section(README, "Быстрый старт")
     assert len(re.findall(r"^### Шаг \d\. ", qs, re.MULTILINE)) == 5
     assert "make setup" in qs and "Прочитай AGENTS.md и запусти месяц" in qs
-    assert "позже" in README and "Попробовать без ключа" in README
+    assert "позже" in README and "Проверьте, что всё работает" in README
 
 
 def test_first_screens_are_agent_neutral_and_sections_in_requested_order():
     # до быстрого старта ни одного упоминания конкретных агентов
     head = README[:README.index("## Быстрый старт")]
+    head = re.sub(r"<details>.*?</details>", "", head, flags=re.DOTALL)  # T33: названия агентов только в раскрывающемся блоке
     for name in ("Claude Code", "Cowork", "Codex", "CLAUDE.md"):
         assert name not in head, name
-    order = ["## Что вы получите", "## Что понадобится", "## Быстрый старт", "## Попробовать без ключа",
+    order = ["## Установка одной фразой", "## Что вы получите", "## Что понадобится", "## Быстрый старт",
              "## Свой канал", "## Если что-то не получилось", "## Подробнее", "## Лицензия"]
     pos = [README.index(h) for h in order]
     assert pos == sorted(pos), pos
@@ -120,7 +121,7 @@ def test_address_lines_are_real_after_publication():
 
 
 def test_demo_section_commands_and_expected_result():
-    demo = _section(README, "Попробовать без ключа")
+    demo = README[README.index("### Проверьте, что всё работает"):README.index("### Шаг 4.")]
     assert "examples/demo/import_comments.json" in demo and "virals" in demo and "×12.68" in demo
     assert (ROOT / "examples/demo/import_comments.json").is_file()
 

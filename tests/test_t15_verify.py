@@ -246,7 +246,7 @@ def test_site_example_brief_taken_from_demo_brief():
 
 
 def test_site_texts_and_no_external_resources():
-    assert "Пример на демо-данных, не реальный канал" in SITE
+    assert "Пример на выдуманном канале, не реальный" in SITE
     assert "Если GitHub не открывается, попробуйте позже" in SITE
     assert SITE.count("https://github.com/ozerova152-lab/youtube-producer") >= 2
     assert re.search(r"<code[^>]*>https://github\.com/ozerova152-lab/youtube-producer</code>", SITE)
@@ -274,7 +274,7 @@ def test_phone_360_no_horizontal_scroll_and_no_js_no_css():
             page = ctx.new_page()
             page.goto(url)
             assert page.evaluate("document.documentElement.scrollWidth <= 360")
-            assert page.get_by_text("Пример на демо-данных, не реальный канал").is_visible()
+            assert page.get_by_text("Пример на выдуманном канале, не реальный").is_visible()
             ctx.close()
             ctx = b.new_context(viewport={"width": 360, "height": 740}, java_script_enabled=False)
             page = ctx.new_page()

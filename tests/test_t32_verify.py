@@ -151,7 +151,7 @@ def test_compatibility_links_and_single_status():
 def test_readme_key_steps_and_length():
     ru = (ROOT / "README.md").read_text(encoding="utf-8")
     en = (ROOT / "README.en.md").read_text(encoding="utf-8")
-    assert len(ru.splitlines()) <= 132
+    assert len(ru.splitlines()) <= 165
     sec = ru.split("## Свой канал")[1]
     assert [int(n) for n in re.findall(r"^(\d)\. ", sec, re.MULTILINE)[:6]] == [1, 2, 3, 4, 5, 6]
     sec_en = en.split("## Your own channel")[1]

@@ -8,6 +8,32 @@ A helper that finds videos in your topic that got a lot of views, explains why, 
 
 Repository: https://github.com/ozerova152-lab/youtube-producer · Showcase page: https://ozerova152-lab.github.io/youtube-producer/
 
+## Install with one phrase
+
+Open any AI agent that can work with your computer, paste this message (the block has a "copy" icon) and answer "yes" to its questions. It installs everything and leads you further. The message is in Russian because the agent talks to you in Russian:
+
+```text
+Установи мне проект «AI-продюсер YouTube-канала» и помоги запустить.
+Адрес: https://github.com/ozerova152-lab/youtube-producer
+Я не разбираюсь в терминале, поэтому объясняй простыми словами.
+Перед каждой командой, которая что-то ставит или скачивает, спрашивай моё «да».
+Скачай проект в домашнюю папку, потом прочитай в нём AGENTS.md, раздел «Установка по ссылке», и действуй по нему.
+Ничего не публикуй.
+```
+
+All that is left for you is to answer "yes" and get a YouTube key (free). Enter the key yourself and never paste it into a chat.
+
+<details>
+<summary>If something went wrong</summary>
+
+- **I am on Windows.** If you run a terminal agent (Claude Code or Codex) on Windows, you need to install WSL once: it is Linux inside Windows, 20-30 minutes. For work in an ordinary chat WSL is not needed. The agent does not install WSL itself: it needs administrator rights and a restart, so it explains the steps and waits. Guide: [docs/windows-wsl.en.md](docs/windows-wsl.en.md).
+- **Python, make or git is missing.** These are small programs the project needs. The agent says what is missing and suggests the command. Enter commands that need an administrator password yourself.
+- **I only have a chat, no terminal.** No install needed: [chat mode](docs/chat-mode.md) (in Russian).
+- **How to open a terminal.** It is a window where you type commands instead of clicking. Mac: Cmd+Space and the word "Terminal". Linux: Ctrl+Alt+T. Windows: "Start" and Ubuntu (after installing WSL).
+- **The agent did not manage.** Follow the same steps by hand: the "Quick start" section below.
+
+</details>
+
 ## What you get
 
 One "month" of work produces files on your own computer in `data/<channel>/runs/<month>_<segment>_v<N>/`:
@@ -22,13 +48,15 @@ The project **never publishes anything and never writes to YouTube**. You decide
 
 ## What you need
 
-- A computer with Windows, macOS or Linux. On Windows you install WSL once (Linux inside Windows, 20-30 minutes).
-- An AI agent: a helper program you write to in plain language ([list and status](docs/compatibility.md), in Russian). You need a subscription to it. The project needs no separate paid AI key.
-- Python 3.12 or newer, `git` and `make`: steps 2-3 show how to check.
-- A YouTube key comes later. You can start without it.
+- A computer with Windows, macOS or Linux.
+- An AI agent that can run commands on your computer ([list and status](docs/compatibility.md), in Russian). You need a subscription to it. The project needs no separate paid AI key.
+- A little time: the agent installs everything itself and asks for your "yes".
+- A YouTube key comes later. You will get it yourself.
 - Only an ordinary AI chat where programs cannot be run? Install nothing: [chat mode](docs/chat-mode.md) (in Russian).
 
 ## Quick start
+
+If the agent did not manage or you prefer step by step, here are the same steps by hand.
 
 **Terminal** is a window where you type commands instead of clicking. Mac: Cmd+Space, type "Terminal". Linux: Ctrl+Alt+T. Windows: "Start" → Ubuntu (after step 1). Copy a command whole, paste it (in a terminal usually Ctrl+Shift+V) and press Enter.
 
@@ -54,6 +82,18 @@ The project **never publishes anything and never writes to YouTube**. You decide
 - "python3: command not found" or "make: command not found". Ubuntu: `sudo apt install -y make python3-venv python3-pip`. Mac: `make` comes with the developer tools (see step 2), Python is installed from python.org as above. Then run `make setup` again.
 - Other cases: [table below](#if-something-went-wrong).
 
+### Check that everything works
+
+Here you can make sure everything is installed. A test channel is already in the project; no internet or key is needed. Run three commands in order:
+
+```bash
+mkdir -p data && cp -r examples/demo data/demo && .venv/bin/produce --channel data/demo start --segment ru --brief-lang ru
+.venv/bin/produce --channel data/demo import examples/demo/import_comments.json --segment ru
+.venv/bin/produce --channel data/demo virals --segment ru
+```
+
+Expected: the second command loads 11 videos and 2 channels with 0 YouTube requests, the third finds 2 viral videos. The date in the demo is fixed (27 October 2026), so the result is the same on any day. If `data/demo` already exists, run `make reset` first.
+
 ### Step 4. Open the folder in the agent
 
 **What to do:** in the same folder start the agent: `claude` (Claude Code) or `codex` (Codex). For Claude Cowork open the project folder in the Claude Desktop app.
@@ -67,18 +107,6 @@ The project **never publishes anything and never writes to YouTube**. You decide
 **If it did not work:** the agent answers off topic. Check that the `youtube-producer` folder itself is open (it contains `AGENTS.md`) and start the phrase with "Read AGENTS.md and…".
 
 To resume after a pause: "Read AGENTS.md and continue the month."
-
-## Try it without a key
-
-A test channel is already in the project. Nothing paid, no internet needed. Run three commands in order:
-
-```bash
-mkdir -p data && cp -r examples/demo data/demo && .venv/bin/produce --channel data/demo start --segment ru --brief-lang ru
-.venv/bin/produce --channel data/demo import examples/demo/import_comments.json --segment ru
-.venv/bin/produce --channel data/demo virals --segment ru
-```
-
-Expected: the second command loads 11 videos and 2 channels with 0 YouTube requests, the third finds 2 viral videos. The date in the demo is fixed (27 October 2026), so the result is the same on any day. If `data/demo` already exists, run `make reset` first. Then you can tell the agent "Read AGENTS.md and start the month" on the `data/demo` channel.
 
 ## Your own channel
 

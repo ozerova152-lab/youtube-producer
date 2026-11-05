@@ -123,11 +123,11 @@ def test_step3_order_and_branches_en_too():
 
 
 def test_readme_demo_commands_work_in_temp_copy(tmp_path):
-    """Три команды из блока «Попробовать без ключа» выполняются дословно вне репозитория."""
+    """Три команды из блока «Проверьте, что всё работает» выполняются дословно вне репозитория."""
     produce = ROOT / ".venv/bin/produce"
     if not produce.exists():
         pytest.skip("нет .venv")
-    block = README[README.index("## Попробовать без ключа"):README.index("## Свой канал")]
+    block = README[README.index("### Проверьте, что всё работает"):README.index("### Шаг 4.")]
     cmds = re.findall(r"```bash\n(.*?)```", block, re.DOTALL)[0].strip().splitlines()
     work = tmp_path / "proj"
     work.mkdir()

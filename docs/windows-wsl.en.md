@@ -2,6 +2,8 @@
 
 [← Quick start](../README.en.md#quick-start) · [Русская версия](windows-wsl.md)
 
+WSL is needed only if you run a terminal agent on Windows (Claude Code, Codex). For work in an ordinary chat it is not needed. If you install the project through an agent ("Install with one phrase"), the agent does not install WSL itself: it explains the steps below and waits for your "done".
+
 WSL is Linux inside Windows; the project runs in it. **This is a single one-time step, about 20-30 minutes.** You need Windows 10 version 2004 or newer, or Windows 11 ([Microsoft guide](https://learn.microsoft.com/windows/wsl/install)).
 
 - **Step 1.** Click "Start", find PowerShell, right-click it and choose "Run as administrator".

@@ -153,3 +153,13 @@ dd {
   margin-left: 0;
   margin-bottom: 0.75rem;
 }
+
+/* Сообщение для агента: переносится по словам, чтобы на телефоне не было прокрутки вбок. */
+#agent-message {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+details {
+  margin-bottom: var(--pico-spacing);
+}

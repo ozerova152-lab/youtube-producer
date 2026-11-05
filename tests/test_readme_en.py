@@ -18,7 +18,7 @@ SECTION_PAIRS = [
     ("## Что вы получите", "## What you get"),
     ("## Что понадобится", "## What you need"),
     ("## Быстрый старт", "## Quick start"),
-    ("## Попробовать без ключа", "## Try it without a key"),
+    ("### Проверьте, что всё работает", "### Check that everything works"),
     ("## Свой канал", "## Your own channel"),
     ("## Если что-то не получилось", "## If something went wrong"),
     ("## Подробнее", "## More"),
@@ -64,7 +64,7 @@ def test_step3_checks_python_version_first_with_mac_and_ubuntu_advice():
 
 
 def test_readmes_are_short_and_have_no_removed_section():
-    assert len(RU.splitlines()) <= 132 and len(EN.splitlines()) <= 132
+    assert len(RU.splitlines()) <= 165 and len(EN.splitlines()) <= 165
     assert "Сколько времени и подписки" not in RU
     assert "не измерен" not in RU
 
@@ -129,8 +129,8 @@ def test_fenced_commands_match_russian():
                 ru_line = line.strip().replace("<channel>", "<канал>").replace("path/to/file.csv", "путь/к/файлу.csv")
                 assert ru_line in RU or ru_line == "cd youtube-producer", line
     # три команды демо идут в том же порядке
-    ru_demo = _block(RU, "## Попробовать без ключа")
-    en_demo = _block(EN, "## Try it without a key")
+    ru_demo = _block(RU, "### Проверьте, что всё работает")
+    en_demo = _block(EN, "### Check that everything works")
     ru_cmds = re.findall(r"```bash\n(.*?)```", ru_demo, re.DOTALL)[0].strip().splitlines()
     en_cmds = re.findall(r"```bash\n(.*?)```", en_demo, re.DOTALL)[0].strip().splitlines()
     assert ru_cmds == en_cmds and len(ru_cmds) == 3
