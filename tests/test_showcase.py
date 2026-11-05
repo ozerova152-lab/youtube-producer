@@ -112,13 +112,14 @@ def test_visitor_reads_blocks_and_reaches_github(browser):
     assert page.get_by_role("heading", name="В Claude Code").is_visible()
     assert page.get_by_role("heading", name="В Claude Cowork").is_visible()
     assert page.get_by_role("heading", name="В Codex").is_visible()
-    status = page.locator("#status")
-    assert status.is_visible()
-    assert status.inner_text() == (
-        "Полностью проверен в Claude Code и Codex. Рассчитан и на другие агенты: те же инструкции "
-        "работают без скрипта сбора данных, данные можно вставить в чат. Расскажите, как получилось")
-    assert status.get_by_role("link", name="Расскажите, как получилось").get_attribute("href") == (
+    # T34: пометок о том, где проект проверен, на витрине нет; остаётся одна ссылка на Issues
+    feedback = page.locator("#feedback")
+    assert feedback.is_visible()
+    assert feedback.inner_text() == "Расскажите, как получилось"
+    assert feedback.get_by_role("link", name="Расскажите, как получилось").get_attribute("href") == (
         "https://github.com/ozerova152-lab/youtube-producer/issues")
+    body = page.locator("body").inner_text()
+    assert "Полностью проверен" not in body and "Рассчитан и на другие" not in body
     # у Codex понятный путь: дать ссылку на репозиторий и написать фразу
     codex_card = manual.locator(".grid article").nth(2)
     assert "Дайте Codex ссылку на репозиторий" in codex_card.inner_text()

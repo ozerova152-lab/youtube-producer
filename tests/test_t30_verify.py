@@ -87,7 +87,8 @@ def test_agent_status_words_live_only_in_compatibility():
 
 
 def test_compatibility_is_single_source_for_statuses():
-    comp = (ROOT / "docs/compatibility.md").read_text(encoding="utf-8")
+    comp = (ROOT / "docs/dev/agent-status.md").read_text(encoding="utf-8")  # T34
+    assert "Основной путь" not in (ROOT / "docs/compatibility.md").read_text(encoding="utf-8")
     for phrase in ("Основной путь — Claude Code, проверен полностью.", "Cowork мы не проверяли"):
         assert phrase in comp
     assert comp.count("Основной путь") == 1

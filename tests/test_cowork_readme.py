@@ -11,6 +11,7 @@ ROOT = Path(__file__).parent.parent
 README = (ROOT / "README.md").read_text(encoding="utf-8")
 COMPAT = (ROOT / "docs/compatibility.md").read_text(encoding="utf-8")
 LIMITS_DOC = (ROOT / "docs/limits-and-security.md").read_text(encoding="utf-8")
+DEVNOTE = (ROOT / "docs/dev/agent-status.md").read_text(encoding="utf-8")  # T34: статус проверки только здесь
 
 
 def _block(text, start, stop):
@@ -57,13 +58,15 @@ def _without_allowed(text):
     return text.replace(CLAUDE_FACT, "").replace(CODEX_FACT, "")
 
 
-def test_status_is_stated_once_in_compatibility_doc():
-    assert STATUS in COMPAT
+def test_status_is_stated_once_in_developer_note_only():
+    # T34: пометки о проверке лежат только в заметке для разработчика, не в docs/compatibility.md
+    assert STATUS in DEVNOTE
+    assert DEVNOTE.count(CODEX_FACT) == 1 and DEVNOTE.count(CLAUDE_FACT) == 1
+    assert DEVNOTE.count(CODEX_STEPS) == 1
+    assert DEVNOTE.count("Cowork мы не проверяли") == 1
+    assert "Обычный чат без терминала" in DEVNOTE and "мы тоже не проверяли" in DEVNOTE
     assert "Для всех используется тот же `AGENTS.md`" in COMPAT
-    assert COMPAT.count(CODEX_FACT) == 1 and COMPAT.count(CLAUDE_FACT) == 1
-    assert COMPAT.count(CODEX_STEPS) == 1
-    assert COMPAT.count("Cowork мы не проверяли") == 1
-    assert "Обычный чат без терминала" in COMPAT and "мы тоже не проверяли" in COMPAT
+    assert CODEX_FACT not in COMPAT and CLAUDE_FACT not in COMPAT and "Cowork мы не проверяли" not in COMPAT
 
 
 def test_no_claims_about_agents_beyond_the_allowed_sentences():
@@ -71,12 +74,12 @@ def test_no_claims_about_agents_beyond_the_allowed_sentences():
     for name, text in (("README.md", README), ("limits-and-security.md", LIMITS_DOC)):
         assert CODEX_FACT not in text and CLAUDE_FACT not in text, name
         assert not re.search(r"проверен", text), name
-    rest = _without_allowed(COMPAT)
+    rest = _without_allowed(DEVNOTE)
     # про Cowork ничего «проверенного», про Codex ничего сверх точной фразы выше
     assert not re.search(r"(Cowork|Codex)[^.\n]{0,40}проверен", rest)
     assert not re.search(r"Claude Code[^.\n]{0,40}проверен", rest)
     assert not re.search(r"не сверяли|лишь на базовом|проверен лишь|проверен полностью", rest)
-    assert not re.search(r"Codex[^.\n]{0,40}не проверя", COMPAT)
+    assert not re.search(r"Codex[^.\n]{0,40}не проверя", DEVNOTE)
 
 
 def test_readme_links_to_status_instead_of_repeating_it():

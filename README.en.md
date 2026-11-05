@@ -49,7 +49,7 @@ The project **never publishes anything and never writes to YouTube**. You decide
 ## What you need
 
 - A computer with Windows, macOS or Linux.
-- An AI agent that can run commands on your computer ([list and status](docs/compatibility.md), in Russian). You need a subscription to it. The project needs no separate paid AI key.
+- An AI agent that can run commands on your computer ([list](docs/compatibility.md), in Russian). You need a subscription to it. The project needs no separate paid AI key.
 - A little time: the agent installs everything itself and asks for your "yes".
 - A YouTube key comes later. You will get it yourself.
 - Only an ordinary AI chat where programs cannot be run? Install nothing: [chat mode](docs/chat-mode.md) (in Russian).
@@ -143,8 +143,9 @@ Two ways to start.
 All files in `docs/` below are in Russian for now.
 
 - [How the project works](docs/how-it-works.md): steps of the month, how the project remembers past months, folders, sample phrases.
-- [Agents](docs/compatibility.md): how to start Claude Code, Cowork, Codex and the status of each.
+- [Agents](docs/compatibility.md): how to start and install Claude Code, Cowork and Codex.
 - [Chat only, no terminal](docs/chat-mode.md) · [Glossary](docs/glossary.md) · [Limits and security](docs/limits-and-security.md).
+- Tell us how it went: [Issues](https://github.com/ozerova152-lab/youtube-producer/issues).
 - [YouTube key guide](docs/api-key-guide.md) · [Import file format](docs/import-format.md).
 
 ## License

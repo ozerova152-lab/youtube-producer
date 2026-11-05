@@ -325,10 +325,11 @@ def test_readme_details_closed_by_default():
 
 
 def test_compatibility_flags_link_path_as_not_run_and_status_once():
-    c = (ROOT / "docs" / "compatibility.md").read_text(encoding="utf-8")
-    sec = _section(c, "## Установка по ссылке", "\n## Обложки")
+    c = (ROOT / "docs" / "dev" / "agent-status.md").read_text(encoding="utf-8")  # T34: заметка разработчика
+    sec = c[c.index("## Установка по ссылке"):]
     assert "не прогоняли" in sec and "на реальной машине" in sec
     assert c.count("## Статус") == 1
+    assert "Установка по ссылке" not in (ROOT / "docs" / "compatibility.md").read_text(encoding="utf-8")
     # статус по агентам (строки с названиями) не продублирован в новом разделе
     assert "Claude Code" not in sec and "Codex" not in sec
 

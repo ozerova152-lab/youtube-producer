@@ -22,9 +22,11 @@ def test_showcase_has_no_negative_check_forms_anywhere():
 
 def test_showcase_status_verbatim_with_issues_link_and_in_spec():
     assert f'<a href="{ISSUES}">Расскажите, как получилось</a>' in HTML
-    plain = re.sub(r"<[^>]+>", "", HTML)
-    assert STATUS in re.sub(r"\s+", " ", plain)
-    assert STATUS in SPEC
+    plain = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", HTML))
+    # T34: пометок о проверке на витрине нет, остаётся только ссылка «Расскажите, как получилось»
+    for gone in ("Полностью проверен", "Рассчитан и на другие агенты", "проверен в Claude Code"):
+        assert gone not in plain and gone not in SPEC, gone
+    assert "Расскажите, как получилось" in plain and "Расскажите, как получилось" in SPEC
 
 
 def test_showcase_follows_ui_rules():
@@ -39,17 +41,17 @@ def test_readmes_same_numbers_and_commands():
         assert token in EN, token
     for token in ("make setup", "make add-key", "make reset", "00-overview.md"):
         assert token in RU, token
-    docs = "".join((ROOT / "docs" / n).read_text(encoding="utf-8") for n in ("compatibility.md", "chat-mode.md"))
+    docs = "".join((ROOT / "docs" / n).read_text(encoding="utf-8") for n in ("compatibility.md", "chat-mode.md", "dev/agent-status.md"))
     for token in ("30.10.2026", "playbooks/no-terminal.md", "thumbs/"):
         assert token in docs, token
     assert re.search(r"5[–-]20", docs) and re.search(r"\b60\b", docs)
 
 
 def test_readmes_do_not_overstate_and_do_not_leak():
-    compat = (ROOT / "docs/compatibility.md").read_text(encoding="utf-8")
+    compat = (ROOT / "docs/dev/agent-status.md").read_text(encoding="utf-8")  # T34: статус только здесь
     for text in (RU, EN, compat):
         assert not re.search(r"/home/|matebook|AIza", text)
         assert not re.search(r"Cowork[^.]{0,40}(fully|полностью) (tested|проверен)", text)
-    # статус по агентам стоит один раз, в docs/compatibility.md (T30); README только ссылаются на него
+    # T34: статус по агентам стоит один раз, в заметке для разработчика; README и витрина на неё не ссылаются
     assert "Cowork мы не проверяли" in compat and "на реальном канале мы тоже не проверяли" in compat
-    assert "docs/compatibility.md" in RU and "docs/compatibility.md" in EN
+    assert "agent-status" not in RU and "agent-status" not in EN and "agent-status" not in HTML

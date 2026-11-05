@@ -56,8 +56,10 @@ def test_no_invented_ui_names():
 def test_cowork_not_claimed_as_checked():
     # в самой подсказке про Cowork статуса нет; статус одной строкой под подсказками: Cowork не проверяли
     assert not re.search(r"проверен|проверено|не проверя", SEC, re.IGNORECASE)
-    assert "Основной путь — Claude Code, проверен полностью." in COMPAT
-    assert "Cowork мы не проверяли: используйте тот же `AGENTS.md` и пишите в [Issues]" in COMPAT
+    note = (ROOT / "docs/dev/agent-status.md").read_text(encoding="utf-8")  # T34: статус только в заметке разработчика
+    assert "Основной путь — Claude Code, проверен полностью." in note
+    assert "Cowork мы не проверяли: используйте тот же `AGENTS.md` и пишите в [Issues]" in note
+    assert "Основной путь" not in COMPAT
 
 
 def test_consistent_with_claude_md_section_a():

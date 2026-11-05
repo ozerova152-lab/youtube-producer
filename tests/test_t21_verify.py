@@ -99,7 +99,9 @@ def test_three_paths_have_phrases_and_marks():
     # общая фраза для любого агента стоит в быстром старте, подсказки её не повторяют
     qs = _section(README, "Быстрый старт")
     assert "Прочитай AGENTS.md и запусти месяц" in qs and "Прочитай AGENTS.md и продолжи месяц" in README
-    assert "Основной путь — Claude Code, проверен полностью." in COMPAT and "тот же `AGENTS.md`" in COMPAT
+    note = (ROOT / "docs/dev/agent-status.md").read_text(encoding="utf-8")  # T34: статус только в заметке разработчика
+    assert "Основной путь — Claude Code, проверен полностью." in note and "тот же `AGENTS.md`" in COMPAT
+    assert "Основной путь" not in COMPAT and "Основной путь" not in README
     assert not re.search(r"не проверя|не проверен|проверено", cw + cx)
     # Cowork и Codex не названы «проверенными полностью»
     assert "проверен полностью" not in cw.lower() and "проверен полностью" not in cx.lower()

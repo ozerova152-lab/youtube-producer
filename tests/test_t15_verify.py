@@ -146,7 +146,7 @@ def test_readme_codex_honest_note_and_no_tutorials():
     codex = next(l for l in COMPAT.splitlines() if l.startswith("- **Codex"))
     assert "`codex`" in codex and not re.search(r"проверен|не проверя", codex)
     assert "лишь на базовом уровне" not in README
-    assert "Cowork мы не проверяли: используйте тот же `AGENTS.md` и пишите в [Issues]" in COMPAT
+    assert "Cowork мы не проверяли: используйте тот же `AGENTS.md` и пишите в [Issues]" in (ROOT / "docs/dev/agent-status.md").read_text(encoding="utf-8")
     assert len(README.splitlines()) < 260  # не учебник (T21: лимит поднят вместе с быстрым стартом и разделом ошибок)
     assert "```mermaid" not in README
     # картинка допустима только одна: обложка в шапке (assets/cover-producer.jpg)

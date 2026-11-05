@@ -144,8 +144,11 @@ def test_compatibility_links_and_single_status():
     for u in ("https://code.claude.com/docs/en/setup", "https://claude.com/download",
               "https://github.com/openai/codex"):
         assert u in t
-    assert len(re.findall(r"^## Статус", t, re.MULTILINE)) == 1
-    assert t.count("Основной путь — Claude Code, проверен полностью") == 1
+    # T34: статус только в заметке разработчика, в compatibility.md его нет
+    note = (ROOT / "docs" / "dev" / "agent-status.md").read_text(encoding="utf-8")
+    assert len(re.findall(r"^## Статус", note, re.MULTILINE)) == 1 and "## Статус" not in t
+    assert note.count("Основной путь — Claude Code, проверен полностью") == 1
+    assert "Основной путь" not in t
 
 
 def test_readme_key_steps_and_length():
