@@ -26,7 +26,9 @@ def test_steps_in_order():
     pos = [INSTALL.find(x) for x in order]
     assert all(p >= 0 for p in pos), pos
     assert pos == sorted(pos)
-    assert README.find(".env.example") > 0 and README.find("docs/import-format.md") > 0
+    # T36: ручная правка `.env` (cp .env.example) осталась только в инструкции по ключу
+    assert ".env.example" in (ROOT / "docs/api-key-guide.md").read_text(encoding="utf-8")
+    assert README.find("docs/import-format.md") > 0
 
 
 def test_no_unmarked_claims_about_cowork():

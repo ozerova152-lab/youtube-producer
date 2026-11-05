@@ -188,7 +188,8 @@ def test_virals_and_report_commands_exist_in_cli():
 
 def test_readme_sections_1_2_consistent_with_guide():
     key_block = README[README.index("## Свой канал"):README.index("## Если что-то не получилось")]
-    s1 = s2 = key_block  # в README (T30) ключ и `.env` описаны в одном разделе «Свой канал»
+    s1 = key_block  # в README (T30) ключ и `.env` описаны в одном разделе «Свой канал»
+    s2 = GUIDE  # T36: ручная правка `.env` (cp и строка с ключом) осталась только в инструкции
     assert "docs/api-key-guide.md" in s1
     assert "YouTube Data API v3" in s1 and "None" in s1
     assert "карта" in s1.lower()

@@ -19,7 +19,8 @@ MONTH = (ROOT / "playbooks/00-month.md").read_text(encoding="utf-8")
 README = (ROOT / "README.md").read_text(encoding="utf-8")
 # T30: часть содержимого переехала из README в docs; «что сказано в README и его docs» читается вместе
 COMPAT = (ROOT / "docs/compatibility.md").read_text(encoding="utf-8")
-README_AND_DOCS = README + COMPAT + (ROOT / "docs/how-it-works.md").read_text(encoding="utf-8")
+README_AND_DOCS = (README + COMPAT + (ROOT / "docs/how-it-works.md").read_text(encoding="utf-8")
+                   + (ROOT / "docs/api-key-guide.md").read_text(encoding="utf-8"))  # T36: cp .env.example живёт в инструкции по ключу
 CLAUDE = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 SITE = (ROOT / "site/index.html").read_text(encoding="utf-8")
 
@@ -134,7 +135,7 @@ def test_missing_playbook_reference_would_be_detected(tmp_path):
 # ---- критерий 4: README ----
 
 @pytest.mark.parametrize("needle", [
-    "Google Cloud", "YouTube Data API v3", ".env", "cp .env.example .env", "Claude Code",
+    "Google Cloud", "YouTube Data API v3", ".env", ".env.example", "Claude Code",
     "запусти месяц", "оценк", "импорт", "docs/import-format.md", "Codex", "AGENTS.md",
     "WSL", "make setup", "Без ключа",
 ])

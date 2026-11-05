@@ -121,11 +121,7 @@ Two ways to start.
 5. Paste the key when asked and repeat it. Nothing is shown while you type, that is normal. The command creates `.env` for you only and prints nothing. **Never paste the key into a chat.** If a key leaks, reissue it in Google Cloud.
 6. Tell the agent "key added".
 
-**A file instead of a key.** Prepare a table of videos as CSV/JSON (columns: `docs/import-format.md`, sample: `examples/demo/import.csv`). Import makes no network calls and spends no quota:
-
-```bash
-.venv/bin/produce --channel data/<channel> import path/to/file.csv
-```
+**Don't want to make a key?** Work in a chat without a terminal: give the agent any data about videos in your topic (a table, a file, an export) and it will work through it itself. [How it works](docs/chat-mode.md) (in Russian).
 
 ## If something went wrong
 
@@ -146,7 +142,7 @@ All files in `docs/` below are in Russian for now.
 - [Agents](docs/compatibility.md): how to start and install Claude Code, Cowork and Codex.
 - [Chat only, no terminal](docs/chat-mode.md) · [Glossary](docs/glossary.md) · [Limits and security](docs/limits-and-security.md).
 - Tell us how it went: [Issues](https://github.com/ozerova152-lab/youtube-producer/issues).
-- [YouTube key guide](docs/api-key-guide.md) · [Import file format](docs/import-format.md).
+- [YouTube key guide](docs/api-key-guide.md) · [Sample file format](docs/import-format.md).
 
 ## License
 
