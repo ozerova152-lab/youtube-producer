@@ -1,6 +1,8 @@
 name: Tests
 
 
+
+
 on:
   push:
     branches: [main]
@@ -8,8 +10,12 @@ on:
     branches: [main]
 
 
+
+
 permissions:
   contents: read
+
+
 
 
 jobs:
@@ -23,9 +29,10 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -e ".[dev]"
       - run: python -m playwright install --with-deps chromium
-      - run: curl -sSfL https://raw.githubusercontent.com/gitleaks/gitleaks/master/scripts/install.sh | sh -s -- -b "$HOME/.local/bin"
-      - run: find "$HOME/.local/bin" -maxdepth 2 -type f -name "gitleaks*" -print && command -v gitleaks || true
+      - run: mkdir -p "$HOME/.local/bin" && curl -fsSL https://github.com/gitleaks/gitleaks/releases/download/v8.28.0/gitleaks_8.28.0_linux_x64.tar.gz | tar -xz -C "$HOME/.local/bin" gitleaks
       - run: echo "$HOME/.local/bin" >> $GITHUB_PATH
       - run: gitleaks version
       - run: python -m pytest -q
+
+
 
