@@ -204,7 +204,7 @@ def test_three_check_commands_only_in_quick_start_between_step3_and_step4():
         s4 = text.index("### Шаг 4") if name == "README" else text.index("### Step 4")
         assert all(s3 < p < s4 for p in positions), name
         assert text.count("```bash") >= 1
-    assert marker not in SITE_HTML and "examples/demo" not in SITE_HTML.split('<section id="scheme">')[0]  # T37: ссылка на examples/demo/expected только под схемой
+    assert marker not in SITE_HTML and "examples/demo" not in SITE_HTML  # T39: ссылок на examples/demo на витрине нет совсем
     assert "### Проверьте, что всё работает" in README
 
 

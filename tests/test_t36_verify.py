@@ -4,6 +4,8 @@ import re
 import subprocess
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).parent.parent
 
 
@@ -99,8 +101,13 @@ def test_site_spec_agents_consistent_and_terminal_mode_untouched():
     assert "лишь удобный пример, не обязательное условие" in row and "«верно?»" in row
     assert "playbooks/no-terminal.md" in read("AGENTS.md")
     for p in ("src", "docs/import-format.md", "docs/api-key-guide.md"):
+        # изменения именно коммита T36 (9e81325), а не рабочего дерева: иначе любая правка src/ в других задачах ломает тест
+        probe = subprocess.run(["git", "cat-file", "-e", "9e81325^{commit}"], cwd=ROOT, check=False,
+                               capture_output=True)
+        if probe.returncode != 0:
+            pytest.skip("нет истории git с коммитом T36 (скачанный ZIP или поверхностный клон)")
         out = subprocess.run(
-            ["git", "diff", "--stat", "--", p],
+            ["git", "diff", "--stat", "9e81325~1", "9e81325", "--", p],
             cwd=ROOT,
             check=False,
             capture_output=True,

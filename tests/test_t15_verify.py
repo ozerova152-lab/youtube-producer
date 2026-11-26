@@ -219,7 +219,11 @@ def test_site_texts_and_no_external_resources():
     assert "Если GitHub не открывается, попробуйте позже" in SITE
     assert SITE.count("https://github.com/ozerova152-lab/youtube-producer") >= 2
     assert re.search(r"<code[^>]*>https://github\.com/ozerova152-lab/youtube-producer</code>", SITE)
-    for m in re.finditer(r'<(script|link|img|iframe)\b[^>]*?(?:src|href)="([^"]+)"', SITE):
+    canonical = '<link rel="canonical" href="https://ozerova152-lab.github.io/youtube-producer/">'
+    assert SITE.count(canonical) == 1
+    # Canonical metadata does not load a resource; still check all other tags.
+    resources = SITE.replace(canonical, "", 1)
+    for m in re.finditer(r'<(script|link|img|iframe)\b[^>]*?(?:src|href)="([^"]+)"', resources):
         assert not m.group(2).startswith(("http:", "https:", "//")), m.group(0)
     assert not re.search(r"cdn\.|googleapis|jsdelivr|unpkg", SITE)
     assert not SECRET_RE.search(SITE)

@@ -8,7 +8,7 @@ from pathlib import Path
 
 from produce.core import quota
 from produce.core.clock import now
-from produce.core.errors import RunError
+from produce.core.errors import FileFormatError, RunError
 from produce.core.files import read_json, write_json_atomic
 
 # Порядок важен: по нему определяется «дошёл ли запуск до конца».
@@ -25,6 +25,7 @@ STAGES = [
     "план готов",
 ]
 FINAL_STAGE = "план готов"
+MAX_VERSION = 999  # номер версии запуска внутри месяца
 
 _NAME = re.compile(r"^(?P<month>\d{4}-\d{2})_(?P<segment>.+)_v(?P<version>\d+)$")
 
@@ -68,11 +69,67 @@ def current_month(day: date | None = None) -> str:
     return (day or today()).strftime("%Y-%m")
 
 
+def _check_version(path: Path, data: dict) -> None:
+    """`version` правят руками, и он нужен всем командам (сравнение запусков, новая версия, отчёт).
+
+    Поэтому проверяем один раз при чтении запуска, а не `int()` в каждом месте: иначе нечисловое
+    значение падает трейсбеком в `later`, `start` и других. Число в кавычках, дробное, `true`, ноль
+    и отрицательное тоже ошибка: при ручной правке это почти всегда опечатка. Значение из файла в
+    сообщение не копируем.
+    """
+    value = data.get("version")
+    match = _NAME.match(path.name)
+    hint = (f"впишите номер из названия папки (здесь v{match['version']}, значит {int(match['version'])})"
+            if match else "впишите целое число")
+    where = f"В файле `runs/{path.name}/run.json`"
+    if not (isinstance(value, int) and not isinstance(value, bool) and value >= 1):
+        raise RunError(
+            f"{where} поле `version` должно быть целым числом, например 1. "
+            f"Скорее всего, файл правили руками. Откройте его, {hint} и запустите команду снова. "
+            "Старые запуски не изменены"
+        )
+    if value > MAX_VERSION:
+        # 10**30 породил бы папку с абсурдным номером; больше тысячи запусков за месяц не бывает
+        raise RunError(
+            f"{where} поле `version` слишком большое: допустимо целое число от 1 до {MAX_VERSION}. "
+            f"Скорее всего, файл правили руками. Откройте его, {hint} и запустите команду снова. "
+            "Старые запуски не изменены"
+        )
+    if match and value != int(match["version"]):
+        raise RunError(
+            f"{where} в поле `version` стоит число, не совпадающее с номером в названии папки "
+            f"(v{match['version']}). Впишите {int(match['version'])} и запустите команду снова. "
+            "Папку не переименовывайте. Старые запуски не изменены"
+        )
+
+
+def _broken_run_message(path: Path, cause: BaseException | None = None) -> str:
+    """Один человечный текст на все виды испорченного `run.json`: пустой, оборванный, не объект, нет файла.
+
+    Показываем только относительный путь и место ошибки (строка и столбец: слой 2 требует «название файла
+    и места»). Содержимое файла, текст разбора и абсолютный путь не показываем. Предлагаем переименовать папку,
+    а не удалять: в кэше лежит собранное за квоту, а переименованная папка просто перестаёт быть запуском.
+    """
+    line, column = getattr(cause, "lineno", None), getattr(cause, "colno", None)
+    place = f" (ошибка формата в строке {line}, столбце {column})" if line and column else ""
+    return (
+        f"Файл `runs/{path.name}/run.json` пуст или повреждён{place}. Остальные файлы запуска не тронуты. "
+        "Что делать: если у вас есть копия этого файла, верните её. Если нет, переименуйте папку запуска "
+        "(например, допишите `-old` в конце: она перестанет считаться запуском, но ничего не удалится) "
+        "и запустите `produce start`: создастся новый запуск. Кэш сбора из старой папки можно скопировать "
+        "в новую, чтобы не тратить квоту заново"
+    )
+
+
 def load_run(path: Path) -> Run:
-    data = read_json(path / "run.json")
+    try:
+        data = read_json(path / "run.json")
+    except FileFormatError as err:
+        raise RunError(_broken_run_message(path, err.__cause__)) from err
     if not isinstance(data, dict):
-        raise RunError(f"Файл {path / 'run.json'} должен быть объектом")
+        raise RunError(_broken_run_message(path))
     check_stage(data.get("stage", ""))
+    _check_version(path, data)
     return Run(path, data)
 
 
@@ -141,6 +198,11 @@ def start_run(channel_dir: Path, month: str, segment: str, brief_lang: str,
     last = existing[-1]
     if not force_new_version:
         return StartResult(last, "ask_new_version" if last.finished else "resume")
+    if last.data["version"] >= MAX_VERSION:
+        raise RunError(
+            "Достигнут предел: 999 версий запуска за месяц и сегмент. "
+            "Дождитесь следующего месяца. Старые запуски не изменены"
+        )
     new = _create(channel_dir, month, segment, brief_lang, last.data["version"] + 1, last)
     return StartResult(new, "new_version")
 

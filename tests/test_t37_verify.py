@@ -151,19 +151,12 @@ def test_dark_browser_theme_page_stays_readable(browser):
         assert contrast(page, sel) >= 4.5, sel
 
 
-def test_link_is_clickable_and_not_covered_on_phone(browser):
+def test_no_example_link_after_the_scheme(browser):
+    """T39: ссылки «Посмотреть полный пример» больше нет, после схемы идёт пояснение про цвет."""
     page = open_page(browser, 360, has_touch=True, is_mobile=True)
-    link = page.get_by_role("link", name="Посмотреть полный пример")
-    link.scroll_into_view_if_needed()
-    box = link.bounding_box()
-    top = page.evaluate(
-        "([x,y]) => { const e = document.elementFromPoint(x,y); return !!e && (e.tagName === 'A' || !!e.closest('a')) && e.closest('a').textContent.includes('Посмотреть полный пример'); }",
-        [box["x"] + box["width"] / 2, box["y"] + box["height"] / 2],
-    )
-    assert top, "ссылка перекрыта другим элементом"
-    assert link.get_attribute("href").endswith("/tree/main/examples/demo/expected")
-    # ссылка под схемой, не над ней
-    assert box["y"] > page.locator(LI).nth(5).bounding_box()["y"]
+    assert page.get_by_role("link", name="Посмотреть полный пример").count() == 0
+    assert page.locator("#scheme a").count() == 0
+    assert "Цветом выделены шаги" in page.locator("#scheme").inner_text()
 
 
 def test_no_scripts_besides_copy_buttons_and_no_cdn():

@@ -11,7 +11,6 @@ SITE = ROOT / "site"
 PAGE_URL = (SITE / "index.html").as_uri()
 HTML = (SITE / "index.html").read_text(encoding="utf-8")
 CSS = (SITE / "theme.css").read_text(encoding="utf-8")
-LINK = "https://github.com/ozerova152-lab/youtube-producer/tree/main/examples/demo/expected"
 NAMES = ["Ваш канал и тема", "Залёты", "Разбор причин", "Стратегия", "Брифы", "План на месяц"]
 
 
@@ -82,9 +81,13 @@ def test_readable_without_javascript_and_without_styles(browser):
     assert positions == sorted(positions) and "Утверждаете вы" in text and "Решаете вы" in text
 
 
-def test_full_example_link_points_to_demo_expected_which_exists():
-    assert f'<a href="{LINK}">Посмотреть полный пример</a>' in HTML
-    assert (ROOT / "examples" / "demo" / "expected").is_dir()
+def test_no_example_link_under_the_scheme_but_the_color_note_stays():
+    """T39: ссылки «Посмотреть полный пример» нет, схема и пояснение про цвет на месте."""
+    section = HTML[HTML.index('<section id="scheme">'):HTML.index('<section id="download"')]
+    assert "Посмотреть полный пример" not in HTML and "examples/demo" not in HTML
+    assert "<a " not in section
+    assert "Цветом выделены шаги, где решаете вы: агент ничего не публикует и не решает за вас." in section
+    assert len(re.findall(r"<li[ >]", section)) == 6
 
 
 def test_old_example_block_is_gone():
@@ -108,5 +111,6 @@ def test_no_verification_words_in_scheme_and_spec_mentions_it():
     flows = (ROOT / "docs/spec/04-user-flows.md").read_text(encoding="utf-8")
     layer1 = (ROOT / "docs/spec/01-functional-requirements.md").read_text(encoding="utf-8")
     for doc in (flows, layer1):
-        assert "Путь от темы до плана" in doc and "Посмотреть полный пример" in doc and "examples/demo/expected" in doc
+        assert "Путь от темы до плана" in doc and "Посмотреть полный пример" not in doc
+        assert "examples/demo/expected" not in doc and "ссылок на примеры нет" in doc
         assert "Пример на выдуманном канале" not in doc

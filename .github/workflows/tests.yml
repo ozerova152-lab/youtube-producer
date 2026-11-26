@@ -33,6 +33,3 @@ jobs:
       - run: echo "$HOME/.local/bin" >> $GITHUB_PATH
       - run: gitleaks version
       - run: python -m pytest -q
-
-
-

@@ -34,6 +34,10 @@ All that is left for you is to answer "yes" and get a YouTube key (free). Enter 
 
 </details>
 
+## Local workspace
+
+The optional local board displays ideas, research and plans in your browser. Your decisions are saved locally for the external agent; it does not start an AI agent automatically. See the [board guide (Russian)](docs/board.md).
+
 ## What you get
 
 One "month" of work produces files on your own computer in `data/<channel>/runs/<month>_<segment>_v<N>/`:

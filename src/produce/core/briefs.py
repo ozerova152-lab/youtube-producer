@@ -375,3 +375,83 @@ def check(run: runs.Run, match_strategy: bool = True) -> tuple[list[Brief], list
         if brief:
             found.append(brief)
     return found, problems + (_count_problems(run, found) if match_strategy else [])
+
+
+def check_idea_briefs(run: runs.Run) -> tuple[list[Brief], list[str]]:
+    """Validate complete briefs against the person's decisions on board ideas.
+
+    This explicitly separate route keeps the old strategy-count rule intact.
+    """
+    from produce.board import BoardError, BoardStore
+
+    channel = run.path.parent.parent
+    try:
+        snapshot = BoardStore(channel.parent).snapshot(channel.name, run.path.name)
+    except BoardError as err:
+        return [], [str(err)]
+    if snapshot["ideas_revision"] is None:
+        return [], ["Идеи не сохранены или файл идей повреждён. Откройте доску и проверьте идеи"]
+    ideas = snapshot["ideas"]
+    if any(not idea["status"] for idea in ideas):
+        return [], ["Не все идеи получили решение. Отметьте каждую идею на доске"]
+    accepted = {idea["id"] for idea in ideas if idea["status"] == "принят"}
+    if not accepted:
+        return [], ["Нет принятых идей. Выберите идею на доске или предложите новые"]
+    found, problems = check(run, match_strategy=False)
+    linked: list[str] = []
+    for brief in found:
+        path = run.path / BRIEFS_DIR / brief.name
+        try:
+            head = path.read_text(encoding="utf-8").split("\n## ", 1)[0]
+        except (OSError, UnicodeDecodeError):
+            continue  # check() already reports an unreadable file
+        ids = re.findall(r"^- Идея-ID:[ \t]*([^\s]+)[ \t]*$", head, re.MULTILINE)
+        if len(ids) != 1:
+            problems.append(f"`{BRIEFS_DIR}/{brief.name}`: нужна одна строка «- Идея-ID: ID» в шапке")
+        elif ids[0] not in accepted:
+            problems.append(f"`{BRIEFS_DIR}/{brief.name}`: идея не принята человеком")
+        else:
+            linked.append(ids[0])
+    if len(linked) != len(set(linked)):
+        problems.append("Несколько брифов ссылаются на одну идею")
+    if accepted - set(linked):
+        problems.append("Не для каждой принятой идеи подготовлен бриф")
+    return found, problems
+
+
+def check_plan_idea_links(run: runs.Run, found: list[Brief]) -> list[str]:
+    """Reject accepted briefs whose idea is no longer approved by the person."""
+    from produce.board import BoardError, BoardStore
+
+    links = {}
+    for brief in found:
+        path = run.path / BRIEFS_DIR / brief.name
+        try:
+            head = path.read_text(encoding="utf-8").split("\n## ", 1)[0]
+        except (OSError, UnicodeDecodeError):
+            return [f"`{BRIEFS_DIR}/{brief.name}`: файл не читается, решения не проверены"]
+        links[brief.name] = re.findall(r"^- Идея-ID:[ \t]*([^\s]+)[ \t]*$", head, re.MULTILINE)
+    ideas_file = run.path / "ideas.json"
+    if not (ideas_file.exists() or ideas_file.is_symlink() or any(links.values())):
+        return []  # old runs have neither board ideas nor their IDs
+    channel = run.path.parent.parent
+    try:
+        snapshot = BoardStore(channel.parent).snapshot(channel.name, run.path.name)
+    except BoardError as err:
+        return [str(err)]
+    if snapshot["ideas_revision"] is None:
+        return ["Идеи не сохранены или файл идей повреждён. План не подтверждён"]
+    accepted = {idea["id"] for idea in snapshot["ideas"] if idea["status"] == "принят"}
+    used = []
+    problems = []
+    for brief in found:
+        if brief.status != "принят":
+            continue
+        ids = links[brief.name]
+        if len(ids) != 1 or ids[0] not in accepted:
+            problems.append(f"`{BRIEFS_DIR}/{brief.name}`: идея не принята или её ID не указан; план не подтверждён")
+        else:
+            used.append(ids[0])
+    if len(used) != len(set(used)):
+        problems.append("Несколько принятых брифов ссылаются на одну идею; план не подтверждён")
+    return problems

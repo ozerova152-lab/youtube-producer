@@ -1,6 +1,7 @@
 """Тонкий интерфейс: разбирает аргументы, вызывает ядро, печатает по-русски."""
 
 import getpass
+import json
 import sys
 from pathlib import Path
 from typing import Annotated
@@ -524,7 +525,93 @@ def _later(channel: Path, segment_id: str | None, picks: list[int], everything: 
     typer.echo(f"Возвращено брифов: {len(done)}")
 
 
-CHECK_STEPS = ("covers", "strategy", "briefs", "plan")
+def _selected_board_run(channel: Path, segment_id: str | None, run_name: str | None):
+    """Resolve an explicitly selected board run, without silently falling back."""
+    if run_name is None:
+        return _current_run(channel, segment_id)
+    from produce.board import BoardError, BoardStore
+
+    channel = Path(channel).resolve()
+    try:
+        if run_name not in BoardStore(channel.parent).runs(channel.name):
+            raise RunError("Выбранный запуск не найден. Обновите доску")
+    except BoardError as err:
+        raise RunError(str(err)) from err
+    run = runs.load_run(channel / "runs" / run_name)
+    settings = load_settings(channel)
+    selected_segment = run.data.get("segment")
+    if not isinstance(selected_segment, str) or (segment_id and segment_id != selected_segment):
+        raise RunError("Сегмент запуска не совпадает с выбранным. Обновите доску")
+    return settings, get_segment(settings, selected_segment), run
+
+
+@app.command(name="run-status")
+def run_status(
+    ctx: typer.Context,
+    run_name: Annotated[str, typer.Option("--run", help="Имя запуска на доске")],
+    segment: Annotated[str | None, typer.Option(help="Сегмент запуска")] = None,
+) -> None:
+    """Показать этап выбранного запуска без создания новой версии."""
+    try:
+        _, _, run = _selected_board_run(ctx.obj, segment, run_name)
+        typer.echo(f"Запуск {run.path.name}. Этап: {run.stage}")
+    except ProduceError as err:
+        raise _fail(err) from err
+
+
+@app.command(name="ideas-list")
+def ideas_list(
+    ctx: typer.Context,
+    segment: Annotated[str | None, typer.Option(help="Сегмент запуска")] = None,
+    run_name: Annotated[str | None, typer.Option("--run", help="Имя запуска на доске")] = None,
+) -> None:
+    """Показать идеи и ревизию для продолжения агентом."""
+    from produce.board import BoardError, BoardStore
+
+    try:
+        _, _, run = _selected_board_run(ctx.obj, segment, run_name)
+        channel = Path(ctx.obj).resolve()
+        snapshot = BoardStore(channel.parent).snapshot(channel.name, run.path.name)
+        if snapshot["ideas_revision"] is None and (run.path / "ideas.json").exists():
+            raise RunError("Файл идей повреждён. Решения не изменены")
+        typer.echo(json.dumps({"revision": snapshot["ideas_revision"], "ideas": snapshot["ideas"]},
+                              ensure_ascii=False))
+    except BoardError as err:
+        raise _fail(RunError(str(err))) from err
+    except ProduceError as err:
+        raise _fail(err) from err
+
+
+@app.command(name="ideas-save")
+def ideas_save(
+    ctx: typer.Context,
+    segment: Annotated[str | None, typer.Option(help="Сегмент запуска")] = None,
+    run_name: Annotated[str | None, typer.Option("--run", help="Имя запуска на доске")] = None,
+) -> None:
+    """Сохранить предложения агента из JSON stdin без изменения решений человека."""
+    from produce.board import BoardError, BoardStore
+
+    try:
+        payload = json.load(sys.stdin)
+        if not isinstance(payload, dict) or set(payload) != {"revision", "ideas"}:
+            raise RunError("Ожидается JSON с полями revision и ideas. Ничего не сохранено")
+        _, _, run = _selected_board_run(ctx.obj, segment, run_name)
+        problems = strategizing.gate(run)
+        if problems:
+            raise RunError("\n".join(problems))
+        channel = Path(ctx.obj).resolve()
+        result = BoardStore(channel.parent).save_ideas(channel.name, run.path.name,
+                                                       payload["ideas"], payload["revision"])
+        typer.echo(json.dumps(result, ensure_ascii=False))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        raise _fail(RunError("Не удалось прочитать JSON идей. Ничего не сохранено")) from None
+    except BoardError as err:
+        raise _fail(RunError(str(err))) from err
+    except ProduceError as err:
+        raise _fail(err) from err
+
+
+CHECK_STEPS = ("covers", "strategy", "briefs", "idea-briefs", "plan")
 
 
 def _check_step(channel: Path, run: runs.Run, step: str, settings: dict) -> list[str]:
@@ -557,8 +644,8 @@ def _check_step(channel: Path, run: runs.Run, step: str, settings: dict) -> list
     problems = strategizing.gate(run)
     if problems:
         return problems
-    if step == "briefs":
-        found, problems = briefing.check(run)
+    if step in ("briefs", "idea-briefs"):
+        found, problems = (briefing.check(run) if step == "briefs" else briefing.check_idea_briefs(run))
         problems += history.brief_repeats(channel, run)
         if problems:
             return problems
@@ -569,6 +656,7 @@ def _check_step(channel: Path, run: runs.Run, step: str, settings: dict) -> list
         return []
     minimum, maximum = planning.limits_from(settings)
     found, problems = planning.check(run, minimum, maximum)
+    problems += briefing.check_plan_idea_links(run, found)
     if problems:
         return problems
     accepted = sum(1 for b in found if b.status == planning.ACCEPTED)
@@ -582,15 +670,16 @@ def _check_step(channel: Path, run: runs.Run, step: str, settings: dict) -> list
 @app.command(name="check-files")
 def check_files(
     ctx: typer.Context,
-    step: Annotated[str | None, typer.Option(help="covers, strategy, briefs или plan; без флага: разбор, ниша и кандидаты")] = None,
+    step: Annotated[str | None, typer.Option(help="covers, strategy, briefs, idea-briefs или plan; без флага: разбор, ниша и кандидаты")] = None,
     segment: Annotated[str | None, typer.Option(help="Сегмент; если он один, берётся он")] = None,
+    run_name: Annotated[str | None, typer.Option("--run", help="Имя запуска на доске")] = None,
 ) -> None:
     """Проверить структуру файлов агента по шаблонам (смысл проверяет человек)."""
     try:
         if step is not None and step not in CHECK_STEPS:
             raise RunError(f"Неизвестный шаг «{step}». Допустимые: {', '.join(CHECK_STEPS)}")
         if step is not None:
-            settings, _, run = _current_run(ctx.obj, segment)
+            settings, _, run = _selected_board_run(ctx.obj, segment, run_name)
             problems = _check_step(ctx.obj, run, step, settings)
             for line in problems:
                 typer.echo(line)
@@ -598,7 +687,7 @@ def check_files(
                 raise typer.Exit(code=1)
             _refresh_overview(ctx.obj, run)
             return
-        settings, seg, run = _current_run(ctx.obj, segment)
+        settings, seg, run = _selected_board_run(ctx.obj, segment, run_name)
         _, minimum = commenting.limits_from(settings)
         niche_written = any((run.path / name).exists() for name in (niching.NICHE, niching.CANDIDATES))
         virals = niching.load_virals(run) if niche_written else []
