@@ -16,7 +16,7 @@ def write_text_atomic(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp_name = tempfile.mkstemp(dir=path.parent, prefix=f".{path.name}.", suffix=".tmp")
     try:
-        with os.fdopen(fd, "w", encoding="utf-8") as tmp:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="") as tmp:
             tmp.write(text)
             tmp.flush()
             os.fsync(tmp.fileno())
